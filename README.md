@@ -4,6 +4,9 @@ CampusFlow is a production-grade, full-stack campus management and cognitive stu
 
 ---
 
+
+
+
 ## System Architecture
 
 The following diagram illustrates the interactions between the Next.js frontend, Express backend, Supabase database, Groq AI services, and automated workflow webhooks:
