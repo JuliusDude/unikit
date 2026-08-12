@@ -102,10 +102,9 @@ export default function NoticesPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      <div>
+    <div className="space-y-6 max-w-7xl mx-auto">
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-foreground">Notice Summarizer</h1>
-        <p className="text-muted-foreground mt-1">Paste college notices and get AI-powered summaries</p>
       </div>
 
       {error && (
@@ -197,7 +196,7 @@ export default function NoticesPage() {
                 <button
                   onClick={() => handleBroadcast(activeNotice.id)}
                   disabled={broadcastingId === activeNotice.id}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold rounded-full transition-standard disabled:opacity-50 cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold rounded-[10px] transition-standard disabled:opacity-50 cursor-pointer"
                 >
                   {broadcastingId === activeNotice.id ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />

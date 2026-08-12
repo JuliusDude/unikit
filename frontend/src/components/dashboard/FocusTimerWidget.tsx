@@ -87,10 +87,10 @@ export function FocusTimerWidget() {
     : ((POMODORO_MINUTES * 60 - totalSeconds) / (POMODORO_MINUTES * 60)) * 100;
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-primary to-primary/80 rounded-xl p-5 card-hover h-full text-white">
+    <div className="relative overflow-hidden bg-gradient-to-br from-primary to-primary/80 rounded-[10px] p-5 card-hover h-full text-white">
       <div className="relative">
         <div className="flex items-center gap-2 mb-4">
-          <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-[10px] bg-white/15 flex items-center justify-center">
             <Timer className="w-4 h-4" />
           </div>
           <h3 className="font-semibold text-sm">Focus Timer</h3>
@@ -113,14 +113,14 @@ export function FocusTimerWidget() {
         <div className="flex items-center justify-center gap-3">
           <button
             onClick={handleReset}
-            className="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center hover:bg-white/25 transition-all"
+            className="w-10 h-10 rounded-[10px] bg-white/15 flex items-center justify-center hover:bg-white/25 transition-all"
             aria-label="Reset timer"
           >
             <RotateCcw className="w-4 h-4" />
           </button>
           <button
             onClick={isRunning ? handlePause : handlePlay}
-            className="w-14 h-14 rounded-xl bg-white flex items-center justify-center text-primary hover:shadow-lg transition-all hover:scale-105"
+            className="w-14 h-14 rounded-[10px] bg-white flex items-center justify-center text-primary hover:shadow-lg transition-all hover:scale-105"
             aria-label={isRunning ? "Pause timer" : "Start timer"}
           >
             {isRunning ? (
@@ -131,7 +131,7 @@ export function FocusTimerWidget() {
           </button>
           <button
             onClick={handleSkip}
-            className="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center hover:bg-white/25 transition-all"
+            className="w-10 h-10 rounded-[10px] bg-white/15 flex items-center justify-center hover:bg-white/25 transition-all"
             aria-label="Skip to next"
           >
             <SkipForward className="w-4 h-4" />

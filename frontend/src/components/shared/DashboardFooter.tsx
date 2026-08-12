@@ -15,7 +15,7 @@ export function DashboardFooter() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
             <div className="space-y-3">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-[10px] bg-white/15 flex items-center justify-center">
                   <GraduationCap className="w-4 h-4 text-white" />
                 </div>
                 <span className="text-base font-bold text-white">CampusFlow</span>
@@ -46,7 +46,7 @@ export function DashboardFooter() {
                   <a
                     key={social.label}
                     href="#"
-                    className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all"
+                    className="w-8 h-8 rounded-[10px] bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all"
                     aria-label={social.label}
                   >
                     <span className="text-xs font-medium text-white">{social.label[0]}</span>

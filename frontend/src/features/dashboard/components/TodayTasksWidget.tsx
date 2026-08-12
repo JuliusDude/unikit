@@ -19,10 +19,10 @@ export function TodayTasksWidget() {
   }, []);
 
   return (
-    <div className="bg-white border border-border rounded-xl p-5 card-hover h-full">
+    <div className="bg-white border border-border rounded-[10px] p-5 card-hover h-full">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-[10px] bg-primary/10 flex items-center justify-center">
             <CalendarClock className="w-4 h-4 text-primary" />
           </div>
           <h3 className="font-semibold text-foreground">Today&apos;s Tasks</h3>
@@ -37,7 +37,7 @@ export function TodayTasksWidget() {
       {loading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-12 bg-muted rounded-lg animate-pulse" />
+            <div key={i} className="h-12 bg-muted rounded-[10px] animate-pulse" />
           ))}
         </div>
       ) : tasks.length === 0 ? (
@@ -49,7 +49,7 @@ export function TodayTasksWidget() {
           <p className="text-xs text-muted-foreground mb-4">Enjoy your free day!</p>
           <Link
             href="/dashboard/tasks"
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-white text-xs font-medium rounded-full hover:bg-primary/90 transition-all"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-white text-xs font-medium rounded-[10px] hover:bg-primary/90 transition-all"
           >
             <Plus className="w-3.5 h-3.5" /> Add Task
           </Link>
@@ -59,13 +59,13 @@ export function TodayTasksWidget() {
           {tasks.slice(0, 5).map((task) => (
             <div
               key={task.id}
-              className="flex items-center justify-between p-3 bg-muted/50 hover:bg-muted rounded-lg transition-colors"
+              className="flex items-center justify-between p-3 bg-muted/50 hover:bg-muted rounded-[10px] transition-colors"
             >
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">{task.title}</p>
                 <p className="text-xs text-muted-foreground">{task.subject}</p>
               </div>
-              <span className="ml-2 px-2.5 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full whitespace-nowrap">
+              <span className="ml-2 px-2.5 py-1 text-xs font-medium bg-primary/10 text-primary rounded-[10px] whitespace-nowrap">
                 {task.status}
               </span>
             </div>

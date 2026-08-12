@@ -200,12 +200,9 @@ export default function TasksPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Tasks</h1>
-          <p className="text-muted-foreground mt-1">Manage your deadlines and assignments</p>
-        </div>
+        <h1 className="text-2xl font-bold text-foreground">Tasks</h1>
         <button 
           onClick={handleOpenCreateModal}
           className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-medium rounded-[10px] hover:opacity-90 transition-standard cursor-pointer"
@@ -283,21 +280,21 @@ export default function TasksPage() {
                     <h3 className={`text-base font-semibold text-foreground ${task.status === "completed" ? "line-through text-muted-foreground" : ""}`}>
                       {task.title}
                     </h3>
-                    <span className="inline-block px-2 py-0.5 text-xs font-semibold bg-muted text-muted-foreground rounded-full mt-1">
+                    <span className="inline-block px-2 py-0.5 text-xs font-semibold bg-muted text-muted-foreground rounded-[10px] mt-1">
                       {task.subject}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <button
                       onClick={() => handleOpenEditModal(task)}
-                      className="p-1.5 hover:bg-accent rounded-md text-muted-foreground hover:text-foreground transition-standard cursor-pointer"
+                      className="p-1.5 hover:bg-accent rounded-[10px] text-muted-foreground hover:text-foreground transition-standard cursor-pointer"
                       title="Edit task"
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(task.id)}
-                      className="p-1.5 hover:bg-destructive/10 rounded-md text-muted-foreground hover:text-destructive transition-standard cursor-pointer"
+                      className="p-1.5 hover:bg-destructive/10 rounded-[10px] text-muted-foreground hover:text-destructive transition-standard cursor-pointer"
                       title="Delete task"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -336,7 +333,7 @@ export default function TasksPage() {
                     </div>
                   )}
                   {task.add_to_calendar && (
-                    <span className="px-2 py-0.5 bg-blue-500/10 text-blue-600 rounded-full font-medium">
+                    <span className="px-2 py-0.5 bg-blue-500/10 text-blue-600 rounded-[10px] font-medium">
                       Google Calendar Linked
                     </span>
                   )}

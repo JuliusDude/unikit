@@ -21,7 +21,7 @@ function getDaysLabel(days: number): string {
 }
 
 function getDaysColor(days: number): string {
-  if (days < 0) return "bg-red-50 text-red-600";
+  if (days < 0) return "bg-destructive/10 text-destructive";
   if (days <= 2) return "bg-orange-50 text-orange-600";
   if (days <= 5) return "bg-yellow-50 text-yellow-700";
   return "bg-emerald-50 text-emerald-600";
@@ -40,10 +40,10 @@ export function UpcomingDeadlinesWidget() {
   }, []);
 
   return (
-    <div className="bg-white border border-border rounded-xl p-5 card-hover h-full">
+    <div className="bg-white border border-border rounded-[10px] p-5 card-hover h-full">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-[10px] bg-primary/10 flex items-center justify-center">
             <Clock className="w-4 h-4 text-primary" />
           </div>
           <h3 className="font-semibold text-foreground">Upcoming Deadlines</h3>
@@ -58,7 +58,7 @@ export function UpcomingDeadlinesWidget() {
       {loading ? (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-12 bg-muted rounded-lg animate-pulse" />
+            <div key={i} className="h-12 bg-muted rounded-[10px] animate-pulse" />
           ))}
         </div>
       ) : tasks.length === 0 ? (
@@ -70,7 +70,7 @@ export function UpcomingDeadlinesWidget() {
           <p className="text-xs text-muted-foreground mb-4">You&apos;re all caught up! Keep it up.</p>
           <Link
             href="/dashboard/tasks"
-            className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-white text-xs font-medium rounded-full hover:bg-primary/90 transition-all"
+            className="inline-flex items-center gap-1.5 px-4 py-2 bg-primary text-white text-xs font-medium rounded-[10px] hover:bg-primary/90 transition-all"
           >
             <Plus className="w-3.5 h-3.5" /> Add Reminder
           </Link>
@@ -82,7 +82,7 @@ export function UpcomingDeadlinesWidget() {
             return (
               <div
                 key={task.id}
-                className="flex items-center justify-between p-3 bg-muted/50 hover:bg-muted rounded-lg transition-colors"
+                className="flex items-center justify-between p-3 bg-muted/50 hover:bg-muted rounded-[10px] transition-colors"
               >
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">{task.title}</p>

@@ -67,7 +67,7 @@ export function StudyStreakWidget() {
 
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-primary to-primary/80 rounded-xl p-5 h-full text-white">
+      <div className="bg-gradient-to-br from-primary to-primary/80 rounded-[10px] p-5 h-full text-white">
         <div className="h-4 bg-white/20 rounded animate-pulse w-1/3 mb-4" />
         <div className="h-20 bg-white/20 rounded animate-pulse" />
       </div>
@@ -75,9 +75,9 @@ export function StudyStreakWidget() {
   }
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-primary to-primary/80 rounded-xl p-5 card-hover h-full text-white">
+    <div className="relative overflow-hidden bg-gradient-to-br from-primary to-primary/80 rounded-[10px] p-5 card-hover h-full text-white">
       <div className="flex items-center gap-2 mb-4">
-        <div className="w-9 h-9 rounded-lg bg-white/15 flex items-center justify-center shrink-0">
+        <div className="w-9 h-9 rounded-[10px] bg-white/15 flex items-center justify-center shrink-0">
           <Flame className="w-5 h-5" />
         </div>
         <h3 className="font-semibold">Study Streak</h3>
@@ -89,14 +89,14 @@ export function StudyStreakWidget() {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-white/10 rounded-lg p-3 text-center">
+        <div className="bg-white/10 rounded-[10px] p-3 text-center">
           <div className="flex items-center justify-center gap-1.5 mb-1">
             <Clock className="w-3.5 h-3.5 text-white/70" />
             <span className="text-xs text-white/70">Hours</span>
           </div>
           <p className="text-lg font-bold">{totalHours}</p>
         </div>
-        <div className="bg-white/10 rounded-lg p-3 text-center">
+        <div className="bg-white/10 rounded-[10px] p-3 text-center">
           <div className="flex items-center justify-center gap-1.5 mb-1">
             <CheckCircle className="w-3.5 h-3.5 text-white/70" />
             <span className="text-xs text-white/70">Tasks</span>

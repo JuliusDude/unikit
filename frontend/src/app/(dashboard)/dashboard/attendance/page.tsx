@@ -126,12 +126,9 @@ export default function AttendancePage() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 max-w-7xl mx-auto">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Attendance Tracker</h1>
-          <p className="text-muted-foreground mt-1">Track attendance and get AI-powered risk alerts</p>
-        </div>
+        <h1 className="text-2xl font-bold text-foreground">Attendance Tracker</h1>
         <button 
           onClick={() => fetchAttendance(false)}
           className="p-2 hover:bg-accent rounded-full text-muted-foreground hover:text-foreground cursor-pointer"

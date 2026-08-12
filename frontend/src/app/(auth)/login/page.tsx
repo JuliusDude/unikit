@@ -21,8 +21,9 @@ type User = {
 export default function LoginPage() {
   const { login } = useAuth();
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // TODO: REMOVE BEFORE PUSH - Hardcoded test credentials
+  const [email, setEmail] = useState("test@example.com");
+  const [password, setPassword] = useState("password123");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -66,14 +67,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-border p-8 shadow-sm">
+    <div className="bg-white rounded-[10px] border border-border p-8 shadow-sm">
       <div className="mb-6">
         <h1 className="text-xl font-bold text-foreground" style={{ letterSpacing: "-0.02em" }}>Login to continue</h1>
         <p className="text-sm text-muted-foreground mt-1">Use your email or service</p>
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+        <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-[10px] text-sm text-destructive">
           {error}
         </div>
       )}
@@ -88,7 +89,7 @@ export default function LoginPage() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             placeholder="you@example.com"
             required
           />
@@ -104,7 +105,7 @@ export default function LoginPage() {
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 pr-10 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-3 py-2 pr-10 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               placeholder="••••••••"
               required
             />

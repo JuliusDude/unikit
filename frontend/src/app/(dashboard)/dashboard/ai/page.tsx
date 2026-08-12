@@ -70,12 +70,11 @@ export default function AiAssistantPage() {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto flex flex-col h-[calc(100vh-120px)]">
-      <div>
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
           <Bot className="w-6 h-6 text-primary" />
           AI Assistant
         </h1>
-        <p className="text-muted-foreground mt-1">Get instant answers, study tips, or homework guidance</p>
       </div>
 
       {/* Main chat card */}

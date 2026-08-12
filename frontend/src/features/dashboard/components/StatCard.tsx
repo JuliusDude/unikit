@@ -12,9 +12,9 @@ interface StatCardProps {
 
 export function StatCard({ icon: Icon, label, value, color = "bg-primary/10 text-primary" }: StatCardProps) {
   return (
-    <div className="bg-white border border-border rounded-xl p-5 card-hover">
+    <div className="bg-white border border-border rounded-[10px] p-5 card-hover">
       <div className="flex items-center gap-4">
-        <div className={cn("w-11 h-11 rounded-lg flex items-center justify-center", color)}>
+        <div className={cn("w-11 h-11 rounded-[10px] flex items-center justify-center", color)}>
           <Icon className="w-5 h-5" />
         </div>
         <div>

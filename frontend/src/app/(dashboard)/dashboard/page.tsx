@@ -62,7 +62,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
-      <div className="bg-gradient-to-r from-primary to-primary/80 rounded-2xl p-6 md:p-8 text-white shadow-lg">
+      <div className="bg-gradient-to-r from-primary to-primary/80 rounded-[10px] p-6 md:p-8 text-white shadow-lg">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold mb-1 tracking-tight" style={{ letterSpacing: "-0.04em" }}>
@@ -73,11 +73,11 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="flex items-center gap-3 text-sm">
-            <div className="flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1.5">
+            <div className="flex items-center gap-1.5 bg-white/10 rounded-[10px] px-3 py-1.5">
               <CalendarDays className="w-4 h-4" />
               <span className="font-medium">{getFormattedDate()}</span>
             </div>
-            <div className="flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1.5">
+            <div className="flex items-center gap-1.5 bg-white/10 rounded-[10px] px-3 py-1.5">
               <Clock className="w-4 h-4" />
               <span className="font-medium">{getFormattedTime()}</span>
             </div>
@@ -88,7 +88,7 @@ export default function DashboardPage() {
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-24 bg-white border border-border rounded-xl animate-pulse" />
+            <div key={i} className="h-24 bg-white border border-border rounded-[10px] animate-pulse" />
           ))}
         </div>
       ) : (
@@ -101,9 +101,9 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <MonthlyCalendarWidget />
-        <div className="space-y-6">
-          <TodayTasksWidget />
-          <UpcomingDeadlinesWidget />
+        <div className="grid grid-rows-2 gap-6">
+          <div className="h-full"><TodayTasksWidget /></div>
+          <div className="h-full"><UpcomingDeadlinesWidget /></div>
         </div>
       </div>
 

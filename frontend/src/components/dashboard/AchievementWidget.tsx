@@ -77,12 +77,12 @@ export function AchievementWidget() {
 
   if (loading) {
     return (
-      <div className="bg-white border border-border rounded-xl p-5 h-full">
+      <div className="bg-white border border-border rounded-[10px] p-5 h-full">
         <div className="h-4 bg-muted rounded animate-pulse w-1/3 mb-4" />
         <div className="h-6 bg-muted rounded animate-pulse mb-3" />
         <div className="grid grid-cols-2 gap-2">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-12 bg-muted rounded-lg animate-pulse" />
+            <div key={i} className="h-12 bg-muted rounded-[10px] animate-pulse" />
           ))}
         </div>
       </div>
@@ -90,9 +90,9 @@ export function AchievementWidget() {
   }
 
   return (
-    <div className="bg-white border border-border rounded-xl p-5 card-hover h-full">
+    <div className="bg-white border border-border rounded-[10px] p-5 card-hover h-full">
       <div className="flex items-center gap-2 mb-4">
-        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+        <div className="w-8 h-8 rounded-[10px] bg-primary/10 flex items-center justify-center">
           <Trophy className="w-4 h-4 text-primary" />
         </div>
         <h3 className="font-semibold text-foreground text-sm">Achievements</h3>
@@ -115,11 +115,11 @@ export function AchievementWidget() {
         {badges.map((badge, i) => (
           <div
             key={i}
-            className={`flex items-center gap-2 p-2 rounded-lg transition-all ${
+            className={`flex items-center gap-2 p-2 rounded-[10px] transition-all ${
               badge.earned ? "bg-primary/5" : "bg-muted/30 opacity-60"
             }`}
           >
-            <div className={`w-7 h-7 rounded-lg ${badge.iconBg} flex items-center justify-center`}>
+            <div className={`w-7 h-7 rounded-[10px] ${badge.iconBg} flex items-center justify-center`}>
               <badge.icon className={`w-3.5 h-3.5 ${badge.color}`} />
             </div>
             <span className="text-xs font-medium text-foreground truncate">{badge.label}</span>

@@ -153,26 +153,24 @@ export default function SmartToolsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fdfaff] text-[#2d3a34] p-6 space-y-6 max-w-6xl mx-auto rounded-[16px]">
+    <div className="space-y-6 max-w-7xl mx-auto">
       
       {/* Premium Header */}
-      <div className="border-b border-[#e0d4f0] pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="border-b border-border pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-[#5b21b6] font-semibold text-sm uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-primary font-semibold text-sm uppercase tracking-wider">
             <Sparkles className="w-4.5 h-4.5" />
             AI Notebook Tools
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-[#2d1055] mt-1 font-sans">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground mt-1">
             Smart Tools
           </h1>
-          <p className="text-sm text-[#6b5a80] mt-1 font-serif italic">
-            Select an specialized AI workflow to generate summaries, explanation guides, study roadmaps, and diagrams.
-          </p>
+          
         </div>
       </div>
 
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-[10px] text-sm text-red-700">
+        <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-[10px] text-sm text-red-700">
           {error}
         </div>
       )}
@@ -184,22 +182,22 @@ export default function SmartToolsPage() {
           return (
             <div
               key={tool.slug}
-              className="bg-white border border-[#e0d4f0] rounded-[12px] p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-all h-full"
+              className="bg-white border border-border rounded-[10px] p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-all h-full"
             >
               <div>
-                <div className="w-10 h-10 rounded-[10px] bg-[#f3eefa] border border-[#e0d4f0] flex items-center justify-center text-[#5b21b6] mb-4">
+                <div className="w-10 h-10 rounded-[10px] bg-primary/10 border border-border flex items-center justify-center text-primary mb-4">
                   <Icon className="w-5 h-5" />
                 </div>
-                <h3 className="font-semibold text-[#2d1055] text-base mb-2 font-sans">
+                <h3 className="font-semibold text-foreground text-base mb-2">
                   {tool.title}
                 </h3>
-                <p className="text-xs text-[#6b5a80] mb-6 leading-relaxed font-sans">
+                <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
                   {tool.description}
                 </p>
               </div>
               <button
                 onClick={() => handleOpenTool(tool)}
-                className="w-full py-2 bg-[#f3eefa] border border-[#e0d4f0] hover:bg-[#5b21b6] hover:text-white hover:border-[#5b21b6] text-[#5b21b6] font-semibold rounded-[10px] text-xs transition-standard cursor-pointer text-center"
+                className="w-full py-2 bg-primary/10 border border-border hover:bg-primary hover:text-white hover:border-primary text-primary font-semibold rounded-[10px] text-xs transition-standard cursor-pointer text-center"
               >
                 Launch Tool
               </button>
@@ -211,15 +209,15 @@ export default function SmartToolsPage() {
       {/* Modal Overlay */}
       {activeTool && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-          <div className="bg-[#fdfaff] border border-[#e0d4f0] rounded-[12px] shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 flex flex-col">
+          <div className="bg-background border border-border rounded-[10px] shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 flex flex-col">
             
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-[#e0d4f0] pb-4 mb-4">
+            <div className="flex items-center justify-between border-b border-border pb-4 mb-4">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-[8px] bg-[#f3eefa] border border-[#e0d4f0] flex items-center justify-center text-[#5b21b6]">
+                <div className="w-8 h-8 rounded-[10px] bg-primary/10 border border-border flex items-center justify-center text-primary">
                   <activeTool.icon className="w-4.5 h-4.5" />
                 </div>
-                <h2 className="text-lg font-bold text-[#2d1055] font-sans">{activeTool.title}</h2>
+                <h2 className="text-lg font-bold text-foreground">{activeTool.title}</h2>
               </div>
               <button 
                 onClick={handleCloseTool}
@@ -232,33 +230,33 @@ export default function SmartToolsPage() {
             {/* Modal Body */}
             <div className="space-y-4 flex-1">
               <div>
-                <label className="block text-xs font-semibold text-[#4c1d95] mb-1.5 uppercase tracking-wider">
+                <label className="block text-xs font-semibold text-primary mb-1.5 uppercase tracking-wider">
                   Source Material / Text Input
                 </label>
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  className="w-full h-36 px-3 py-2 bg-white border border-[#cfc0e0] rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-[#5b21b6] resize-none font-sans text-[#2d3a34] placeholder-[#b0a3c2]"
+                  className="w-full h-36 px-3 py-2 bg-white border border-input rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-[#5b21b6] resize-none text-foreground placeholder-muted-foreground"
                   placeholder={activeTool.placeholder}
                 />
               </div>
 
               {/* Dynamic options fields */}
               {activeTool.slug === "study-schedule" && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-[#f3eefa] p-4 border border-[#e0d4f0] rounded-[10px]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-primary/10 p-4 border border-border rounded-[10px]">
                   <div>
-                    <label className="block text-xs font-semibold text-[#4c1d95] mb-1.5 uppercase tracking-wider">
+                    <label className="block text-xs font-semibold text-primary mb-1.5 uppercase tracking-wider">
                       Target Exam Date
                     </label>
                     <input
                       type="date"
                       value={examDate}
                       onChange={(e) => setExamDate(e.target.value)}
-                      className="w-full px-3 py-2 border border-[#cfc0e0] rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-[#5b21b6] bg-white text-[#2d3a34]"
+                      className="w-full px-3 py-2 border border-input rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-[#5b21b6] bg-white text-foreground"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-[#4c1d95] mb-1.5 uppercase tracking-wider">
+                    <label className="block text-xs font-semibold text-primary mb-1.5 uppercase tracking-wider">
                       Daily Study Hours Limit
                     </label>
                     <input
@@ -267,24 +265,24 @@ export default function SmartToolsPage() {
                       max={24}
                       value={studyHours}
                       onChange={(e) => setStudyHours(Number(e.target.value))}
-                      className="w-full px-3 py-2 border border-[#cfc0e0] rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-[#5b21b6] bg-white text-[#2d3a34]"
+                      className="w-full px-3 py-2 border border-input rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-[#5b21b6] bg-white text-foreground"
                     />
                   </div>
                 </div>
               )}
 
-              <div className="flex gap-3 justify-end border-t border-[#e0d4f0] pt-4">
+              <div className="flex gap-3 justify-end border-t border-border pt-4">
                 <button
                   type="button"
                   onClick={handleCloseTool}
-                  className="px-4 py-2 border border-[#cfc0e0] text-[#2d3a34] font-medium rounded-[10px] hover:bg-[#f1ecf8] text-xs transition-standard cursor-pointer"
+                  className="px-4 py-2 border border-input text-foreground font-medium rounded-[10px] hover:bg-primary/10 text-xs transition-standard cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleProcess}
                   disabled={loading}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-[#5b21b6] hover:bg-[#4c1d95] text-white font-semibold rounded-[10px] text-xs transition-standard cursor-pointer disabled:opacity-50 shadow-xs"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-white font-semibold rounded-[10px] text-xs transition-standard cursor-pointer disabled:opacity-50 shadow-xs"
                 >
                   {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                   {activeTool.action}
@@ -293,26 +291,26 @@ export default function SmartToolsPage() {
 
               {/* Result output display */}
               {(result || loading) && (
-                <div className="mt-6 border-t border-[#e0d4f0] pt-6 space-y-3 relative">
+                <div className="mt-6 border-t border-border pt-6 space-y-3 relative">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs font-semibold text-[#6b5a80] uppercase tracking-wider">Generated Output</span>
+                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Generated Output</span>
                     {result && (
                       <button
                         onClick={handleCopy}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 border border-[#cfc0e0] hover:bg-[#f1ecf8] text-xs font-medium rounded-[8px] transition-standard cursor-pointer text-[#5b21b6]"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 border border-input hover:bg-primary/10 text-xs font-medium rounded-[10px] transition-standard cursor-pointer text-primary"
                       >
-                        {copied ? <Check className="w-3.5 h-3.5 text-purple-600" /> : <Copy className="w-3.5 h-3.5" />}
+                        {copied ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5" />}
                         {copied ? "Copied!" : "Copy"}
                       </button>
                     )}
                   </div>
                   {loading ? (
                     <div className="flex flex-col items-center justify-center py-10">
-                      <Loader2 className="w-8 h-8 text-[#5b21b6] animate-spin mb-2" />
-                      <p className="text-sm text-[#6b5a80] font-serif italic">AI is processing your document...</p>
+                      <Loader2 className="w-8 h-8 text-primary animate-spin mb-2" />
+                      
                     </div>
                   ) : (
-                    <div className="bg-white border border-[#e0d4f0] rounded-[10px] p-5 text-sm text-[#2d3a34] whitespace-pre-wrap leading-relaxed max-h-[300px] overflow-y-auto font-serif shadow-xs">
+                    <div className="bg-white border border-border rounded-[10px] p-5 text-sm text-foreground whitespace-pre-wrap leading-relaxed max-h-[300px] overflow-y-auto shadow-xs">
                       {result}
                     </div>
                   )}

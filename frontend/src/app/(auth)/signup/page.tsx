@@ -102,14 +102,14 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-border p-8 shadow-sm">
+    <div className="bg-white rounded-[10px] border border-border p-8 shadow-sm">
       <div className="mb-6">
         <h1 className="text-xl font-bold text-foreground" style={{ letterSpacing: "-0.02em" }}>Create your account</h1>
         <p className="text-sm text-muted-foreground mt-1">Join CampusFlow today</p>
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+        <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-[10px] text-sm text-destructive">
           {error}
         </div>
       )}
@@ -125,7 +125,7 @@ export default function SignupPage() {
             type="text"
             value={form.name}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             placeholder="John Doe"
             required
           />
@@ -141,7 +141,7 @@ export default function SignupPage() {
             type="email"
             value={form.email}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             placeholder="you@example.com"
             required
           />
@@ -157,7 +157,7 @@ export default function SignupPage() {
               name="branch"
               value={form.branch}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white"
+              className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white"
               required
             >
               <option value="">Select</option>
@@ -176,7 +176,7 @@ export default function SignupPage() {
               name="year"
               value={form.year}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white"
+              className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white"
               required
             >
               <option value="">Select</option>
@@ -197,7 +197,7 @@ export default function SignupPage() {
             type="text"
             value={form.telegram_username}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             placeholder="@yourusername"
             required
           />
@@ -214,7 +214,7 @@ export default function SignupPage() {
               type={showPassword ? "text" : "password"}
               value={form.password}
               onChange={handleChange}
-              className="w-full px-3 py-2 pr-10 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full px-3 py-2 pr-10 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
               placeholder="••••••••"
               required
             />
@@ -253,7 +253,7 @@ export default function SignupPage() {
             type="password"
             value={form.confirmPassword}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             placeholder="••••••••"
             required
           />

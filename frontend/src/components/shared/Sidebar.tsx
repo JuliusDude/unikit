@@ -66,7 +66,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
     >
       <div className={cn("flex items-center h-16 border-b border-white/10", isCollapsed ? "justify-center px-2" : "px-5")}>
         <Link href="/dashboard" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center group-hover:bg-white/20 transition-colors">
+          <div className="w-8 h-8 rounded-[10px] bg-white/15 flex items-center justify-center group-hover:bg-white/20 transition-colors">
             <GraduationCap className="w-4.5 h-4.5 text-white" />
           </div>
           {!isCollapsed && <span className="text-base font-bold text-white" style={{ letterSpacing: "-0.02em" }}>CampusFlow</span>}
@@ -79,7 +79,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
             key={item.href}
             href={item.href}
             className={cn(
-              "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150",
+              "flex items-center gap-3 px-3 py-2 rounded-[10px] text-sm font-medium transition-all duration-150",
               isActive(item.href)
                 ? "bg-white/20 text-white"
                 : "text-white/70 hover:bg-white/10 hover:text-white"
@@ -101,7 +101,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
             key={item.href}
             href={item.href}
             className={cn(
-              "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150",
+              "flex items-center gap-3 px-3 py-2 rounded-[10px] text-sm font-medium transition-all duration-150",
               isActive(item.href)
                 ? "bg-white/20 text-white"
                 : "text-white/70 hover:bg-white/10 hover:text-white"
@@ -123,7 +123,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
             key={item.href}
             href={item.href}
             className={cn(
-              "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150",
+              "flex items-center gap-3 px-3 py-2 rounded-[10px] text-sm font-medium transition-all duration-150",
               isActive(item.href)
                 ? "bg-white/20 text-white"
                 : "text-white/70 hover:bg-white/10 hover:text-white"
@@ -146,7 +146,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
         <button
           onClick={logout}
           className={cn(
-            "flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 text-white/70 hover:bg-white/10 hover:text-white",
+            "flex items-center gap-3 w-full px-3 py-2 rounded-[10px] text-sm font-medium transition-all duration-150 text-white/70 hover:bg-white/10 hover:text-white",
             isCollapsed && "justify-center"
           )}
         >
@@ -157,7 +157,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
         <button
           onClick={onToggle}
           className={cn(
-            "flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 text-white/70 hover:bg-white/10 hover:text-white",
+            "flex items-center gap-3 w-full px-3 py-2 rounded-[10px] text-sm font-medium transition-all duration-150 text-white/70 hover:bg-white/10 hover:text-white",
             isCollapsed && "justify-center"
           )}
         >
