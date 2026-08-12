@@ -20,6 +20,20 @@ import { MonthlyCalendarWidget } from "@/components/dashboard/MonthlyCalendarWid
 import { ListTodo, Clock, CheckCircle, CalendarDays } from "lucide-react";
 import { api } from "@/lib/api";
 import type { Task } from "@/features/types";
+import { motion } from "framer-motion";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+};
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -61,8 +75,18 @@ export default function DashboardPage() {
   const completedCount = tasks.filter((t) => t.status === "completed").length;
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
-      <div className="bg-gradient-to-r from-primary to-primary/80 rounded-[10px] p-6 md:p-8 text-white shadow-lg">
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="space-y-6 max-w-7xl mx-auto"
+    >
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.1, duration: 0.4, type: "spring" }}
+        className="bg-gradient-to-r from-primary to-primary/80 rounded-[10px] p-6 md:p-8 text-white shadow-lg"
+      >
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold mb-1 tracking-tight" style={{ letterSpacing: "-0.04em" }}>
@@ -83,7 +107,7 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -92,48 +116,96 @@ export default function DashboardPage() {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 animate-fade-in-up">
-          <StatCard icon={ListTodo} label="Total Tasks" value={String(totalCount)} color="bg-primary/10 text-primary" />
-          <StatCard icon={Clock} label="Pending" value={String(pendingCount)} color="bg-primary/5 text-primary" />
-          <StatCard icon={CheckCircle} label="Completed" value={String(completedCount)} color="bg-primary/10 text-primary" />
-        </div>
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4"
+        >
+          <motion.div variants={itemVariants}>
+            <StatCard icon={ListTodo} label="Total Tasks" value={String(totalCount)} color="bg-primary/10 text-primary" />
+          </motion.div>
+          <motion.div variants={itemVariants}>
+            <StatCard icon={Clock} label="Pending" value={String(pendingCount)} color="bg-primary/5 text-primary" />
+          </motion.div>
+          <motion.div variants={itemVariants}>
+            <StatCard icon={CheckCircle} label="Completed" value={String(completedCount)} color="bg-primary/10 text-primary" />
+          </motion.div>
+        </motion.div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <MonthlyCalendarWidget />
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-50px" }}
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+      >
+        <motion.div variants={itemVariants}><MonthlyCalendarWidget /></motion.div>
         <div className="grid grid-rows-2 gap-6">
-          <div className="h-full"><TodayTasksWidget /></div>
-          <div className="h-full"><UpcomingDeadlinesWidget /></div>
+          <motion.div variants={itemVariants} className="h-full"><TodayTasksWidget /></motion.div>
+          <motion.div variants={itemVariants} className="h-full"><UpcomingDeadlinesWidget /></motion.div>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <AttendanceWidget />
-        <StudyStreakWidget />
-      </div>
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-50px" }}
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+      >
+        <motion.div variants={itemVariants}><AttendanceWidget /></motion.div>
+        <motion.div variants={itemVariants}><StudyStreakWidget /></motion.div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <QuickActionsWidget />
-        <WeeklyProgressWidget />
-        <UpcomingEventsWidget />
-      </div>
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-50px" }}
+        className="grid grid-cols-1 md:grid-cols-3 gap-6"
+      >
+        <motion.div variants={itemVariants}><QuickActionsWidget /></motion.div>
+        <motion.div variants={itemVariants}><WeeklyProgressWidget /></motion.div>
+        <motion.div variants={itemVariants}><UpcomingEventsWidget /></motion.div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <RecentActivityWidget />
-        <ProductivityScoreWidget />
-        <FocusTimerWidget />
-      </div>
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-50px" }}
+        className="grid grid-cols-1 md:grid-cols-3 gap-6"
+      >
+        <motion.div variants={itemVariants}><RecentActivityWidget /></motion.div>
+        <motion.div variants={itemVariants}><ProductivityScoreWidget /></motion.div>
+        <motion.div variants={itemVariants}><FocusTimerWidget /></motion.div>
+      </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <CampusNewsWidget />
-        <AchievementWidget />
-      </div>
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, margin: "-50px" }}
+        className="grid grid-cols-1 md:grid-cols-2 gap-6"
+      >
+        <motion.div variants={itemVariants}><CampusNewsWidget /></motion.div>
+        <motion.div variants={itemVariants}><AchievementWidget /></motion.div>
+      </motion.div>
 
-      <div className="flex justify-center">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ type: "spring", stiffness: 300, damping: 24 }}
+        className="flex justify-center"
+      >
         <div className="w-full max-w-lg">
           <QuoteWidget />
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
+

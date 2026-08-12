@@ -21,9 +21,8 @@ type User = {
 export default function LoginPage() {
   const { login } = useAuth();
   const router = useRouter();
-  // TODO: REMOVE BEFORE PUSH - Hardcoded test credentials
-  const [email, setEmail] = useState("test@example.com");
-  const [password, setPassword] = useState("password123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);

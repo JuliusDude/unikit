@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
+import { ReactLenis } from 'lenis/react';
 import {
   CalendarClock,
   Sparkles,
@@ -876,17 +877,19 @@ function Footer() {
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
-      <Header />
-      <main>
-        <Hero />
-        <Modules />
-        <AIFeatures />
-        <WhyUs />
-        <ReplaceTools />
-        <CTA />
-      </main>
-      <Footer />
-    </div>
+    <ReactLenis root options={{ lerp: 0.1, duration: 1.5, smoothWheel: true }}>
+      <div className="min-h-screen">
+        <Header />
+        <main>
+          <Hero />
+          <Modules />
+          <AIFeatures />
+          <WhyUs />
+          <ReplaceTools />
+          <CTA />
+        </main>
+        <Footer />
+      </div>
+    </ReactLenis>
   );
 }

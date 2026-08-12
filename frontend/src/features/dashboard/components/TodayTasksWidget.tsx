@@ -5,6 +5,17 @@ import Link from "next/link";
 import { CalendarClock, Plus, ArrowRight, ClipboardList } from "lucide-react";
 import { api } from "@/lib/api";
 import type { Task } from "@/features/types";
+import { motion } from "framer-motion";
+
+const listVariants = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.05 } }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, x: -10 },
+  show: { opacity: 1, x: 0 }
+};
 
 export function TodayTasksWidget() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -19,7 +30,7 @@ export function TodayTasksWidget() {
   }, []);
 
   return (
-    <div className="bg-white border border-border rounded-[10px] p-5 card-hover h-full">
+    <div className="bg-white border border-border rounded-[10px] p-5 card-hover h-full flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-[10px] bg-primary/10 flex items-center justify-center">
@@ -55,10 +66,18 @@ export function TodayTasksWidget() {
           </Link>
         </div>
       ) : (
-        <div className="space-y-2">
+        <motion.div 
+          variants={listVariants}
+          initial="hidden"
+          animate="show"
+          className="space-y-2 flex-1"
+        >
           {tasks.slice(0, 5).map((task) => (
-            <div
+            <motion.div
               key={task.id}
+              variants={itemVariants}
+              whileHover={{ scale: 1.01, x: 4 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
               className="flex items-center justify-between p-3 bg-muted/50 hover:bg-muted rounded-[10px] transition-colors"
             >
               <div className="flex-1 min-w-0">
@@ -68,9 +87,9 @@ export function TodayTasksWidget() {
               <span className="ml-2 px-2.5 py-1 text-xs font-medium bg-primary/10 text-primary rounded-[10px] whitespace-nowrap">
                 {task.status}
               </span>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   );
