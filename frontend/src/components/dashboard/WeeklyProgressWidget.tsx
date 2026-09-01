@@ -1,20 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
 import type { Task } from "@/features/types";
 
-export function WeeklyProgressWidget() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
+interface WeeklyProgressWidgetProps {
+  tasks: Task[];
+}
 
-  useEffect(() => {
-    api
-      .get<{ tasks: Task[] }>("/api/tasks")
-      .then((res) => setTasks(res.tasks || []))
-      .catch(() => setTasks([]))
-      .finally(() => setLoading(false));
-  }, []);
+export function WeeklyProgressWidget({ tasks = [] }: WeeklyProgressWidgetProps) {
 
   const getWeekData = () => {
     const now = new Date();
@@ -46,15 +38,6 @@ export function WeeklyProgressWidget() {
   const maxVal = Math.max(...weekData.map((d) => d.completed + d.pending), 1);
   const totalCompleted = weekData.reduce((s, d) => s + d.completed, 0);
   const totalPending = weekData.reduce((s, d) => s + d.pending, 0);
-
-  if (loading) {
-    return (
-      <div className="bg-white border border-border rounded-[10px] p-5 h-full">
-        <div className="h-4 bg-muted rounded animate-pulse w-1/3 mb-4" />
-        <div className="h-32 bg-muted rounded animate-pulse" />
-      </div>
-    );
-  }
 
   return (
     <div className="bg-white border border-border rounded-[10px] p-5 card-hover h-full">

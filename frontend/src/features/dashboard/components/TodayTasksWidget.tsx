@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CalendarClock, Plus, ArrowRight, ClipboardList } from "lucide-react";
-import { api } from "@/lib/api";
 import type { Task } from "@/features/types";
 import { motion } from "framer-motion";
+
+interface TodayTasksWidgetProps {
+  tasks: Task[];
+}
 
 const listVariants = {
   hidden: { opacity: 0 },
@@ -17,17 +19,16 @@ const itemVariants = {
   show: { opacity: 1, x: 0 }
 };
 
-export function TodayTasksWidget() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
+export function TodayTasksWidget({ tasks = [] }: TodayTasksWidgetProps) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
 
-  useEffect(() => {
-    api
-      .get<{ tasks: Task[] }>("/api/tasks/today")
-      .then((res) => setTasks(res.tasks || []))
-      .catch(() => setTasks([]))
-      .finally(() => setLoading(false));
-  }, []);
+  const todayTasks = tasks.filter((task) => {
+    const taskDate = new Date(task.deadline);
+    return taskDate >= today && taskDate < tomorrow;
+  });
 
   return (
     <div className="bg-white border border-border rounded-[10px] p-5 card-hover h-full flex flex-col">
@@ -38,20 +39,14 @@ export function TodayTasksWidget() {
           </div>
           <h3 className="font-semibold text-foreground">Today&apos;s Tasks</h3>
         </div>
-        {tasks.length > 0 && (
+        {todayTasks.length > 0 && (
           <Link href="/dashboard/tasks" className="text-xs text-primary hover:text-primary/80 font-medium flex items-center gap-1 transition-colors">
             View All <ArrowRight className="w-3 h-3" />
           </Link>
         )}
       </div>
 
-      {loading ? (
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-12 bg-muted rounded-[10px] animate-pulse" />
-          ))}
-        </div>
-      ) : tasks.length === 0 ? (
+      {todayTasks.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-8">
           <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-4">
             <ClipboardList className="w-6 h-6 text-muted-foreground" />
@@ -72,7 +67,7 @@ export function TodayTasksWidget() {
           animate="show"
           className="space-y-2 flex-1"
         >
-          {tasks.slice(0, 5).map((task) => (
+          {todayTasks.slice(0, 5).map((task) => (
             <motion.div
               key={task.id}
               variants={itemVariants}

@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Trophy, Star, Zap, Target } from "lucide-react";
-import { api } from "@/lib/api";
 import type { Task, Attendance } from "@/features/types";
 
 interface Badge {
@@ -13,21 +11,12 @@ interface Badge {
   iconBg: string;
 }
 
-export function AchievementWidget() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [attendance, setAttendance] = useState<Attendance[]>([]);
-  const [loading, setLoading] = useState(true);
+interface AchievementWidgetProps {
+  tasks: Task[];
+  attendance: Attendance[];
+}
 
-  useEffect(() => {
-    Promise.all([
-      api.get<{ tasks: Task[] }>("/api/tasks").catch(() => ({ tasks: [] })),
-      api.get<{ attendance: Attendance[] }>("/api/attendance").catch(() => ({ attendance: [] })),
-    ]).then(([taskRes, attRes]) => {
-      setTasks(taskRes.tasks || []);
-      setAttendance(attRes.attendance || []);
-    }).finally(() => setLoading(false));
-  }, []);
-
+export function AchievementWidget({ tasks = [], attendance = [] }: AchievementWidgetProps) {
   const completedCount = tasks.filter((t) => t.status === "completed").length;
   const totalAttended = attendance.reduce((s, r) => s + r.attended_classes, 0);
   const totalClasses = attendance.reduce((s, r) => s + r.total_classes, 0);
@@ -74,20 +63,6 @@ export function AchievementWidget() {
   const maxXp = 1000;
   const level = Math.floor(xp / maxXp) + 1;
   const xpPercent = Math.min((xp % maxXp) / maxXp, 1) * 100;
-
-  if (loading) {
-    return (
-      <div className="bg-white border border-border rounded-[10px] p-5 h-full">
-        <div className="h-4 bg-muted rounded animate-pulse w-1/3 mb-4" />
-        <div className="h-6 bg-muted rounded animate-pulse mb-3" />
-        <div className="grid grid-cols-2 gap-2">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-12 bg-muted rounded-[10px] animate-pulse" />
-          ))}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-white border border-border rounded-[10px] p-5 card-hover h-full">

@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Clock, ArrowRight, PartyPopper, Plus } from "lucide-react";
-import { api } from "@/lib/api";
 import type { Task } from "@/features/types";
+
+interface UpcomingDeadlinesWidgetProps {
+  tasks: Task[];
+}
 
 function getDaysLeft(deadline: string): number {
   const now = new Date();
@@ -27,17 +29,16 @@ function getDaysColor(days: number): string {
   return "bg-emerald-50 text-emerald-600";
 }
 
-export function UpcomingDeadlinesWidget() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
+export function UpcomingDeadlinesWidget({ tasks = [] }: UpcomingDeadlinesWidgetProps) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const nextWeek = new Date(today);
+  nextWeek.setDate(nextWeek.getDate() + 7);
 
-  useEffect(() => {
-    api
-      .get<{ tasks: Task[] }>("/api/tasks/upcoming")
-      .then((res) => setTasks(res.tasks || []))
-      .catch(() => setTasks([]))
-      .finally(() => setLoading(false));
-  }, []);
+  const upcomingTasks = tasks.filter((task) => {
+    const taskDate = new Date(task.deadline);
+    return taskDate >= today && taskDate <= nextWeek;
+  });
 
   return (
     <div className="bg-white border border-border rounded-[10px] p-5 card-hover h-full">
@@ -48,20 +49,14 @@ export function UpcomingDeadlinesWidget() {
           </div>
           <h3 className="font-semibold text-foreground">Upcoming Deadlines</h3>
         </div>
-        {tasks.length > 0 && (
+        {upcomingTasks.length > 0 && (
           <Link href="/dashboard/tasks" className="text-xs text-primary hover:text-primary/80 font-medium flex items-center gap-1 transition-colors">
             View All <ArrowRight className="w-3 h-3" />
           </Link>
         )}
       </div>
 
-      {loading ? (
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-12 bg-muted rounded-[10px] animate-pulse" />
-          ))}
-        </div>
-      ) : tasks.length === 0 ? (
+      {upcomingTasks.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-8">
           <div className="w-14 h-14 rounded-full bg-emerald-50 flex items-center justify-center mb-4">
             <PartyPopper className="w-6 h-6 text-emerald-500" />
@@ -77,7 +72,7 @@ export function UpcomingDeadlinesWidget() {
         </div>
       ) : (
         <div className="space-y-2">
-          {tasks.slice(0, 5).map((task) => {
+          {upcomingTasks.slice(0, 5).map((task) => {
             const days = getDaysLeft(task.deadline);
             return (
               <div

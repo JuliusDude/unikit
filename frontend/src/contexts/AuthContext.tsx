@@ -31,6 +31,7 @@ export interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (payload: RegisterPayload) => Promise<void>;
   logout: () => void;
+  devLogin: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -42,6 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const token = localStorage.getItem("campusflow_token");
+    
     if (token) {
       api
         .get<{ student: User }>("/api/auth/me", { token })
@@ -52,6 +54,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     }
   }, []);
+
+  const devLogin = useCallback(async () => {
+    const token = "dev-token";
+    localStorage.setItem("campusflow_token", token);
+    const res = await api.get<{ student: User }>("/api/auth/me", { token });
+    setUser(res.student);
+    router.push("/dashboard");
+  }, [router]);
 
   const login = useCallback(
     async (email: string, password: string) => {
@@ -83,7 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [router]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, devLogin }}>
       {children}
     </AuthContext.Provider>
   );

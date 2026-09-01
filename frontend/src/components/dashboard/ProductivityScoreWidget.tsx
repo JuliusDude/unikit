@@ -1,24 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Lightbulb } from "lucide-react";
-import { api } from "@/lib/api";
 import type { Task, Attendance } from "@/features/types";
 
-export function ProductivityScoreWidget() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [attendance, setAttendance] = useState<Attendance[]>([]);
-  const [loading, setLoading] = useState(true);
+interface ProductivityScoreWidgetProps {
+  tasks: Task[];
+  attendance: Attendance[];
+}
 
-  useEffect(() => {
-    Promise.all([
-      api.get<{ tasks: Task[] }>("/api/tasks").catch(() => ({ tasks: [] })),
-      api.get<{ attendance: Attendance[] }>("/api/attendance").catch(() => ({ attendance: [] })),
-    ]).then(([taskRes, attRes]) => {
-      setTasks(taskRes.tasks || []);
-      setAttendance(attRes.attendance || []);
-    }).finally(() => setLoading(false));
-  }, []);
+export function ProductivityScoreWidget({ tasks = [], attendance = [] }: ProductivityScoreWidgetProps) {
 
   const calculateScore = () => {
     if (tasks.length === 0 && attendance.length === 0) return 0;
@@ -64,15 +54,6 @@ export function ProductivityScoreWidget() {
   }
   if (suggestions.length === 0) {
     suggestions.push("Add tasks and track attendance to see your productivity score");
-  }
-
-  if (loading) {
-    return (
-      <div className="bg-white border border-border rounded-[10px] p-5 h-full">
-        <div className="h-4 bg-muted rounded animate-pulse w-1/3 mb-4" />
-        <div className="h-28 bg-muted rounded-full mx-auto w-28 animate-pulse" />
-      </div>
-    );
   }
 
   return (

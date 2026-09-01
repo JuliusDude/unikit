@@ -19,7 +19,7 @@ type User = {
 };
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, devLogin } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -143,6 +143,15 @@ export default function LoginPage() {
       </div>
 
       <div className="space-y-3">
+        {process.env.NEXT_PUBLIC_DEV_MODE === "true" && (
+          <button
+            onClick={devLogin}
+            type="button"
+            className="w-full py-2.5 bg-zinc-900 text-white rounded-full text-sm font-medium hover:bg-zinc-800 transition-standard flex items-center justify-center gap-2"
+          >
+            Developer Login (Bypass)
+          </button>
+        )}
         <button
           onClick={handleGoogleLogin}
           className="w-full py-2.5 border border-border rounded-full text-sm font-medium text-foreground hover:bg-muted transition-standard flex items-center justify-center gap-2"

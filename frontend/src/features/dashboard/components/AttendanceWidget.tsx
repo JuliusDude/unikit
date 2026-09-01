@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { BarChart3, TrendingUp, TrendingDown } from "lucide-react";
-import { api } from "@/lib/api";
 import type { Attendance } from "@/features/types";
 
 function getPercentage(attended: number, total: number): number {
@@ -28,18 +26,11 @@ function getRingColor(pct: number): string {
   return "#ef4444";
 }
 
-export function AttendanceWidget() {
-  const [attendance, setAttendance] = useState<Attendance[]>([]);
-  const [loading, setLoading] = useState(true);
+interface AttendanceWidgetProps {
+  attendance: Attendance[];
+}
 
-  useEffect(() => {
-    api
-      .get<{ attendance: Attendance[] }>("/api/attendance")
-      .then((res) => setAttendance(res.attendance || []))
-      .catch(() => setAttendance([]))
-      .finally(() => setLoading(false));
-  }, []);
-
+export function AttendanceWidget({ attendance = [] }: AttendanceWidgetProps) {
   const totalAttended = attendance.reduce((s, r) => s + r.attended_classes, 0);
   const totalClasses = attendance.reduce((s, r) => s + r.total_classes, 0);
   const overallPct = getPercentage(totalAttended, totalClasses);
@@ -55,13 +46,7 @@ export function AttendanceWidget() {
         <h3 className="font-semibold text-foreground">Attendance Overview</h3>
       </div>
 
-      {loading ? (
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-10 bg-muted rounded-[10px] animate-pulse" />
-          ))}
-        </div>
-      ) : attendance.length === 0 ? (
+      {attendance.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-8">
           <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-4">
             <BarChart3 className="w-6 h-6 text-muted-foreground" />
