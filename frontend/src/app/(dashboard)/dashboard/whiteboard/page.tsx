@@ -64,7 +64,7 @@ export default function WhiteboardPage() {
   return (
     <div className="space-y-4 h-full relative">
       {!activeBoardId ? (
-        <div className="space-y-6 max-w-7xl mx-auto">
+        <div className="max-w-5xl space-y-8 mx-auto">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-foreground">Whiteboard</h1>
           </div>

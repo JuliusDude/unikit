@@ -39,7 +39,7 @@ export default function AutomationsPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="max-w-4xl space-y-8 mx-auto">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-foreground">Automations</h1>
         <button
