@@ -155,18 +155,9 @@ export default function SmartToolsPage() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       
-      {/* Premium Header */}
-      <div className="border-b border-border pb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-primary font-semibold text-sm uppercase tracking-wider">
-            <Sparkles className="w-4.5 h-4.5" />
-            AI Notebook Tools
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground mt-1">
-            Smart Tools
-          </h1>
-          
-        </div>
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-foreground">Smart Tools</h1>
       </div>
 
       {error && (
@@ -182,7 +173,7 @@ export default function SmartToolsPage() {
           return (
             <div
               key={tool.slug}
-              className="bg-white border border-border rounded-[10px] p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-all h-full"
+              className="bg-white border border-border rounded-[10px] p-5 shadow-sm transition-all hover:shadow-md flex flex-col justify-between h-full"
             >
               <div>
                 <div className="w-10 h-10 rounded-[10px] bg-primary/10 border border-border flex items-center justify-center text-primary mb-4">
@@ -209,19 +200,14 @@ export default function SmartToolsPage() {
       {/* Modal Overlay */}
       {activeTool && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-          <div className="bg-background border border-border rounded-[10px] shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 flex flex-col">
+          <div className="bg-white rounded-[12px] border border-border shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 flex flex-col">
             
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-border pb-4 mb-4">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-[10px] bg-primary/10 border border-border flex items-center justify-center text-primary">
-                  <activeTool.icon className="w-4.5 h-4.5" />
-                </div>
-                <h2 className="text-lg font-bold text-foreground">{activeTool.title}</h2>
-              </div>
+              <h2 className="text-lg font-bold text-foreground">{activeTool.title}</h2>
               <button 
                 onClick={handleCloseTool}
-                className="p-1 hover:bg-accent rounded-full text-muted-foreground hover:text-foreground transition-standard cursor-pointer"
+                className="p-1 hover:bg-accent rounded-full text-muted-foreground transition-standard cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -230,33 +216,33 @@ export default function SmartToolsPage() {
             {/* Modal Body */}
             <div className="space-y-4 flex-1">
               <div>
-                <label className="block text-xs font-semibold text-primary mb-1.5 uppercase tracking-wider">
+                <label className="block text-sm font-medium text-foreground mb-1.5">
                   Source Material / Text Input
                 </label>
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  className="w-full h-36 px-3 py-2 bg-white border border-input rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-[#5b21b6] resize-none text-foreground placeholder-muted-foreground"
+                  className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-ring h-36 resize-none"
                   placeholder={activeTool.placeholder}
                 />
               </div>
 
               {/* Dynamic options fields */}
               {activeTool.slug === "study-schedule" && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-primary/10 p-4 border border-border rounded-[10px]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-primary mb-1.5 uppercase tracking-wider">
+                    <label className="block text-sm font-medium text-foreground mb-1.5">
                       Target Exam Date
                     </label>
                     <input
                       type="date"
                       value={examDate}
                       onChange={(e) => setExamDate(e.target.value)}
-                      className="w-full px-3 py-2 border border-input rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-[#5b21b6] bg-white text-foreground"
+                      className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-primary mb-1.5 uppercase tracking-wider">
+                    <label className="block text-sm font-medium text-foreground mb-1.5">
                       Daily Study Hours Limit
                     </label>
                     <input
@@ -265,13 +251,13 @@ export default function SmartToolsPage() {
                       max={24}
                       value={studyHours}
                       onChange={(e) => setStudyHours(Number(e.target.value))}
-                      className="w-full px-3 py-2 border border-input rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-[#5b21b6] bg-white text-foreground"
+                      className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                     />
                   </div>
                 </div>
               )}
 
-              <div className="flex gap-3 justify-end border-t border-border pt-4">
+              <div className="flex gap-3 justify-end border-t border-border pt-4 mt-6">
                 <button
                   type="button"
                   onClick={handleCloseTool}

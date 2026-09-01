@@ -591,22 +591,22 @@ export default function FlashcardsPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowAddCardInline(!showAddCardInline)}
-              className="px-3.5 py-2 border border-border hover:bg-accent/40 text-xs font-semibold rounded-[10px] text-foreground transition-standard cursor-pointer flex items-center gap-1.5"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-medium rounded-[10px] hover:opacity-90 transition-standard cursor-pointer"
             >
-              <Plus className="w-3.5 h-3.5" />
+              <Plus className="w-4 h-4" />
               Add Custom Card
             </button>
             <button
               onClick={handleClearDeck}
-              className="px-3.5 py-2 border border-border hover:bg-accent text-xs font-semibold rounded-[10px] text-foreground transition-standard cursor-pointer"
+              className="px-4 py-2 border border-border hover:bg-accent text-sm font-medium rounded-[10px] text-foreground transition-standard cursor-pointer"
             >
               Clear Deck
             </button>
             <button
               onClick={handleCopyAll}
-              className="px-3.5 py-2 bg-muted hover:bg-accent text-xs font-semibold rounded-[10px] text-foreground transition-standard cursor-pointer flex items-center gap-1.5"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-muted hover:bg-accent text-sm font-medium rounded-[10px] text-foreground transition-standard cursor-pointer"
             >
-              {copiedAll ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5" />}
+              {copiedAll ? <Check className="w-4 h-4 text-primary" /> : <Copy className="w-4 h-4" />}
               {copiedAll ? "Copied All!" : "Copy Deck"}
             </button>
           </div>
@@ -628,23 +628,23 @@ export default function FlashcardsPage() {
           <div className="bg-card border border-border rounded-[10px] p-5 space-y-4 shadow-sm">
             
             {/* Sidebar Tabs */}
-            <div className="flex gap-1 border-b border-border pb-2">
+            <div className="flex gap-2 border-b border-border pb-1">
               <button
                 onClick={() => setSidebarTab("sources")}
-                className={`flex-1 py-1.5 text-center text-xs font-semibold rounded-[10px] transition-standard cursor-pointer ${
+                className={`px-4 py-2 text-sm font-medium border-b-2 transition-standard capitalize cursor-pointer ${
                   sidebarTab === "sources"
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    ? "border-primary text-primary font-semibold"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
                 Sources ({sources.length})
               </button>
               <button
                 onClick={() => setSidebarTab("notes")}
-                className={`flex-1 py-1.5 text-center text-xs font-semibold rounded-[10px] transition-standard cursor-pointer ${
+                className={`px-4 py-2 text-sm font-medium border-b-2 transition-standard capitalize cursor-pointer ${
                   sidebarTab === "notes"
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    ? "border-primary text-primary font-semibold"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
                 }`}
               >
                 Saved Notes ({notesList.length})
@@ -905,16 +905,14 @@ export default function FlashcardsPage() {
 
           {/* Empty Desk */}
           {flashcards.length === 0 && !loading && (
-            <div className="h-[460px] border border-dashed border-border rounded-[10px] flex flex-col items-center justify-center text-center p-8 bg-[#fdfcff] shadow-sm">
-              <div className="w-14 h-14 rounded-full bg-card flex items-center justify-center mb-4 text-primary border border-border">
-                <Layers className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground font-sans">Notebook Study Guide</h3>
-              <p className="text-sm text-muted-foreground max-w-sm font-sans italic mt-2">
+            <div className="bg-white border border-border rounded-[10px] p-12 text-center shadow-sm">
+              <Layers className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">Notebook Study Guide</h3>
+              <p className="text-sm text-muted-foreground mb-4">
                 Check study documents on the left, then click <strong className="text-primary">"Generate Flashcards"</strong> or add files/notes to review.
               </p>
               
-              <div className="flex gap-3 mt-6">
+              <div className="flex gap-3 mt-6 justify-center">
                 <button
                   onClick={() => {
                     setSidebarTab("sources");
@@ -1465,13 +1463,13 @@ export default function FlashcardsPage() {
 
       {/* Add/Edit Source Modal */}
       {isSourceModalOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-150">
-          <div className="bg-background border border-border rounded-[10px] p-6 max-w-lg w-full shadow-lg space-y-4 animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <h3 className="text-lg font-bold text-foreground font-sans flex items-center gap-2">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+          <div className="bg-white rounded-[12px] border border-border shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 flex flex-col space-y-4">
+            <div className="flex items-center justify-between border-b border-border pb-4 mb-4">
+              <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
                 <FileText className="w-5 h-5 text-primary" />
                 {modalSourceId ? "Edit Source Document" : "Add Source Document"}
-              </h3>
+              </h2>
               <button
                 onClick={() => {
                   setIsSourceModalOpen(false);
@@ -1479,9 +1477,9 @@ export default function FlashcardsPage() {
                   setModalContent("");
                   setModalSourceId(null);
                 }}
-                className="text-xs text-muted-foreground hover:text-foreground font-semibold"
+                className="p-1 hover:bg-accent rounded-full text-muted-foreground transition-standard cursor-pointer"
               >
-                Close
+                <X className="w-5 h-5" />
               </button>
             </div>
 
@@ -1601,13 +1599,13 @@ export default function FlashcardsPage() {
 
       {/* Written Note CRUD Modal */}
       {isNoteModalOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-150">
-          <div className="bg-background border border-border rounded-[10px] p-6 max-w-lg w-full shadow-lg space-y-4 animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <h3 className="text-lg font-bold text-foreground font-sans flex items-center gap-2">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+          <div className="bg-white rounded-[12px] border border-border shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 flex flex-col space-y-4">
+            <div className="flex items-center justify-between border-b border-border pb-4 mb-4">
+              <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
                 <Bookmark className="w-5 h-5 text-primary" />
                 {modalNoteId ? "Edit Study Note" : "Write Custom Note"}
-              </h3>
+              </h2>
               <button
                 onClick={() => {
                   setIsNoteModalOpen(false);
@@ -1615,31 +1613,27 @@ export default function FlashcardsPage() {
                   setNoteModalContent("");
                   setModalNoteId(null);
                 }}
-                className="text-xs text-muted-foreground hover:text-foreground font-semibold"
+                className="p-1 hover:bg-accent rounded-full text-muted-foreground transition-standard cursor-pointer"
               >
-                Close
+                <X className="w-5 h-5" />
               </button>
             </div>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">
-                  Note Title *
-                </label>
+                <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">Note Title *</label>
                 <input
                   type="text"
                   value={noteModalTitle}
                   onChange={(e) => setNoteModalTitle(e.target.value)}
                   className="w-full px-3 py-2 bg-white border border-border rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
-                  placeholder="e.g. Summary points"
+                  placeholder="Summary points"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">
-                  Note Content *
-                </label>
+                <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">Note Content *</label>
                 <textarea
                   value={noteModalContent}
                   onChange={(e) => setNoteModalContent(e.target.value)}
@@ -1650,7 +1644,7 @@ export default function FlashcardsPage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-border mt-6">
               <button
                 onClick={() => {
                   setIsNoteModalOpen(false);

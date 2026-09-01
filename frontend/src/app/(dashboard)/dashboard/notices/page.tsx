@@ -124,7 +124,7 @@ export default function NoticesPage() {
         <div className="lg:col-span-2 space-y-4">
           <div className="bg-white border border-border rounded-[10px] p-5 shadow-sm space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-foreground mb-2">
+              <label className="block text-sm font-medium text-foreground mb-1.5">
                 Paste Notice Text *
               </label>
               <textarea
@@ -166,7 +166,7 @@ export default function NoticesPage() {
               <button
                 onClick={handleSummarize}
                 disabled={summarizing}
-                className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground font-semibold rounded-[10px] hover:opacity-90 transition-standard cursor-pointer disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-medium rounded-[10px] hover:opacity-90 transition-standard cursor-pointer disabled:opacity-50"
               >
                 {summarizing ? (
                   <>
@@ -196,12 +196,12 @@ export default function NoticesPage() {
                 <button
                   onClick={() => handleBroadcast(activeNotice.id)}
                   disabled={broadcastingId === activeNotice.id}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-semibold rounded-[10px] transition-standard disabled:opacity-50 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-medium rounded-[10px] hover:opacity-90 transition-standard cursor-pointer disabled:opacity-50"
                 >
                   {broadcastingId === activeNotice.id ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
-                    <Send className="w-3.5 h-3.5" />
+                    <Send className="w-4 h-4" />
                   )}
                   {activeNotice.broadcast_status === "sent" ? "Re-Broadcast" : "Broadcast (TG)"}
                 </button>
@@ -240,9 +240,9 @@ export default function NoticesPage() {
             </h3>
             <button 
               onClick={() => fetchNotices(false)}
-              className="p-1 hover:bg-accent rounded-full text-muted-foreground hover:text-foreground cursor-pointer"
+              className="p-1.5 hover:bg-accent rounded-[10px] text-muted-foreground hover:text-foreground transition-standard cursor-pointer"
             >
-              <RefreshCw className="w-3.5 h-3.5" />
+              <RefreshCw className="w-4 h-4" />
             </button>
           </div>
 
@@ -252,10 +252,10 @@ export default function NoticesPage() {
               <p className="text-xs text-muted-foreground">Loading notices...</p>
             </div>
           ) : notices.length === 0 ? (
-            <div className="flex-1 flex flex-col items-center justify-center text-center py-20">
-              <Megaphone className="w-10 h-10 text-muted-foreground/60 mb-2" />
-              <p className="text-sm font-medium text-foreground">No notices yet</p>
-              <p className="text-xs text-muted-foreground mt-1 max-w-[180px]">
+            <div className="bg-white border border-border rounded-[10px] p-12 text-center shadow-sm my-auto">
+              <Megaphone className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">No notices yet</h3>
+              <p className="text-sm text-muted-foreground mb-4">
                 Paste your first announcement to generate history
               </p>
             </div>
@@ -279,7 +279,7 @@ export default function NoticesPage() {
                   </p>
                   <div className="flex items-center justify-between text-[10px] text-muted-foreground mt-1 pt-1 border-t border-dashed border-border w-full">
                     <span>{new Date(notice.created_at).toLocaleDateString()}</span>
-                    <span className={`px-1.5 py-0.5 rounded-full font-medium ${
+                    <span className={`inline-block px-2 py-0.5 text-xs font-semibold rounded-[10px] ${
                       notice.broadcast_status === "sent" 
                         ? "bg-green-500/15 text-green-600" 
                         : notice.broadcast_status === "failed"
