@@ -42,13 +42,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("campusflow_token");
+    const token = localStorage.getItem("UniKit_token");
     
     if (token) {
       api
         .get<{ student: User }>("/api/auth/me", { token })
         .then((res) => setUser(res.student))
-        .catch(() => localStorage.removeItem("campusflow_token"))
+        .catch(() => localStorage.removeItem("UniKit_token"))
         .finally(() => setLoading(false));
     } else {
       setLoading(false);
@@ -57,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const devLogin = useCallback(async () => {
     const token = "dev-token";
-    localStorage.setItem("campusflow_token", token);
+    localStorage.setItem("UniKit_token", token);
     const res = await api.get<{ student: User }>("/api/auth/me", { token });
     setUser(res.student);
     router.push("/dashboard");
@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email,
         password,
       });
-      localStorage.setItem("campusflow_token", res.token);
+      localStorage.setItem("UniKit_token", res.token);
       setUser(res.student);
       router.push("/dashboard");
     },
@@ -79,7 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = useCallback(
     async (payload: RegisterPayload) => {
       const res = await api.post<{ token: string; student: User }>("/api/auth/register", payload);
-      localStorage.setItem("campusflow_token", res.token);
+      localStorage.setItem("UniKit_token", res.token);
       setUser(res.student);
       router.push("/dashboard");
     },
@@ -87,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const logout = useCallback(() => {
-    localStorage.removeItem("campusflow_token");
+    localStorage.removeItem("UniKit_token");
     setUser(null);
     router.push("/login");
   }, [router]);

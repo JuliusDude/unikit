@@ -36,7 +36,7 @@ export default function SignupPage() {
     }
 
     if (token) {
-      localStorage.setItem("campusflow_token", token);
+      localStorage.setItem("UniKit_token", token);
       window.location.href = "/dashboard";
     }
   }, []);
@@ -105,7 +105,7 @@ export default function SignupPage() {
     <div className="bg-white rounded-[10px] border border-border p-8 shadow-sm">
       <div className="mb-6">
         <h1 className="text-xl font-bold text-foreground" style={{ letterSpacing: "-0.02em" }}>Create your account</h1>
-        <p className="text-sm text-muted-foreground mt-1">Join CampusFlow today</p>
+        <p className="text-sm text-muted-foreground mt-1">Join UniKit today</p>
       </div>
 
       {error && (

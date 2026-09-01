@@ -47,7 +47,7 @@ export default function JoinGroupPage() {
   const handleLogin = () => {
     // Save the current URL so user can be redirected back after login
     if (typeof window !== "undefined") {
-      localStorage.setItem("campusflow_redirect", window.location.href);
+      localStorage.setItem("UniKit_redirect", window.location.href);
     }
     router.push("/login");
   };
@@ -62,7 +62,7 @@ export default function JoinGroupPage() {
               <Loader2 className="w-8 h-8 text-primary animate-spin" />
             </div>
             <h1 className="text-xl font-bold text-slate-900">Joining group...</h1>
-            <p className="text-sm text-slate-500">Linking your CampusFlow account to this Telegram group.</p>
+            <p className="text-sm text-slate-500">Linking your UniKit account to this Telegram group.</p>
           </div>
         )}
 
@@ -74,7 +74,7 @@ export default function JoinGroupPage() {
             </div>
             <h1 className="text-xl font-bold text-slate-900">Join Your Class Group</h1>
             <p className="text-sm text-slate-500">
-              Sign in to CampusFlow to link your account. All deadlines from your teacher will automatically sync to your Google Calendar.
+              Sign in to UniKit to link your account. All deadlines from your teacher will automatically sync to your Google Calendar.
             </p>
             <button
               onClick={handleLogin}
@@ -125,7 +125,7 @@ export default function JoinGroupPage() {
           </div>
         )}
 
-        <p className="mt-6 text-[10px] text-slate-300 uppercase tracking-wider">CampusFlow × NotifyMe</p>
+        <p className="mt-6 text-[10px] text-slate-300 uppercase tracking-wider">UniKit × NotifyMe</p>
       </div>
     </div>
   );

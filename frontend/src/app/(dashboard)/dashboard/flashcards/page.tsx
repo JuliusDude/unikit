@@ -116,7 +116,7 @@ export default function FlashcardsPage() {
   // Initialize Data from localStorage
   useEffect(() => {
     // 1. Load Sources
-    const savedSources = localStorage.getItem("campusflow_notebook_sources");
+    const savedSources = localStorage.getItem("UniKit_notebook_sources");
     if (savedSources) {
       try {
         const parsed = JSON.parse(savedSources) as SourceDoc[];
@@ -135,11 +135,11 @@ export default function FlashcardsPage() {
       };
       setSources([defaultSource]);
       setSelectedSourceIds([defaultSource.id]);
-      localStorage.setItem("campusflow_notebook_sources", JSON.stringify([defaultSource]));
+      localStorage.setItem("UniKit_notebook_sources", JSON.stringify([defaultSource]));
     }
 
     // 2. Load Pinned Notes
-    const savedNotes = localStorage.getItem("campusflow_notebook_notes");
+    const savedNotes = localStorage.getItem("UniKit_notebook_notes");
     if (savedNotes) {
       try {
         setNotesList(JSON.parse(savedNotes));
@@ -154,7 +154,7 @@ export default function FlashcardsPage() {
         createdAt: new Date().toISOString()
       };
       setNotesList([defaultNote]);
-      localStorage.setItem("campusflow_notebook_notes", JSON.stringify([defaultNote]));
+      localStorage.setItem("UniKit_notebook_notes", JSON.stringify([defaultNote]));
     }
   }, []);
 
@@ -255,7 +255,7 @@ export default function FlashcardsPage() {
     }
 
     setSources(updatedSources);
-    localStorage.setItem("campusflow_notebook_sources", JSON.stringify(updatedSources));
+    localStorage.setItem("UniKit_notebook_sources", JSON.stringify(updatedSources));
     
     setIsSourceModalOpen(false);
     setModalTitle("");
@@ -281,7 +281,7 @@ export default function FlashcardsPage() {
     const updated = sources.filter(s => s.id !== id);
     setSources(updated);
     setSelectedSourceIds(prev => prev.filter(selectedId => selectedId !== id));
-    localStorage.setItem("campusflow_notebook_sources", JSON.stringify(updated));
+    localStorage.setItem("UniKit_notebook_sources", JSON.stringify(updated));
   };
 
   // Toggle Source selection
@@ -316,7 +316,7 @@ export default function FlashcardsPage() {
     }
 
     setNotesList(updatedNotes);
-    localStorage.setItem("campusflow_notebook_notes", JSON.stringify(updatedNotes));
+    localStorage.setItem("UniKit_notebook_notes", JSON.stringify(updatedNotes));
 
     setIsNoteModalOpen(false);
     setNoteModalTitle("");
@@ -335,7 +335,7 @@ export default function FlashcardsPage() {
     if (!confirm("Are you sure you want to delete this note?")) return;
     const updated = notesList.filter(n => n.id !== id);
     setNotesList(updated);
-    localStorage.setItem("campusflow_notebook_notes", JSON.stringify(updated));
+    localStorage.setItem("UniKit_notebook_notes", JSON.stringify(updated));
   };
 
   // Pin a Flashcard to Pinned Notes
@@ -350,7 +350,7 @@ export default function FlashcardsPage() {
     
     const updated = [newNote, ...notesList];
     setNotesList(updated);
-    localStorage.setItem("campusflow_notebook_notes", JSON.stringify(updated));
+    localStorage.setItem("UniKit_notebook_notes", JSON.stringify(updated));
     
     setPinnedFeedback(index);
     setTimeout(() => setPinnedFeedback(null), 1500);

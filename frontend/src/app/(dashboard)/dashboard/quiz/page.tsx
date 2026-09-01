@@ -111,7 +111,7 @@ export default function QuizPage() {
   // Initialize Sources and Notes from localStorage (shares the exact same lists!)
   useEffect(() => {
     // 1. Load Sources
-    const savedSources = localStorage.getItem("campusflow_notebook_sources");
+    const savedSources = localStorage.getItem("UniKit_notebook_sources");
     if (savedSources) {
       try {
         const parsed = JSON.parse(savedSources) as SourceDoc[];
@@ -130,11 +130,11 @@ export default function QuizPage() {
       };
       setSources([defaultSource]);
       setSelectedSourceIds([defaultSource.id]);
-      localStorage.setItem("campusflow_notebook_sources", JSON.stringify([defaultSource]));
+      localStorage.setItem("UniKit_notebook_sources", JSON.stringify([defaultSource]));
     }
 
     // 2. Load Notes
-    const savedNotes = localStorage.getItem("campusflow_notebook_notes");
+    const savedNotes = localStorage.getItem("UniKit_notebook_notes");
     if (savedNotes) {
       try {
         setNotesList(JSON.parse(savedNotes));
@@ -238,7 +238,7 @@ export default function QuizPage() {
     }
 
     setSources(updatedSources);
-    localStorage.setItem("campusflow_notebook_sources", JSON.stringify(updatedSources));
+    localStorage.setItem("UniKit_notebook_sources", JSON.stringify(updatedSources));
     
     setIsSourceModalOpen(false);
     setModalTitle("");
@@ -262,7 +262,7 @@ export default function QuizPage() {
     const updated = sources.filter(s => s.id !== id);
     setSources(updated);
     setSelectedSourceIds(prev => prev.filter(selectedId => selectedId !== id));
-    localStorage.setItem("campusflow_notebook_sources", JSON.stringify(updated));
+    localStorage.setItem("UniKit_notebook_sources", JSON.stringify(updated));
   };
 
   const handleToggleSelectSource = (id: string) => {
@@ -296,7 +296,7 @@ export default function QuizPage() {
     }
 
     setNotesList(updatedNotes);
-    localStorage.setItem("campusflow_notebook_notes", JSON.stringify(updatedNotes));
+    localStorage.setItem("UniKit_notebook_notes", JSON.stringify(updatedNotes));
 
     setIsNoteModalOpen(false);
     setNoteModalTitle("");
@@ -315,7 +315,7 @@ export default function QuizPage() {
     if (!confirm("Are you sure you want to delete this note?")) return;
     const updated = notesList.filter(n => n.id !== id);
     setNotesList(updated);
-    localStorage.setItem("campusflow_notebook_notes", JSON.stringify(updated));
+    localStorage.setItem("UniKit_notebook_notes", JSON.stringify(updated));
   };
 
   // Pin question review
@@ -345,7 +345,7 @@ export default function QuizPage() {
 
     const updated = [newNote, ...notesList];
     setNotesList(updated);
-    localStorage.setItem("campusflow_notebook_notes", JSON.stringify(updated));
+    localStorage.setItem("UniKit_notebook_notes", JSON.stringify(updated));
     
     setPinnedFeedback(qidx);
     setTimeout(() => setPinnedFeedback(null), 1500);
