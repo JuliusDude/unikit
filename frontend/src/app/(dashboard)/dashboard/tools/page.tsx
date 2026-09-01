@@ -167,28 +167,28 @@ export default function SmartToolsPage() {
       )}
 
       {/* Grid of Tools */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {TOOLS_CONFIG.map((tool) => {
           const Icon = tool.icon;
           return (
             <div
               key={tool.slug}
-              className="bg-white border border-border rounded-[10px] p-5 shadow-sm transition-all hover:shadow-md flex flex-col justify-between h-full"
+              className="bg-white border border-border rounded-[12px] p-8 shadow-sm transition-all hover:shadow-lg flex flex-col justify-between h-full"
             >
               <div>
-                <div className="w-10 h-10 rounded-[10px] bg-primary/10 border border-border flex items-center justify-center text-primary mb-4">
-                  <Icon className="w-5 h-5" />
+                <div className="w-14 h-14 rounded-[12px] bg-primary/10 border border-border flex items-center justify-center text-primary mb-6">
+                  <Icon className="w-7 h-7" />
                 </div>
-                <h3 className="font-semibold text-foreground text-base mb-2">
+                <h3 className="font-bold text-foreground text-xl mb-3">
                   {tool.title}
                 </h3>
-                <p className="text-xs text-muted-foreground mb-6 leading-relaxed">
+                <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
                   {tool.description}
                 </p>
               </div>
               <button
                 onClick={() => handleOpenTool(tool)}
-                className="w-full py-2 bg-primary/10 border border-border hover:bg-primary hover:text-white hover:border-primary text-primary font-semibold rounded-[10px] text-xs transition-standard cursor-pointer text-center"
+                className="w-full py-3 bg-primary/5 border border-border hover:bg-primary hover:text-white hover:border-primary text-primary font-semibold rounded-[10px] text-sm transition-standard cursor-pointer text-center"
               >
                 Launch Tool
               </button>
