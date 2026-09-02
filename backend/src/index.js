@@ -14,6 +14,7 @@ const whiteboardRoutes = require("./routes/whiteboards");
 const groupRoutes = require("./routes/groups");
 const calendarRoutes = require("./routes/calendar");
 const reminderRoutes = require("./routes/reminders");
+const flashcardsRoutes = require("./routes/flashcards");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -32,6 +33,7 @@ app.use("/api/whiteboards", whiteboardRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api/calendar", calendarRoutes);
 app.use("/api/reminders", reminderRoutes);
+app.use("/api/flashcards", flashcardsRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
