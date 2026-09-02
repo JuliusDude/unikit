@@ -159,7 +159,7 @@ async function summarizeNotice(text) {
   }
   try {
     const res = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: "llama3-8b-8192",
       messages: [
         { role: "system", content: "Summarize college notices in exactly 3 concise bullet points. Be specific about dates." },
         { role: "user", content: text },
@@ -216,7 +216,7 @@ Since the Groq API key is not configured, I'm responding in offline fallback mod
 
   try {
     const res = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: "llama3-8b-8192",
       messages: [
         { role: "system", content: "You are a helpful AI study assistant named CampusFlow AI. You assist college students with their homework, study planning, exam preparation, and notices clarification. Keep responses helpful, structured, and friendly." },
         ...messages
@@ -246,7 +246,7 @@ async function generateFlashcards(notes) {
   }
   try {
     const res = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: "llama3-8b-8192",
       messages: [
         {
           role: "system",
@@ -333,7 +333,7 @@ Format: [{"question": "...", "options": ["A", "B", "C", "D"], "correctIndex": 0,
 
   try {
     const res = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: "llama3-8b-8192",
       messages: [
         { role: "system", content: promptContent },
         { role: "user", content: `Create a ${type} quiz from these notes:\n\n${notes}` }
@@ -358,7 +358,7 @@ async function gradeShortAnswer(question, modelAnswer, userAnswer) {
   }
   try {
     const res = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: "llama3-8b-8192",
       messages: [
         {
           role: "system",
@@ -557,7 +557,7 @@ Rules:
 
   try {
     const res = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: "llama3-8b-8192",
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt }
