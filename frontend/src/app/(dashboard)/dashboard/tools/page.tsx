@@ -297,11 +297,8 @@ export default function SmartToolsPage() {
                       
                     </div>
                   ) : (
-                    <div className="bg-white border border-border rounded-[10px] p-6 text-sm text-foreground max-h-[300px] overflow-y-auto shadow-xs">
-                      <ReactMarkdown 
-                        remarkPlugins={[remarkGfm]} 
-                        className="prose prose-sm max-w-none prose-headings:text-primary prose-a:text-primary prose-li:my-0"
-                      >
+                    <div className="bg-white border border-border rounded-[10px] p-6 text-sm text-foreground max-h-[300px] overflow-y-auto shadow-xs prose prose-sm max-w-none prose-headings:text-primary prose-a:text-primary prose-li:my-0">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
                         {result}
                       </ReactMarkdown>
                     </div>
