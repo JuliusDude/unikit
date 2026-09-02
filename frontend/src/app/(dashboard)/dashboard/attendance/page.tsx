@@ -126,8 +126,8 @@ export default function AttendancePage() {
   };
 
   return (
-    <div className="max-w-4xl space-y-8 mx-auto">
-      <div className="flex items-center justify-between">
+    <div className="max-w-7xl mx-auto h-[calc(100vh-6rem)] flex flex-col">
+      <div className="flex items-center justify-between flex-shrink-0 mb-6">
         <h1 className="text-2xl font-bold text-foreground">Attendance Tracker</h1>
         <button 
           onClick={() => fetchAttendance(false)}
@@ -149,7 +149,7 @@ export default function AttendancePage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0 overflow-y-auto pb-6 pr-1">
         {/* Attendance Form */}
         <div className="bg-white border border-border rounded-[10px] p-5 shadow-sm h-fit">
           <h3 className="font-semibold text-foreground text-base mb-4 flex items-center gap-2">

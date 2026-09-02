@@ -64,8 +64,8 @@ export default function WhiteboardPage() {
   return (
     <div className="space-y-4 h-full relative">
       {!activeBoardId ? (
-        <div className="max-w-5xl space-y-8 mx-auto">
-          <div className="flex items-center justify-between">
+        <div className="max-w-7xl mx-auto h-[calc(100vh-6rem)] flex flex-col">
+          <div className="flex items-center justify-between flex-shrink-0 mb-6">
             <h1 className="text-2xl font-bold text-foreground">Whiteboard</h1>
           </div>
           {loading && whiteboards.length === 0 ? (
@@ -73,13 +73,15 @@ export default function WhiteboardPage() {
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
           ) : (
-            <WhiteboardList
-              whiteboards={whiteboards}
-              onSelectBoard={setActiveBoardId}
-              onCreateBoard={handleCreateBoard}
-              onDeleteBoard={handleDeleteBoard}
-              onRenameBoard={handleRenameBoard}
-            />
+            <div className="flex-1 overflow-y-auto min-h-0 pr-1 pb-6">
+              <WhiteboardList
+                whiteboards={whiteboards}
+                onSelectBoard={setActiveBoardId}
+                onCreateBoard={handleCreateBoard}
+                onDeleteBoard={handleDeleteBoard}
+                onRenameBoard={handleRenameBoard}
+              />
+            </div>
           )}
         </div>
       ) : (

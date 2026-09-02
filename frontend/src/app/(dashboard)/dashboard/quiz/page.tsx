@@ -517,10 +517,10 @@ export default function QuizPage() {
     .reduce((sum, s) => sum + s.content.length, 0);
 
   return (
-    <div className="max-w-3xl space-y-8 mx-auto">
+    <div className="max-w-7xl mx-auto h-[calc(100vh-6rem)] flex flex-col">
       
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-shrink-0 mb-6">
         <h1 className="text-2xl font-bold text-foreground">
           Quizzes
         </h1>
@@ -553,7 +553,7 @@ export default function QuizPage() {
       )}
 
       {/* Main Split Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 min-h-0 overflow-y-auto pb-6 pr-1">
         
         {/* Left Sidebar */}
         <div className="lg:col-span-4 space-y-4">
@@ -586,7 +586,7 @@ export default function QuizPage() {
             {/* TAB 1: Sources */}
             {sidebarTab === "sources" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between flex-shrink-0 mb-6">
                   <h4 className="font-semibold text-foreground text-xs uppercase tracking-wider font-mono">
                     Notebook Documents
                   </h4>
@@ -728,7 +728,7 @@ export default function QuizPage() {
             {/* TAB 2: Notes */}
             {sidebarTab === "notes" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between flex-shrink-0 mb-6">
                   <h4 className="font-semibold text-foreground text-xs uppercase tracking-wider font-mono">
                     Notebook Notes
                   </h4>
@@ -897,7 +897,7 @@ export default function QuizPage() {
                   <div className="md:col-span-8 bg-white border border-border rounded-[10px] p-6 shadow-sm space-y-6">
                     
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between flex-shrink-0 mb-6">
                         <span className="text-[10px] font-bold text-primary tracking-wider uppercase font-mono">
                           QUESTION {activeQuestionIndex + 1} OF {questions.length} · {quizType.toUpperCase()}
                         </span>
@@ -1156,7 +1156,7 @@ export default function QuizPage() {
                             {pinnedFeedback === qidx ? <Check className="w-4.5 h-4.5 text-purple-700" /> : <Pin className="w-4.5 h-4.5" />}
                           </button>
 
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-center justify-between flex-shrink-0 mb-6">
                             <span className="bg-muted text-foreground text-[10px] px-2 py-0.5 rounded-[10px] font-mono font-bold">QUESTION {qidx + 1}</span>
                             <span className={`text-xs font-bold px-3 py-0.5 rounded-full ${passed ? "text-purple-700 bg-purple-50 border border-purple-150" : "text-red-700 bg-destructive/10 border border-red-150"}`}>
                               {quizType === "short_answer" ? `Score (${shortAnswerGrades[qidx]?.score}%)` : passed ? "✓ Correct" : "✗ Incorrect"}

@@ -578,10 +578,10 @@ export default function FlashcardsPage() {
     .reduce((sum, s) => sum + s.content.length, 0);
 
   return (
-    <div className="max-w-5xl space-y-8 mx-auto">
+    <div className="max-w-7xl mx-auto h-[calc(100vh-6rem)] flex flex-col">
       
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-shrink-0 mb-6">
         <h1 className="text-2xl font-bold text-foreground">
           Flashcards
         </h1>
@@ -621,7 +621,7 @@ export default function FlashcardsPage() {
       )}
 
       {/* Main Split Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 min-h-0 overflow-y-auto pb-6 pr-1">
         
         {/* Left Sidebar */}
         <div className="lg:col-span-4 space-y-4">
@@ -654,7 +654,7 @@ export default function FlashcardsPage() {
             {/* TAB 1: Sources */}
             {sidebarTab === "sources" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between flex-shrink-0 mb-6">
                   <h4 className="font-semibold text-foreground text-xs uppercase tracking-wider font-mono">
                     Notebook Documents
                   </h4>
@@ -763,7 +763,7 @@ export default function FlashcardsPage() {
             {/* TAB 2: Notes */}
             {sidebarTab === "notes" && (
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between flex-shrink-0 mb-6">
                   <h4 className="font-semibold text-foreground text-xs uppercase tracking-wider font-mono">
                     Notebook Notes
                   </h4>
