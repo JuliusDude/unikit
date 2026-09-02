@@ -457,19 +457,24 @@ Strict Format:
 You must wrap the entire flowchart inside a standard Markdown code block labeled "mermaid".
 Use the TD (top-down) flowchart direction.
 
+CRITICAL MERMAID SYNTAX RULE:
+You MUST wrap EVERY SINGLE node label in double quotes to prevent parsing errors with special characters like parentheses.
+Example: A["Main Topic"] --> B("Subtopic (Details)") is WRONG.
+Correct: A["Main Topic"] --> B["Subtopic (Details)"]
+
 Example:
 \`\`\`mermaid
 flowchart TD
-    A[Main Topic] --> B(Subtopic 1)
-    A --> C(Subtopic 2)
-    B --> D[Detail 1]
-    B --> E[Detail 2]
-    C --> F[Detail A]
+    A["Main Topic"] --> B["Subtopic 1"]
+    A --> C["Subtopic 2"]
+    B --> D["Detail 1"]
+    B --> E["Detail 2 (Note)"]
+    C --> F["Detail A"]
 \`\`\`
 
 Rules:
 - Map ONLY the concepts explicitly mentioned in the text. DO NOT hallucinate.
-- Use valid Mermaid.js syntax. Do not include parentheses or special characters inside the node names unless escaped.
+- Use valid Mermaid.js syntax. ALWAYS use double quotes for node text: nodeID["Node Text"]
 - Keep the node text concise.`;
       userPrompt = `Create a concept map for:\n\n${content}`;
       break;
