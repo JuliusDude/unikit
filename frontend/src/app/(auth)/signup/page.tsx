@@ -130,43 +130,43 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="bg-white rounded-[10px] border border-border p-8 shadow-sm">
+    <div className="bg-white rounded-[10px] border border-border p-5 sm:p-6 shadow-sm w-full">
       {/* Progress Indicator */}
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-2 mb-4">
         <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 1 ? "bg-primary" : "bg-muted"}`} />
         <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 2 ? "bg-primary" : "bg-muted"}`} />
         <div className={`h-1.5 flex-1 rounded-full transition-colors ${step >= 3 ? "bg-primary" : "bg-muted"}`} />
       </div>
 
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold text-foreground" style={{ letterSpacing: "-0.02em" }}>
             {step === 1 ? "Account Credentials" : step === 2 ? "Personal Info" : "Telegram Sync"}
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-xs text-muted-foreground mt-0.5">
             {step === 1 ? "Step 1 of 3" : step === 2 ? "Step 2 of 3" : "Final Step"}
           </p>
         </div>
         {step > 1 && (
-          <button onClick={handleBack} className="p-2 text-muted-foreground hover:bg-accent rounded-full transition-colors">
-            <ArrowLeft className="w-5 h-5" />
+          <button onClick={handleBack} className="p-1.5 text-muted-foreground hover:bg-accent rounded-full transition-colors">
+            <ArrowLeft className="w-4 h-4" />
           </button>
         )}
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-[10px] text-sm text-destructive">
+        <div className="mb-3 p-2 bg-destructive/10 border border-destructive/20 rounded-[10px] text-xs text-destructive">
           {error}
         </div>
       )}
 
-      <form onSubmit={step === 3 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }} className="space-y-4">
+      <form onSubmit={step === 3 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }} className="space-y-3">
         
         {/* STEP 1: CREDENTIALS */}
         {step === 1 && (
-          <div className="space-y-4 animate-in slide-in-from-right-4 duration-300">
+          <div className="space-y-3 animate-in slide-in-from-right-4 duration-300">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-foreground mb-1.5">
+              <label htmlFor="email" className="block text-sm font-medium text-foreground mb-1">
                 Email
               </label>
               <input
@@ -175,14 +175,14 @@ export default function SignupPage() {
                 type="email"
                 value={form.email}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full px-3 py-1.5 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 placeholder="you@example.com"
                 required
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-foreground mb-1.5">
+              <label htmlFor="password" className="block text-sm font-medium text-foreground mb-1">
                 Password
               </label>
               <div className="relative">
@@ -192,7 +192,7 @@ export default function SignupPage() {
                   type={showPassword ? "text" : "password"}
                   value={form.password}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 pr-10 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                  className="w-full px-3 py-1.5 pr-10 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   placeholder="••••••••"
                   required
                 />
@@ -205,8 +205,8 @@ export default function SignupPage() {
                 </button>
               </div>
               {form.password.length > 0 && (
-                <div className="mt-2">
-                  <div className="flex gap-1 mb-1">
+                <div className="mt-1.5">
+                  <div className="flex gap-1 mb-0.5">
                     {[1, 2, 3, 4, 5].map((i) => (
                       <div
                         key={i}
@@ -216,13 +216,13 @@ export default function SignupPage() {
                       />
                     ))}
                   </div>
-                  <p className="text-xs text-muted-foreground">{strengthLabels[passwordStrength]}</p>
+                  <p className="text-[10px] text-muted-foreground">{strengthLabels[passwordStrength]}</p>
                 </div>
               )}
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-foreground mb-1.5">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-foreground mb-1">
                 Confirm Password
               </label>
               <input
@@ -231,7 +231,7 @@ export default function SignupPage() {
                 type="password"
                 value={form.confirmPassword}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full px-3 py-1.5 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 placeholder="••••••••"
                 required
               />
@@ -241,9 +241,9 @@ export default function SignupPage() {
 
         {/* STEP 2: PERSONAL INFO */}
         {step === 2 && (
-          <div className="space-y-4 animate-in slide-in-from-right-4 duration-300">
+          <div className="space-y-3 animate-in slide-in-from-right-4 duration-300">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-foreground mb-1.5">
+              <label htmlFor="name" className="block text-sm font-medium text-foreground mb-1">
                 Full Name
               </label>
               <input
@@ -252,15 +252,15 @@ export default function SignupPage() {
                 type="text"
                 value={form.name}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full px-3 py-1.5 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 placeholder="John Doe"
                 required
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label htmlFor="branch" className="block text-sm font-medium text-foreground mb-1.5">
+                <label htmlFor="branch" className="block text-sm font-medium text-foreground mb-1">
                   Branch
                 </label>
                 <select
@@ -268,7 +268,7 @@ export default function SignupPage() {
                   name="branch"
                   value={form.branch}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white"
+                  className="w-full px-3 py-1.5 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white"
                   required
                 >
                   <option value="">Select</option>
@@ -279,7 +279,7 @@ export default function SignupPage() {
               </div>
 
               <div>
-                <label htmlFor="year" className="block text-sm font-medium text-foreground mb-1.5">
+                <label htmlFor="year" className="block text-sm font-medium text-foreground mb-1">
                   Year
                 </label>
                 <select
@@ -287,7 +287,7 @@ export default function SignupPage() {
                   name="year"
                   value={form.year}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white"
+                  className="w-full px-3 py-1.5 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white"
                   required
                 >
                   <option value="">Select</option>
@@ -302,13 +302,13 @@ export default function SignupPage() {
 
         {/* STEP 3: TELEGRAM INFO */}
         {step === 3 && (
-          <div className="space-y-4 animate-in slide-in-from-right-4 duration-300">
-            <div className="p-4 bg-blue-500/10 text-blue-700 border border-blue-500/20 rounded-[10px] text-sm mb-4 leading-relaxed">
+          <div className="space-y-3 animate-in slide-in-from-right-4 duration-300">
+            <div className="p-3 bg-blue-500/10 text-blue-700 border border-blue-500/20 rounded-[10px] text-xs mb-3 leading-relaxed">
               UniKit uses Telegram to send you intelligent task reminders, summarize college notices on-the-fly, and alert you of attendance risks.
             </div>
             
             <div>
-              <label htmlFor="telegram_username" className="block text-sm font-medium text-foreground mb-1.5">
+              <label htmlFor="telegram_username" className="block text-sm font-medium text-foreground mb-1">
                 Telegram Username
               </label>
               <input
@@ -317,7 +317,7 @@ export default function SignupPage() {
                 type="text"
                 value={form.telegram_username}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="w-full px-3 py-1.5 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                 placeholder="@yourusername"
                 required
               />
@@ -328,7 +328,7 @@ export default function SignupPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2.5 mt-6 bg-primary text-white font-medium rounded-full hover:bg-primary/90 transition-standard disabled:opacity-50 flex items-center justify-center gap-2"
+          className="w-full py-2 mt-4 bg-primary text-white text-sm font-medium rounded-full hover:bg-primary/90 transition-standard disabled:opacity-50 flex items-center justify-center gap-2"
         >
           {step < 3 ? (
             <>
@@ -346,21 +346,21 @@ export default function SignupPage() {
 
       {step === 1 && (
         <>
-          <div className="relative my-6">
+          <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-border" />
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
+            <div className="relative flex justify-center text-[10px] uppercase font-semibold">
               <span className="bg-white px-2 text-muted-foreground">or</span>
             </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2">
             <button
               onClick={handleGoogleLogin}
-              className="w-full py-2.5 border border-border rounded-full text-sm font-medium text-foreground hover:bg-muted transition-standard flex items-center justify-center gap-2"
+              className="w-full py-2 border border-border rounded-full text-sm font-medium text-foreground hover:bg-muted transition-standard flex items-center justify-center gap-2"
             >
-              <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
@@ -368,7 +368,7 @@ export default function SignupPage() {
               </svg>
               Continue with Google
             </button>
-            <button className="w-full py-2.5 border border-border rounded-full text-sm font-medium text-foreground hover:bg-muted transition-standard">
+            <button className="w-full py-2 border border-border rounded-full text-sm font-medium text-foreground hover:bg-muted transition-standard">
               Continue with GitHub
             </button>
           </div>
@@ -376,7 +376,7 @@ export default function SignupPage() {
       )}
 
       {step === 1 && (
-        <p className="mt-6 text-center text-sm text-muted-foreground">
+        <p className="mt-4 text-center text-xs text-muted-foreground">
           Already have an account?{" "}
           <Link href="/login" className="font-medium text-primary hover:underline">
             Sign in
