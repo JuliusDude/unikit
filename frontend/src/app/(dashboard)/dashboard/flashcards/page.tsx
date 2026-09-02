@@ -218,15 +218,20 @@ export default function FlashcardsPage() {
       }));
 
       // 2. Save deck to database
-      const saveRes = await api.post<Deck>("/api/flashcards/decks", {
+      const saveRes = await api.post<{ deck: any, flashcards: Flashcard[] }>("/api/flashcards/decks", {
         title: modalTitle.trim(),
         flashcards: generatedCards
       });
 
+      const newDeck: Deck = {
+        ...saveRes.deck,
+        flashcards: saveRes.flashcards
+      };
+
       // 3. Update local state
-      setDecks(prev => [...prev, saveRes]);
-      setSelectedDeckId(saveRes.id);
-      setFlashcards(saveRes.flashcards);
+      setDecks(prev => [newDeck, ...prev]);
+      setSelectedDeckId(newDeck.id);
+      setFlashcards(newDeck.flashcards);
       setCurrentIndex(0);
       
       setModalTitle("");
