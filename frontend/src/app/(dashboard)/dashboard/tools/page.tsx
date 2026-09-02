@@ -15,7 +15,8 @@ import {
   Check 
 } from "lucide-react";
 import { api } from "@/lib/api";
-
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 interface Tool {
   slug: string;
   title: string;
@@ -296,8 +297,13 @@ export default function SmartToolsPage() {
                       
                     </div>
                   ) : (
-                    <div className="bg-white border border-border rounded-[10px] p-5 text-sm text-foreground whitespace-pre-wrap leading-relaxed max-h-[300px] overflow-y-auto shadow-xs">
-                      {result}
+                    <div className="bg-white border border-border rounded-[10px] p-6 text-sm text-foreground max-h-[300px] overflow-y-auto shadow-xs">
+                      <ReactMarkdown 
+                        remarkPlugins={[remarkGfm]} 
+                        className="prose prose-sm max-w-none prose-headings:text-primary prose-a:text-primary prose-li:my-0"
+                      >
+                        {result}
+                      </ReactMarkdown>
                     </div>
                   )}
                 </div>
