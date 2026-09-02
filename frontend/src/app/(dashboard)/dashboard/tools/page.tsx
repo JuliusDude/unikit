@@ -153,42 +153,42 @@ export default function SmartToolsPage() {
   };
 
   return (
-    <div className="max-w-5xl space-y-8 mx-auto">
+    <div className="max-w-7xl mx-auto h-[calc(100vh-6rem)] flex flex-col">
       
       {/* Page Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-6 flex-shrink-0">
         <h1 className="text-2xl font-bold text-foreground">Smart Tools</h1>
       </div>
 
       {error && (
-        <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-[10px] text-sm text-red-700">
+        <div className="p-4 mb-6 bg-destructive/10 border border-destructive/20 rounded-[10px] text-sm text-red-700 flex-shrink-0">
           {error}
         </div>
       )}
 
       {/* Grid of Tools */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-1 min-h-0 pb-6">
         {TOOLS_CONFIG.map((tool) => {
           const Icon = tool.icon;
           return (
             <div
               key={tool.slug}
-              className="bg-white border border-border rounded-[12px] p-8 shadow-sm transition-all hover:shadow-lg flex flex-col justify-between h-full"
+              className="bg-white border border-border rounded-[12px] p-6 shadow-sm transition-all hover:shadow-lg flex flex-col justify-between h-full"
             >
               <div>
-                <div className="w-14 h-14 rounded-[12px] bg-primary/10 border border-border flex items-center justify-center text-primary mb-6">
-                  <Icon className="w-7 h-7" />
+                <div className="w-12 h-12 rounded-[12px] bg-primary/10 border border-border flex items-center justify-center text-primary mb-4">
+                  <Icon className="w-6 h-6" />
                 </div>
-                <h3 className="font-bold text-foreground text-xl mb-3">
+                <h3 className="font-bold text-foreground text-lg mb-1.5">
                   {tool.title}
                 </h3>
-                <p className="text-sm text-muted-foreground mb-8 leading-relaxed">
+                <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
                   {tool.description}
                 </p>
               </div>
               <button
                 onClick={() => handleOpenTool(tool)}
-                className="w-full py-3 bg-primary/5 border border-border hover:bg-primary hover:text-white hover:border-primary text-primary font-semibold rounded-[10px] text-sm transition-standard cursor-pointer text-center"
+                className="w-full py-2.5 mt-4 bg-primary/5 border border-border hover:bg-primary hover:text-white hover:border-primary text-primary font-semibold rounded-[10px] text-sm transition-standard cursor-pointer text-center"
               >
                 Launch Tool
               </button>
