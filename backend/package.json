@@ -4,8 +4,8 @@
   "description": "CampusFlow Express backend",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "node --watch src/index.js"
+    "start": "set NODE_TLS_REJECT_UNAUTHORIZED=0&& node src/index.js",
+    "dev": "set NODE_TLS_REJECT_UNAUTHORIZED=0&& node --watch src/index.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
