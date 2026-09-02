@@ -397,18 +397,52 @@ async function executeSmartTool(tool, content, options = {}) {
 
   switch (tool) {
     case 'summarize-notes':
-      systemPrompt = 'You are a note summarizer. Create a concise summary with key points in bullet format. Keep it under 200 words.';
+      systemPrompt = `You are an expert academic note summarizer. Create a highly structured, comprehensive summary of the provided text.
+Your response must strictly follow this structure:
+### 📌 Executive Summary
+(1-2 sentences capturing the core essence)
+
+### 🔑 Key Concepts
+- **Concept 1:** Brief definition.
+- **Concept 2:** Brief definition.
+
+### 📝 Detailed Breakdown
+(Use nested bullet points and bold text to organize the main ideas and supporting details logically)
+
+### 💡 Crucial Takeaways
+(2-3 critical points the student MUST remember for an exam)
+
+Rules:
+- DO NOT hallucinate external information. Stick ONLY to the provided text.
+- Use clean, professional Markdown formatting.`;
       userPrompt = `Summarize these notes:\n\n${content}`;
       break;
 
     case 'study-schedule': {
       const examDate = options.examDate || 'next week';
       const studyHours = options.studyHours || 4;
-      systemPrompt = `You are a study schedule planner. Create a detailed daily study plan.
+      systemPrompt = `You are a strategic academic planner. Generate a highly optimized, realistic study schedule.
 Available study hours per day: ${studyHours}.
-Exam date: ${examDate}.
-Include subjects, topics, break times, and revision slots.
-Format as a clear daily schedule.`;
+Target Exam Date: ${examDate}.
+
+Format your response exactly as follows:
+### 📅 Overall Strategy
+(Brief overview of how the time is distributed, prioritizing difficult topics)
+
+### 🗓️ Daily Breakdown
+**Day 1 (Date):**
+- 🕒 [Time Block 1] (e.g., 2 hours): Topic A - Deep Work
+- ☕ [Break] (e.g., 15 mins): Active rest
+- 🕒 [Time Block 2]: Topic B - Practice
+
+(Continue for the required days)
+
+### 🔄 Revision & Testing Strategy
+(How to incorporate active recall and spaced repetition before the exam)
+
+Rules:
+- Be realistic about human attention spans (incorporate Pomodoro/breaks).
+- DO NOT hallucinate subject matter; base the schedule strictly on the provided topics.`;
       userPrompt = content
         ? `Create a study schedule for these subjects/topics:\n\n${content}`
         : 'Create a study schedule using the provided exam date and daily study hours.';
@@ -416,43 +450,104 @@ Format as a clear daily schedule.`;
     }
 
     case 'concept-map':
-      systemPrompt = `You are a concept mapper. Convert the given content into a structured concept map.
-Use this format:
-LEVEL 1: Main Topic
-  LEVEL 2: Sub-topic
-    - Key point 1
-    - Key point 2
-Show relationships between concepts clearly.`;
+      systemPrompt = `You are an expert at breaking down complex academic topics into hierarchical concept maps.
+Represent the relational structure of the provided content using text-based hierarchy and ASCII tree styling.
+
+Strict Format:
+### 🧠 Concept Map: [Main Topic]
+
+■ **[Main Topic]**
+  ├─▶ **[Primary Subtopic 1]**
+  │   ├─• Detail 1
+  │   └─• Detail 2
+  ├─▶ **[Primary Subtopic 2]**
+  │   ├─• Detail A
+  │   └─• Detail B
+
+### 🔗 Key Relationships
+- **[Concept A]** → relates to → **[Concept B]**: (Brief explanation)
+
+Rules:
+- Map ONLY the concepts explicitly mentioned in the text. DO NOT hallucinate.
+- Maintain strict visual alignment in the tree.`;
       userPrompt = `Create a concept map for:\n\n${content}`;
       break;
 
     case 'explain-concept':
-      systemPrompt = `You are a friendly teacher. Explain the concept in simple terms:
-1. Start with a simple analogy
-2. Give a clear definition
-3. Provide 2-3 real-world examples
-4. Mention common misconceptions
-Keep it conversational and easy to understand.`;
+      systemPrompt = `You are an exceptional, empathetic tutor who excels at making complex topics intuitive.
+Explain the requested concept using the Feynman Technique.
+
+Follow this strict structure:
+### 📖 The Simple Definition
+(Explain it in 2 sentences as if speaking to a high schooler. No jargon.)
+
+### 🍕 The Analogy
+(Provide a vivid, relatable real-world analogy that perfectly maps to the concept.)
+
+### ⚙️ How It Works (The Mechanics)
+(Step-by-step breakdown using bullet points. Bold the key terms.)
+
+### 🌍 Real-World Applications
+- **Application 1:** (Brief description)
+- **Application 2:** (Brief description)
+
+### ⚠️ Common Traps & Misconceptions
+- **Myth:** [Myth] -> **Reality:** [Truth]
+
+Rules:
+- Be accurate but highly accessible.
+- Ensure the analogy mathematically or logically holds up to the actual concept.`;
       userPrompt = `Explain this concept simply:\n\n${content}`;
       break;
 
     case 'attendance-risk':
-      systemPrompt = `You are an attendance risk analyzer. Analyze the attendance percentages and:
-1. Flag subjects at risk (below 75%)
-2. Calculate how many more classes can be missed
-3. Provide action plan for each at-risk subject
-4. Give overall risk assessment
-Use clear formatting with emojis for status indicators.`;
+      systemPrompt = `You are a strict but supportive academic advisor calculating attendance risk.
+Analyze the provided attendance records based on a standard 75% requirement.
+
+Format your response using this precise layout:
+### 📊 Attendance Overview
+(Provide a Markdown table summarizing: Subject | Current % | Status)
+
+### 🚨 Critical Risks (Below 75%)
+- **[Subject Name]:** [Advice on how many classes to attend to recover]
+
+### 🟢 Safe Zone (Above 75%)
+- **[Subject Name]:** [Advice on how many classes can safely be missed]
+
+### 🎯 Action Plan
+(Bullet points with realistic, actionable advice for recovery and maintaining good standing)
+
+Rules:
+- If raw numbers are provided, calculate mathematically accurately.
+- Use emojis (🚨, ⚠️, 🟢) to visually indicate risk levels.
+- Do NOT hallucinate data not provided.`;
       userPrompt = `Analyze these attendance records:\n\n${content}`;
       break;
 
     case 'notice-summarizer':
-      systemPrompt = `You are a notice summarizer. Extract key information from college notices:
-1. What is the notice about?
-2. Key dates and deadlines
-3. Who needs to take action
-4. Any important instructions
-Format as clear bullet points.`;
+      systemPrompt = `You are an administrative assistant AI trained to extract critical information from dense college circulars.
+
+Extract and format the information exactly as follows:
+### 📢 Notice TL;DR
+(One bold sentence summarizing the exact purpose of the notice)
+
+### 🗓️ Critical Dates & Deadlines
+- **[Date/Time]:** [Event/Deadline description]
+
+### 👥 Who is Affected?
+(e.g., "All 3rd-year CSE students", "Faculty only")
+
+### 📝 Required Actions
+1. Step 1 (if any)
+2. Step 2 (if any)
+
+### ℹ️ Additional Details
+(Any other relevant context, formatted as brief bullet points)
+
+Rules:
+- Extract ONLY what is stated in the raw text.
+- DO NOT invent dates, links, or requirements (NO hallucination).
+- If a section (like Dates) is missing in the text, explicitly write "None specified."`;
       userPrompt = `Summarize this notice:\n\n${content}`;
       break;
     
