@@ -1,17 +1,6 @@
 -- Flashcards Schema
 
--- 1. Study Materials (Replaces localStorage Sources and Notes)
-CREATE TABLE public.study_materials (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  student_id UUID REFERENCES public.students(id) ON DELETE CASCADE,
-  title TEXT NOT NULL,
-  content TEXT NOT NULL,
-  material_type TEXT NOT NULL CHECK (material_type IN ('source', 'note')),
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
-);
-
--- 2. Flashcard Decks
+-- 1. Flashcard Decks (Folders / Topics)
 CREATE TABLE public.flashcard_decks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   student_id UUID REFERENCES public.students(id) ON DELETE CASCADE,
@@ -20,7 +9,7 @@ CREATE TABLE public.flashcard_decks (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW())
 );
 
--- 3. Flashcards
+-- 2. Flashcards
 CREATE TABLE public.flashcards (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   deck_id UUID REFERENCES public.flashcard_decks(id) ON DELETE CASCADE,
@@ -33,14 +22,10 @@ CREATE TABLE public.flashcards (
 );
 
 -- Enable RLS
-ALTER TABLE public.study_materials ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.flashcard_decks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.flashcards ENABLE ROW LEVEL SECURITY;
 
--- RLS Policies (Service Role bypasses this, but good practice for client-side queries)
-CREATE POLICY "Users can manage their own study materials" ON public.study_materials
-  FOR ALL USING (auth.uid() = student_id);
-
+-- RLS Policies (Client-side protection)
 CREATE POLICY "Users can manage their own decks" ON public.flashcard_decks
   FOR ALL USING (auth.uid() = student_id);
 

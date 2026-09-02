@@ -5,61 +5,6 @@ const authMiddleware = require("../middleware/auth");
 const router = express.Router();
 router.use(authMiddleware);
 
-// --- Study Materials (Sources & Notes) ---
-
-// Get all materials for user
-router.get("/materials", async (req, res) => {
-  try {
-    const { data: materials, error } = await getClient()
-      .from("study_materials")
-      .select("*")
-      .eq("student_id", req.student.id)
-      .order("created_at", { ascending: false });
-
-    if (error) throw error;
-    res.json({ materials });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// Create material
-router.post("/materials", async (req, res) => {
-  try {
-    const { title, content, material_type } = req.body;
-    if (!title || !content || !material_type) {
-      return res.status(400).json({ message: "Missing required fields" });
-    }
-
-    const { data: material, error } = await getClient()
-      .from("study_materials")
-      .insert({ student_id: req.student.id, title, content, material_type })
-      .select()
-      .single();
-
-    if (error) throw error;
-    res.status(201).json({ material });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// Delete material
-router.delete("/materials/:id", async (req, res) => {
-  try {
-    const { error } = await getClient()
-      .from("study_materials")
-      .delete()
-      .eq("id", req.params.id)
-      .eq("student_id", req.student.id);
-
-    if (error) throw error;
-    res.json({ success: true });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
 // --- Flashcard Decks & Cards ---
 
 // Get all decks
