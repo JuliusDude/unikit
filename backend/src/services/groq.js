@@ -586,6 +586,56 @@ Rules:
   }
 }
 
+/**
+ * Extracts a structured academic event from a raw Telegram message
+ * @param {string} text - The raw telegram message
+ * @returns {Promise<{title: string, event_date: string, priority: string, category: string} | null>}
+ */
+async function extractGroupEvent(text) {
+  if (!isGroqAvailable()) {
+    // Fallback mock
+    return {
+      title: "Extracted: " + text.substring(0, 20),
+      event_date: new Date(Date.now() + 86400000).toISOString().split('T')[0], // tomorrow
+      priority: "Medium",
+      category: "Other"
+    };
+  }
+
+  const systemPrompt = `You are an AI assistant that extracts academic events from teacher announcements.
+If the message contains an announcement about a test, exam, assignment, placement, fee, or deadline, extract the event.
+If it is just casual chat and does NOT contain an event, return null.
+
+Return ONLY a valid JSON object with the following schema, or null (literally the word null without quotes) if no event is found:
+{
+  "title": "A concise title (max 50 chars)",
+  "event_date": "YYYY-MM-DD" (guess the date based on today's date if they say 'tomorrow' or 'next monday'. Assume today is ${new Date().toISOString().split('T')[0]}),
+  "priority": "High" | "Medium" | "Low",
+  "category": "Exam" | "Assignment" | "Attendance" | "Fee" | "Placement" | "Other"
+}
+Do NOT wrap the JSON in Markdown backticks (e.g., \`\`\`json). Return raw JSON.`;
+
+  try {
+    const res = await groq.chat.completions.create({
+      model: "groq/compound",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: text }
+      ],
+      temperature: 0.2,
+      max_tokens: 512,
+    });
+
+    const content = (res.choices[0]?.message?.content || "").trim();
+    if (content === "null" || content === "") return null;
+    
+    return JSON.parse(content);
+  } catch (err) {
+    console.error("Group event extraction error:", err);
+    return null;
+  }
+}
+
 module.exports = {
   summarizeNotice,
   getStudyTip,
@@ -594,6 +644,7 @@ module.exports = {
   generateFlashcards,
   generateQuiz,
   gradeShortAnswer,
-  executeSmartTool
+  executeSmartTool,
+  extractGroupEvent
 };
 
