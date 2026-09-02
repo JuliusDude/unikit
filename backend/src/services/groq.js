@@ -454,8 +454,8 @@ Rules:
 Represent the relational structure of the provided content using a Mermaid.js flowchart.
 
 Strict Format:
-You must wrap the entire flowchart inside a standard Markdown code block labeled "mermaid".
-Use the TD (top-down) flowchart direction.
+You must return ONLY the standard Markdown code block labeled "mermaid".
+DO NOT output any conversational text, titles, or explanations outside the code block.
 
 CRITICAL MERMAID SYNTAX RULE:
 You MUST wrap EVERY SINGLE node label in double quotes to prevent parsing errors with special characters like parentheses.

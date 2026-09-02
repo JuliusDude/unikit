@@ -27,14 +27,23 @@ const MermaidChart = ({ chart }: { chart: string }) => {
     if (ref.current && chart) {
       try {
         mermaid.render(`mermaid-${Math.random().toString(36).substr(2, 9)}`, chart).then(({ svg }) => {
-          if (ref.current) ref.current.innerHTML = svg;
+          if (ref.current) {
+            ref.current.innerHTML = svg;
+            // Make the SVG occupy more space
+            const svgElem = ref.current.querySelector('svg');
+            if (svgElem) {
+              svgElem.style.width = '100%';
+              svgElem.style.maxWidth = '1000px';
+              svgElem.style.height = 'auto';
+            }
+          }
         });
       } catch (e) {
         console.error("Mermaid error:", e);
       }
     }
   }, [chart]);
-  return <div ref={ref} className="flex justify-center my-6 overflow-x-auto bg-white/50 p-4 rounded-xl border border-border" />;
+  return <div ref={ref} className="w-full flex justify-center my-6 overflow-x-auto bg-white p-6 md:p-10 rounded-[16px] border border-border shadow-sm" />;
 };
 
 interface Tool {
