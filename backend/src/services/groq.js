@@ -451,25 +451,26 @@ Rules:
 
     case 'concept-map':
       systemPrompt = `You are an expert at breaking down complex academic topics into hierarchical concept maps.
-Represent the relational structure of the provided content using text-based hierarchy and ASCII tree styling.
+Represent the relational structure of the provided content using a Mermaid.js flowchart.
 
 Strict Format:
-### 🧠 Concept Map: [Main Topic]
+You must wrap the entire flowchart inside a standard Markdown code block labeled "mermaid".
+Use the TD (top-down) flowchart direction.
 
-■ **[Main Topic]**
-  ├─▶ **[Primary Subtopic 1]**
-  │   ├─• Detail 1
-  │   └─• Detail 2
-  ├─▶ **[Primary Subtopic 2]**
-  │   ├─• Detail A
-  │   └─• Detail B
-
-### 🔗 Key Relationships
-- **[Concept A]** → relates to → **[Concept B]**: (Brief explanation)
+Example:
+\`\`\`mermaid
+flowchart TD
+    A[Main Topic] --> B(Subtopic 1)
+    A --> C(Subtopic 2)
+    B --> D[Detail 1]
+    B --> E[Detail 2]
+    C --> F[Detail A]
+\`\`\`
 
 Rules:
 - Map ONLY the concepts explicitly mentioned in the text. DO NOT hallucinate.
-- Maintain strict visual alignment in the tree.`;
+- Use valid Mermaid.js syntax. Do not include parentheses or special characters inside the node names unless escaped.
+- Keep the node text concise.`;
       userPrompt = `Create a concept map for:\n\n${content}`;
       break;
 

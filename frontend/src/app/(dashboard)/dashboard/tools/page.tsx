@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { 
   Sparkles, 
   FileText, 
@@ -17,6 +17,26 @@ import {
 import { api } from "@/lib/api";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import mermaid from "mermaid";
+
+mermaid.initialize({ startOnLoad: false, theme: 'default' });
+
+const MermaidChart = ({ chart }: { chart: string }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (ref.current && chart) {
+      try {
+        mermaid.render(`mermaid-${Math.random().toString(36).substr(2, 9)}`, chart).then(({ svg }) => {
+          if (ref.current) ref.current.innerHTML = svg;
+        });
+      } catch (e) {
+        console.error("Mermaid error:", e);
+      }
+    }
+  }, [chart]);
+  return <div ref={ref} className="flex justify-center my-6 overflow-x-auto bg-white/50 p-4 rounded-xl border border-border" />;
+};
+
 interface Tool {
   slug: string;
   title: string;
@@ -298,7 +318,19 @@ export default function SmartToolsPage() {
                     </div>
                   ) : (
                     <div className="bg-white border border-border rounded-[12px] p-6 md:p-8 text-base text-foreground max-h-[500px] overflow-y-auto shadow-inner prose prose-slate max-w-none prose-headings:text-primary prose-a:text-primary prose-li:my-0">
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      <ReactMarkdown 
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          code(props) {
+                            const {children, className, node, ...rest} = props;
+                            const match = /language-(\w+)/.exec(className || '');
+                            if (match && match[1] === 'mermaid') {
+                              return <MermaidChart chart={String(children).replace(/\n$/, '')} />;
+                            }
+                            return <code {...rest} className={className}>{children}</code>;
+                          }
+                        }}
+                      >
                         {result}
                       </ReactMarkdown>
                     </div>
