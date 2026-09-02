@@ -201,7 +201,7 @@ export default function SmartToolsPage() {
       {/* Modal Overlay */}
       {activeTool && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-          <div className="bg-white rounded-[12px] border border-border shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 flex flex-col">
+          <div className="bg-white rounded-[16px] border border-border shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 flex flex-col">
             
             {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-border pb-4 mb-4">
@@ -223,7 +223,7 @@ export default function SmartToolsPage() {
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-ring h-36 resize-none"
+                  className="w-full px-4 py-3 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-ring min-h-[200px] resize-y"
                   placeholder={activeTool.placeholder}
                 />
               </div>
@@ -297,7 +297,7 @@ export default function SmartToolsPage() {
                       
                     </div>
                   ) : (
-                    <div className="bg-white border border-border rounded-[10px] p-6 text-sm text-foreground max-h-[300px] overflow-y-auto shadow-xs prose prose-sm max-w-none prose-headings:text-primary prose-a:text-primary prose-li:my-0">
+                    <div className="bg-white border border-border rounded-[12px] p-6 md:p-8 text-base text-foreground max-h-[500px] overflow-y-auto shadow-inner prose prose-slate max-w-none prose-headings:text-primary prose-a:text-primary prose-li:my-0">
                       <ReactMarkdown remarkPlugins={[remarkGfm]}>
                         {result}
                       </ReactMarkdown>
