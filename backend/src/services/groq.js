@@ -1,4 +1,4 @@
-﻿const Groq = require("groq-sdk");
+const Groq = require("groq-sdk");
 
 let groq = null;
 try {
@@ -244,6 +244,11 @@ async function generateFlashcards(notes) {
       { front: "What is space repetition?", back: "Reviewing concepts at increasing intervals to improve long-term memory retention.", citation: "Local mock study guide notes" }
     ];
   }
+
+  // Prevent 413 Request Entity Too Large by truncating huge documents
+  const MAX_CHARS = 14000;
+  const truncatedNotes = notes.length > MAX_CHARS ? notes.substring(0, MAX_CHARS) + "\n\n...[content truncated for AI length limits]" : notes;
+
   try {
     const res = await groq.chat.completions.create({
       model: "groq/compound",
@@ -259,7 +264,7 @@ Create 8-12 flashcards covering the key concepts.
 Do not include any markdown format, backticks, or text outside the JSON array.
 Format: [{"front": "question", "back": "answer", "citation": "quote from notes"}, ...]`
         },
-        { role: "user", content: `Create flashcards from these notes:\n\n${notes}` }
+        { role: "user", content: `Create flashcards from these notes:\n\n${truncatedNotes}` }
       ],
       temperature: 0.7,
       max_tokens: 2048,
@@ -276,6 +281,9 @@ Format: [{"front": "question", "back": "answer", "citation": "quote from notes"}
 }
 
 async function generateQuiz(notes, count = 10, type = "mcq") {
+  const MAX_CHARS = 14000;
+  const truncatedNotes = notes.length > MAX_CHARS ? notes.substring(0, MAX_CHARS) + "\n\n...[content truncated for AI length limits]" : notes;
+
   if (!isGroqAvailable()) {
     if (type === "tf") {
       return [
@@ -336,7 +344,7 @@ Format: [{"question": "...", "options": ["A", "B", "C", "D"], "correctIndex": 0,
       model: "groq/compound",
       messages: [
         { role: "system", content: promptContent },
-        { role: "user", content: `Create a ${type} quiz from these notes:\n\n${notes}` }
+        { role: "user", content: `Create a ${type} quiz from these notes:\n\n${truncatedNotes}` }
       ],
       temperature: 0.7,
       max_tokens: 2048,
