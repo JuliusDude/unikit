@@ -40,34 +40,20 @@ interface Flashcard {
   status?: "mastered" | "review" | "unseen";
 }
 
-interface SourceDoc {
+interface Deck {
   id: string;
   title: string;
-  content: string;
-  createdAt: string;
-}
-
-interface WrittenNote {
-  id: string;
-  title: string;
-  content: string;
-  createdAt: string;
+  created_at: string;
+  flashcards: Flashcard[];
 }
 
 export default function FlashcardsPage() {
-  // Sidebar Tabs: "sources" | "notes"
-  const [sidebarTab, setSidebarTab] = useState<"sources" | "notes">("sources");
+  // Deck State
+  const [decks, setDecks] = useState<Deck[]>([]);
+  const [selectedDeckId, setSelectedDeckId] = useState<string | null>(null);
 
-  // Sources State
-  const [sources, setSources] = useState<SourceDoc[]>([]);
-  const [selectedSourceIds, setSelectedSourceIds] = useState<string[]>([]);
-  
-  // Pinned/Written Notes State
-  const [notesList, setNotesList] = useState<WrittenNote[]>([]);
-  
-  // Modal State for Adding/Editing Sources
-  const [isSourceModalOpen, setIsSourceModalOpen] = useState(false);
-  const [modalSourceId, setModalSourceId] = useState<string | null>(null);
+  // Modal State for New Deck
+  const [isDeckModalOpen, setIsDeckModalOpen] = useState(false);
   const [modalTitle, setModalTitle] = useState("");
   const [modalContent, setModalContent] = useState("");
   const [modalTab, setModalTab] = useState<"text" | "upload">("text");
@@ -75,12 +61,6 @@ export default function FlashcardsPage() {
   // File Upload Status
   const [fileLoading, setFileLoading] = useState(false);
   const [uploadError, setUploadError] = useState("");
-
-  // Modal State for Manual Written Note Creation
-  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
-  const [modalNoteId, setModalNoteId] = useState<string | null>(null);
-  const [noteModalTitle, setNoteModalTitle] = useState("");
-  const [noteModalContent, setNoteModalContent] = useState("");
 
   // Flashcards state
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
@@ -111,52 +91,26 @@ export default function FlashcardsPage() {
   // Copy Feedback State
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [copiedAll, setCopiedAll] = useState(false);
-  const [pinnedFeedback, setPinnedFeedback] = useState<number | null>(null);
 
-  // Initialize Data from localStorage
+  // Fetch decks from backend
   useEffect(() => {
-    // 1. Load Sources
-    const savedSources = localStorage.getItem("UniKit_notebook_sources");
-    if (savedSources) {
+    async function fetchDecks() {
       try {
-        const parsed = JSON.parse(savedSources) as SourceDoc[];
-        setSources(parsed);
-        setSelectedSourceIds(parsed.map(s => s.id));
-      } catch (e) {
-        console.error(e);
+        const res = await api.get<{ decks: Deck[] }>("/api/flashcards/decks");
+        if (res.decks && res.decks.length > 0) {
+          setDecks(res.decks);
+          // Auto-select first deck if none selected
+          if (!selectedDeckId) {
+            setSelectedDeckId(res.decks[0].id);
+            setFlashcards(res.decks[0].flashcards || []);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch decks:", err);
       }
-    } else {
-      // Seed with a default source
-      const defaultSource: SourceDoc = {
-        id: "default-1",
-        title: "Active Recall & Spaced Repetition",
-        content: "Active recall is a highly effective learning technique that involves testing your memory rather than passively reviewing notes. Instead of reading transcripts, you force your brain to retrieve the concept. Spaced repetition utilizes expanding time intervals (e.g. 1 day, 3 days, 7 days) before reviewing cards again. This leverages the psychological spacing effect, strengthening synapses and encoding information into long-term memory. Combined, these methods optimize cognitive efficiency.",
-        createdAt: new Date().toISOString()
-      };
-      setSources([defaultSource]);
-      setSelectedSourceIds([defaultSource.id]);
-      localStorage.setItem("UniKit_notebook_sources", JSON.stringify([defaultSource]));
     }
-
-    // 2. Load Pinned Notes
-    const savedNotes = localStorage.getItem("UniKit_notebook_notes");
-    if (savedNotes) {
-      try {
-        setNotesList(JSON.parse(savedNotes));
-      } catch (e) {
-        console.error(e);
-      }
-    } else {
-      const defaultNote: WrittenNote = {
-        id: "note-1",
-        title: "My Study Strategy",
-        content: "Draft flashcards for lecture topics immediately after classes. Review reviews on spaced interval schedules. Focus on active self-testing.",
-        createdAt: new Date().toISOString()
-      };
-      setNotesList([defaultNote]);
-      localStorage.setItem("UniKit_notebook_notes", JSON.stringify([defaultNote]));
-    }
-  }, []);
+    fetchDecks();
+  }, [selectedDeckId]);
 
   // PDF.js dynamic CDN Loader helper
   const loadPdfJs = async () => {
@@ -229,143 +183,14 @@ export default function FlashcardsPage() {
     }
   };
 
-  // Save/Edit Source Action
-  const handleSaveSource = () => {
+
+  // Generate New Deck
+  const handleGenerate = async () => {
     if (!modalTitle.trim() || !modalContent.trim()) {
       alert("Please provide both a title and notes text content.");
       return;
     }
 
-    let updatedSources = [...sources];
-    if (modalSourceId) {
-      updatedSources = updatedSources.map(s => 
-        s.id === modalSourceId 
-          ? { ...s, title: modalTitle.trim(), content: modalContent.trim() } 
-          : s
-      );
-    } else {
-      const newDoc: SourceDoc = {
-        id: Math.random().toString(36).substring(7),
-        title: modalTitle.trim(),
-        content: modalContent.trim(),
-        createdAt: new Date().toISOString()
-      };
-      updatedSources.push(newDoc);
-      setSelectedSourceIds(prev => [...prev, newDoc.id]);
-    }
-
-    setSources(updatedSources);
-    localStorage.setItem("UniKit_notebook_sources", JSON.stringify(updatedSources));
-    
-    setIsSourceModalOpen(false);
-    setModalTitle("");
-    setModalContent("");
-    setModalSourceId(null);
-  };
-
-  // Trigger Edit Source
-  const handleStartEditSource = (doc: SourceDoc) => {
-    setModalSourceId(doc.id);
-    setModalTitle(doc.title);
-    setModalContent(doc.content);
-    setModalTab("text");
-    setUploadError("");
-    setIsSourceModalOpen(true);
-  };
-
-  // Delete Source Document
-  const handleDeleteSource = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!confirm("Are you sure you want to delete this source document?")) return;
-
-    const updated = sources.filter(s => s.id !== id);
-    setSources(updated);
-    setSelectedSourceIds(prev => prev.filter(selectedId => selectedId !== id));
-    localStorage.setItem("UniKit_notebook_sources", JSON.stringify(updated));
-  };
-
-  // Toggle Source selection
-  const handleToggleSelectSource = (id: string) => {
-    setSelectedSourceIds(prev => 
-      prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
-    );
-  };
-
-  // Pinned/Written Note Save
-  const handleSaveNote = () => {
-    if (!noteModalTitle.trim() || !noteModalContent.trim()) {
-      alert("Please enter a note title and text content.");
-      return;
-    }
-
-    let updatedNotes = [...notesList];
-    if (modalNoteId) {
-      updatedNotes = updatedNotes.map(n => 
-        n.id === modalNoteId 
-          ? { ...n, title: noteModalTitle.trim(), content: noteModalContent.trim() }
-          : n
-      );
-    } else {
-      const newNote: WrittenNote = {
-        id: Math.random().toString(36).substring(7),
-        title: noteModalTitle.trim(),
-        content: noteModalContent.trim(),
-        createdAt: new Date().toISOString()
-      };
-      updatedNotes.unshift(newNote);
-    }
-
-    setNotesList(updatedNotes);
-    localStorage.setItem("UniKit_notebook_notes", JSON.stringify(updatedNotes));
-
-    setIsNoteModalOpen(false);
-    setNoteModalTitle("");
-    setNoteModalContent("");
-    setModalNoteId(null);
-  };
-
-  const handleStartEditNote = (note: WrittenNote) => {
-    setModalNoteId(note.id);
-    setNoteModalTitle(note.title);
-    setNoteModalContent(note.content);
-    setIsNoteModalOpen(true);
-  };
-
-  const handleDeleteNote = (id: string) => {
-    if (!confirm("Are you sure you want to delete this note?")) return;
-    const updated = notesList.filter(n => n.id !== id);
-    setNotesList(updated);
-    localStorage.setItem("UniKit_notebook_notes", JSON.stringify(updated));
-  };
-
-  // Pin a Flashcard to Pinned Notes
-  const handlePinCardToNotes = (card: Flashcard, index: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    const newNote: WrittenNote = {
-      id: Math.random().toString(36).substring(7),
-      title: `Saved Concept: ${card.front.substring(0, 30)}...`,
-      content: `Flashcard Concept Detail:\nPrompt: ${card.front}\nAnswer: ${card.back}${card.citation ? `\nCitation: "${card.citation}"` : ""}`,
-      createdAt: new Date().toISOString()
-    };
-    
-    const updated = [newNote, ...notesList];
-    setNotesList(updated);
-    localStorage.setItem("UniKit_notebook_notes", JSON.stringify(updated));
-    
-    setPinnedFeedback(index);
-    setTimeout(() => setPinnedFeedback(null), 1500);
-  };
-
-  // Generate Flashcards
-  const handleGenerate = async () => {
-    const activeSources = sources.filter(s => selectedSourceIds.includes(s.id));
-    if (activeSources.length === 0) {
-      setError("Please select or add at least one source document first!");
-      return;
-    }
-
-    const combinedNotes = activeSources.map(s => s.content).join("\n\n");
-    
     setError("");
     setLoading(true);
     setIsFlipped(false);
@@ -373,25 +198,40 @@ export default function FlashcardsPage() {
     setFlashcards([]);
     setGridFlippedState({});
     setEditingCardId(null);
+    setIsDeckModalOpen(false);
 
     try {
-      const res = await api.post<{ flashcards: Flashcard[] }>("/api/ai/flashcards", { 
-        notes: combinedNotes 
+      // 1. Generate flashcards using AI
+      const aiRes = await api.post<{ flashcards: Flashcard[] }>("/api/ai/flashcards", { 
+        notes: modalContent.trim()
       });
       
-      if (res.flashcards && res.flashcards.length > 0) {
-        const mappedCards = res.flashcards.map((c, index) => ({
-          id: index,
-          front: c.front,
-          back: c.back,
-          citation: c.citation || "Derived from source reference.",
-          status: "unseen" as const
-        }));
-        setFlashcards(mappedCards);
-        setCurrentIndex(0);
-      } else {
-        throw new Error("AI did not generate any flashcards. Try pasting longer text or adding more sources.");
+      if (!aiRes.flashcards || aiRes.flashcards.length === 0) {
+        throw new Error("AI did not generate any flashcards. Try pasting longer text.");
       }
+
+      const generatedCards = aiRes.flashcards.map(c => ({
+        front: c.front,
+        back: c.back,
+        citation: c.citation || "Derived from source reference.",
+        status: "unseen" as const
+      }));
+
+      // 2. Save deck to database
+      const saveRes = await api.post<Deck>("/api/flashcards/decks", {
+        title: modalTitle.trim(),
+        flashcards: generatedCards
+      });
+
+      // 3. Update local state
+      setDecks(prev => [...prev, saveRes]);
+      setSelectedDeckId(saveRes.id);
+      setFlashcards(saveRes.flashcards);
+      setCurrentIndex(0);
+      
+      setModalTitle("");
+      setModalContent("");
+
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to generate flashcards");
     } finally {
@@ -467,12 +307,32 @@ export default function FlashcardsPage() {
   };
 
   // Mark mastery status
-  const handleSetStatus = (status: "mastered" | "review") => {
+  const handleSetStatus = async (status: "mastered" | "review") => {
     if (flashcards.length === 0) return;
     
+    const cardId = flashcards[currentIndex].id;
+
+    // Optimistic update
     setFlashcards((prev) => 
       prev.map((c, index) => index === currentIndex ? { ...c, status } : c)
     );
+    
+    // API call
+    try {
+      await api.patch(`/api/flashcards/${cardId}/status`, { status });
+      // Update the deck state as well to maintain consistency
+      setDecks(prev => prev.map(d => {
+        if (d.id === selectedDeckId) {
+          return {
+            ...d,
+            flashcards: d.flashcards.map(c => c.id === cardId ? { ...c, status } : c)
+          };
+        }
+        return d;
+      }));
+    } catch (err) {
+      console.error("Failed to update status", err);
+    }
 
     if (currentIndex < flashcards.length - 1) {
       setTimeout(() => {
@@ -573,9 +433,6 @@ export default function FlashcardsPage() {
   const masteredCount = flashcards.filter((c) => c.status === "mastered").length;
   const reviewCount = flashcards.filter((c) => c.status === "review").length;
   const unseenCount = flashcards.filter((c) => c.status === "unseen").length;
-  const totalCharacters = sources
-    .filter(s => selectedSourceIds.includes(s.id))
-    .reduce((sum, s) => sum + s.content.length, 0);
 
   return (
     <div className="max-w-7xl mx-auto h-[calc(100vh-6rem)] flex flex-col">
@@ -627,203 +484,66 @@ export default function FlashcardsPage() {
         <div className="lg:col-span-4 space-y-4">
           <div className="bg-card border border-border rounded-[10px] p-5 space-y-4 shadow-sm">
             
-            {/* Sidebar Tabs */}
-            <div className="flex gap-2 border-b border-border pb-1">
-              <button
-                onClick={() => setSidebarTab("sources")}
-                className={`px-4 py-2 text-sm font-medium border-b-2 transition-standard capitalize cursor-pointer ${
-                  sidebarTab === "sources"
-                    ? "border-primary text-primary font-semibold"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                }`}
+            {/* Sidebar Title */}
+            <div className="flex items-center justify-between border-b border-border pb-3 mb-4">
+              <h4 className="font-semibold text-foreground text-xs uppercase tracking-wider font-mono flex items-center gap-2">
+                <Layers className="w-4 h-4 text-primary" />
+                Your Decks ({decks.length})
+              </h4>
+              <button 
+                onClick={() => {
+                  setModalTitle("");
+                  setModalContent("");
+                  setModalTab("text");
+                  setUploadError("");
+                  setIsDeckModalOpen(true);
+                }}
+                className="text-[10px] font-semibold text-primary hover:text-foreground flex items-center gap-1 transition-standard cursor-pointer"
               >
-                Sources ({sources.length})
-              </button>
-              <button
-                onClick={() => setSidebarTab("notes")}
-                className={`px-4 py-2 text-sm font-medium border-b-2 transition-standard capitalize cursor-pointer ${
-                  sidebarTab === "notes"
-                    ? "border-primary text-primary font-semibold"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Saved Notes ({notesList.length})
+                <Plus className="w-3 h-3" />
+                New Deck
               </button>
             </div>
 
-            {/* TAB 1: Sources */}
-            {sidebarTab === "sources" && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between flex-shrink-0 mb-6">
-                  <h4 className="font-semibold text-foreground text-xs uppercase tracking-wider font-mono">
-                    Notebook Documents
-                  </h4>
-                  <button 
-                    onClick={() => {
-                      setModalSourceId(null);
-                      setModalTitle("");
-                      setModalContent("");
-                      setModalTab("text");
-                      setUploadError("");
-                      setIsSourceModalOpen(true);
-                    }}
-                    className="text-[10px] font-semibold text-primary hover:text-foreground flex items-center gap-1 transition-standard cursor-pointer"
-                  >
-                    <Plus className="w-3 h-3" />
-                    Add Source
-                  </button>
+            {/* Decks List */}
+            <div className="space-y-2.5 max-h-[500px] overflow-y-auto pr-1">
+              {decks.length === 0 ? (
+                <div className="border border-dashed border-border rounded-[10px] p-6 text-center text-xs text-muted-foreground font-sans italic">
+                  No decks found. Create your first flashcard deck!
                 </div>
-
-                <div className="space-y-2.5 max-h-[340px] overflow-y-auto pr-1">
-                  {sources.length === 0 ? (
-                    <div className="border border-dashed border-border rounded-[10px] p-6 text-center text-xs text-muted-foreground font-sans italic">
-                      No source documents found. Add your reference notes.
-                    </div>
-                  ) : (
-                    sources.map((doc) => {
-                      const isChecked = selectedSourceIds.includes(doc.id);
-                      return (
-                        <div 
-                          key={doc.id}
-                          onClick={() => handleToggleSelectSource(doc.id)}
-                          className={`group border rounded-[10px] p-3 transition-standard cursor-pointer flex items-start gap-2.5 relative ${
-                            isChecked 
-                              ? "bg-white border-primary/40 shadow-sm" 
-                              : "bg-transparent border-border hover:bg-muted/45"
-                          }`}
-                        >
-                          <div className="pt-0.5" onClick={(e) => e.stopPropagation()}>
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => handleToggleSelectSource(doc.id)}
-                              className="w-3.5 h-3.5 accent-primary rounded-[10px] cursor-pointer"
-                            />
-                          </div>
-
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-1.5">
-                              <FileText className={`w-3.5 h-3.5 flex-shrink-0 ${isChecked ? "text-primary" : "text-muted-foreground"}`} />
-                              <h4 className="font-semibold text-xs text-foreground truncate pr-12">
-                                {doc.title}
-                              </h4>
-                            </div>
-                            <p className="text-[10px] text-muted-foreground mt-1 font-mono">
-                              {doc.content.split(/\s+/).filter(Boolean).length} words
-                            </p>
-                          </div>
-
-                          {/* Hover Actions */}
-                          <div className="absolute right-2 top-2 flex items-center gap-1 lg:opacity-0 lg:group-hover:opacity-100 transition-standard" onClick={(e) => e.stopPropagation()}>
-                            <button
-                              onClick={() => handleStartEditSource(doc)}
-                              className="p-1 text-muted-foreground hover:text-primary hover:bg-muted rounded-[10px] transition-standard cursor-pointer"
-                              title="Edit Source"
-                            >
-                              <Edit2 className="w-3 h-3" />
-                            </button>
-                            <button
-                              onClick={(e) => handleDeleteSource(doc.id, e)}
-                              className="p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-[10px] transition-standard cursor-pointer"
-                              title="Delete Source"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })
-                  )}
-                </div>
-
-                {sources.length > 0 && (
-                  <div className="pt-2 border-t border-border space-y-3">
-                    <button
-                      onClick={handleGenerate}
-                      disabled={loading || selectedSourceIds.length === 0}
-                      className="w-full py-2.5 bg-primary hover:opacity-90 disabled:opacity-50 text-primary-foreground font-semibold rounded-[10px] text-xs transition-standard cursor-pointer flex items-center justify-center gap-2 shadow-sm"
+              ) : (
+                decks.map((deck) => {
+                  const isSelected = selectedDeckId === deck.id;
+                  return (
+                    <div 
+                      key={deck.id}
+                      onClick={() => {
+                        setSelectedDeckId(deck.id);
+                        setFlashcards(deck.flashcards || []);
+                        setCurrentIndex(0);
+                        setIsFlipped(false);
+                        setShowSummary(false);
+                      }}
+                      className={`group border rounded-[10px] p-3 transition-standard cursor-pointer flex flex-col gap-1.5 relative ${
+                        isSelected 
+                          ? "bg-white border-primary/40 shadow-sm" 
+                          : "bg-transparent border-border hover:bg-muted/45"
+                      }`}
                     >
-                      {loading ? (
-                        <>
-                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          Formulating...
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="w-3.5 h-3.5" />
-                          Generate Flashcards
-                        </>
-                      )}
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* TAB 2: Notes */}
-            {sidebarTab === "notes" && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between flex-shrink-0 mb-6">
-                  <h4 className="font-semibold text-foreground text-xs uppercase tracking-wider font-mono">
-                    Notebook Notes
-                  </h4>
-                  <button 
-                    onClick={() => {
-                      setModalNoteId(null);
-                      setNoteModalTitle("");
-                      setNoteModalContent("");
-                      setIsNoteModalOpen(true);
-                    }}
-                    className="text-[10px] font-semibold text-primary hover:text-foreground flex items-center gap-1 transition-standard cursor-pointer"
-                  >
-                    <Plus className="w-3 h-3" />
-                    Create Note
-                  </button>
-                </div>
-
-                <div className="space-y-3 max-h-[390px] overflow-y-auto pr-1">
-                  {notesList.length === 0 ? (
-                    <div className="border border-dashed border-border rounded-[10px] p-6 text-center text-xs text-muted-foreground font-sans italic">
-                      No written notes saved. Pinned items will appear here.
-                    </div>
-                  ) : (
-                    notesList.map((note) => (
-                      <div 
-                        key={note.id}
-                        className="bg-white border border-border rounded-[10px] p-3 shadow-2xs space-y-2 relative group hover:border-primary/30 transition-standard"
-                      >
-                        <div className="flex items-start justify-between gap-6">
-                          <h5 className="font-bold text-xs text-foreground line-clamp-1 pr-6 font-sans">
-                            {note.title}
-                          </h5>
-                          
-                          <div className="absolute right-2 top-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-standard">
-                            <button
-                              onClick={() => handleStartEditNote(note)}
-                              className="p-1 text-muted-foreground hover:text-primary hover:bg-muted rounded-[10px] transition-standard cursor-pointer"
-                              title="Edit Note"
-                            >
-                              <Edit2 className="w-3 h-3" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteNote(note.id)}
-                              className="p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-[10px] transition-standard cursor-pointer"
-                              title="Delete Note"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </button>
-                          </div>
-                        </div>
-
-                        <p className="text-[11px] text-muted-foreground font-sans leading-relaxed line-clamp-4 whitespace-pre-wrap">
-                          {note.content}
-                        </p>
+                      <div className="flex items-center gap-1.5">
+                        <BookOpen className={`w-3.5 h-3.5 flex-shrink-0 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
+                        <h4 className="font-semibold text-xs text-foreground truncate pr-6">
+                          {deck.title}
+                        </h4>
                       </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
+                      <p className="text-[10px] text-muted-foreground font-mono pl-5">
+                        {deck.flashcards?.length || 0} cards
+                      </p>
+                    </div>
+                  );
+                })
+              )}
+            </div>
 
           </div>
         </div>
@@ -909,35 +629,23 @@ export default function FlashcardsPage() {
               <Layers className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-foreground mb-2">Notebook Study Guide</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Check study documents on the left, then click <strong className="text-primary">"Generate Flashcards"</strong> or add files/notes to review.
+                Select a deck on the left, or click <strong className="text-primary">"New Deck"</strong> to generate flashcards from your notes.
               </p>
               
               <div className="flex gap-3 mt-6 justify-center">
                 <button
                   onClick={() => {
-                    setSidebarTab("sources");
-                    setModalSourceId(null);
                     setModalTitle("");
                     setModalContent("");
                     setModalTab("upload"); // Open on Upload tab
                     setUploadError("");
-                    setIsSourceModalOpen(true);
+                    setIsDeckModalOpen(true);
                   }}
                   className="px-5 py-2.5 bg-primary hover:opacity-90 text-primary-foreground font-semibold rounded-[10px] text-xs transition-standard cursor-pointer flex items-center gap-1.5 shadow-sm"
                 >
                   <Upload className="w-4 h-4" />
                   Upload Document (PDF/Text)
                 </button>
-                
-                {selectedSourceIds.length > 0 && (
-                  <button
-                    onClick={handleGenerate}
-                    className="px-5 py-2.5 bg-muted hover:bg-accent text-foreground font-semibold rounded-[10px] text-xs transition-standard cursor-pointer flex items-center gap-1.5"
-                  >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    Generate ({selectedSourceIds.length} active)
-                  </button>
-                )}
               </div>
             </div>
           )}
@@ -1144,13 +852,6 @@ export default function FlashcardsPage() {
                                       <span>{copiedIndex === currentIndex ? "Copied!" : "Copy"}</span>
                                     </button>
 
-                                    <button
-                                      onClick={(e) => handlePinCardToNotes(flashcards[currentIndex], currentIndex, e)}
-                                      className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1.5 transition-standard cursor-pointer"
-                                    >
-                                      {pinnedFeedback === currentIndex ? <Check className="w-3.5 h-3.5 text-purple-700 animate-bounce" /> : <Pin className="w-3.5 h-3.5" />}
-                                      <span>{pinnedFeedback === currentIndex ? "Pinned!" : "Pin Note"}</span>
-                                    </button>
                                   </div>
                                   
                                   <span className="text-[11px] text-muted-foreground italic font-sans">
@@ -1292,12 +993,6 @@ export default function FlashcardsPage() {
                                     >
                                       {copiedIndex === idx ? <Check className="w-3 h-3 text-purple-700" /> : <Copy className="w-3 h-3" />}
                                     </button>
-                                    <button
-                                      onClick={(e) => handlePinCardToNotes(card, idx, e)}
-                                      className="p-1 text-muted-foreground hover:text-primary rounded"
-                                    >
-                                      {pinnedFeedback === idx ? <Check className="w-3 h-3 text-purple-700" /> : <Pin className="w-3 h-3" />}
-                                    </button>
                                   </div>
                                 </div>
                                 <div className="flex-grow flex items-center justify-center py-2 overflow-y-auto max-h-24 scrollbar-thin">
@@ -1334,12 +1029,6 @@ export default function FlashcardsPage() {
                               className="p-1.5 text-muted-foreground hover:text-primary hover:bg-card rounded-[10px] transition-standard cursor-pointer"
                             >
                               {copiedIndex === idx ? <Check className="w-3.5 h-3.5 text-purple-700" /> : <Copy className="w-3.5 h-3.5" />}
-                            </button>
-                            <button
-                              onClick={(e) => handlePinCardToNotes(card, idx, e)}
-                              className="p-1.5 text-muted-foreground hover:text-primary hover:bg-card rounded-[10px] transition-standard cursor-pointer"
-                            >
-                              {pinnedFeedback === idx ? <Check className="w-3.5 h-3.5 text-purple-700" /> : <Pin className="w-3.5 h-3.5" />}
                             </button>
                             <button
                               onClick={(e) => handleDeleteCard(card.id, e)}
@@ -1461,49 +1150,46 @@ export default function FlashcardsPage() {
 
       </div>
 
-      {/* Add/Edit Source Modal */}
-      {isSourceModalOpen && (
+      {/* New Deck Modal */}
+      {isDeckModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
           <div className="bg-white rounded-[12px] border border-border shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 flex flex-col space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-4 mb-4">
               <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
                 <FileText className="w-5 h-5 text-primary" />
-                {modalSourceId ? "Edit Source Document" : "Add Source Document"}
+                New Deck
               </h2>
               <button
                 onClick={() => {
-                  setIsSourceModalOpen(false);
+                  setIsDeckModalOpen(false);
                   setModalTitle("");
                   setModalContent("");
-                  setModalSourceId(null);
                 }}
                 className="p-1 hover:bg-accent rounded-full text-muted-foreground transition-standard cursor-pointer"
               >
-                <X className="w-5 h-5" />
+                <XCircle className="w-5 h-5" />
               </button>
             </div>
 
             {/* Modal Tabs for Manual Input vs Upload File */}
-            {!modalSourceId && (
-              <div className="flex gap-1 bg-muted/60 p-1 rounded-[10px]">
-                <button
-                  onClick={() => setModalTab("text")}
-                  className={`flex-1 py-1.5 text-center text-xs font-semibold rounded-[10px] transition-standard ${
-                    modalTab === "text" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Write / Paste Text
-                </button>
-                <button
-                  onClick={() => setModalTab("upload")}
-                  className={`flex-1 py-1.5 text-center text-xs font-semibold rounded-[10px] transition-standard ${
-                    modalTab === "upload" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Upload File
-                </button>
-              </div>
-            )}
+            <div className="flex gap-1 bg-muted/60 p-1 rounded-[10px]">
+              <button
+                onClick={() => setModalTab("text")}
+                className={`flex-1 py-1.5 text-center text-xs font-semibold rounded-[10px] transition-standard ${
+                  modalTab === "text" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Write / Paste Text
+              </button>
+              <button
+                onClick={() => setModalTab("upload")}
+                className={`flex-1 py-1.5 text-center text-xs font-semibold rounded-[10px] transition-standard ${
+                  modalTab === "upload" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Upload File
+              </button>
+            </div>
 
             {uploadError && (
               <div className="p-3 bg-destructive/10 border border-destructive/20 text-red-700 text-xs rounded-[10px] flex items-center gap-2 animate-in fade-in duration-200">
@@ -1517,7 +1203,7 @@ export default function FlashcardsPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">
-                    Document Title *
+                    Deck Title *
                   </label>
                   <input
                     type="text"
@@ -1530,13 +1216,13 @@ export default function FlashcardsPage() {
 
                 <div>
                   <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">
-                    Document Content *
+                    Source Content *
                   </label>
                   <textarea
                     value={modalContent}
                     onChange={(e) => setModalContent(e.target.value)}
                     className="w-full h-44 px-3 py-2 bg-white border border-border rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-ring resize-none text-foreground font-sans leading-relaxed"
-                    placeholder="Paste details or notes..."
+                    placeholder="Paste details or notes here..."
                   />
                 </div>
               </div>
@@ -1575,10 +1261,9 @@ export default function FlashcardsPage() {
             <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
               <button
                 onClick={() => {
-                  setIsSourceModalOpen(false);
+                  setIsDeckModalOpen(false);
                   setModalTitle("");
                   setModalContent("");
-                  setModalSourceId(null);
                 }}
                 className="px-4 py-2 border border-border hover:bg-[#f1ecf8] text-foreground font-semibold rounded-[10px] text-xs transition-standard"
               >
@@ -1586,82 +1271,11 @@ export default function FlashcardsPage() {
               </button>
               
               <button
-                onClick={handleSaveSource}
-                disabled={modalTab !== "text" || !modalTitle.trim() || !modalContent.trim()}
+                onClick={handleGenerate}
+                disabled={loading || modalTab !== "text" || !modalTitle.trim() || !modalContent.trim()}
                 className="px-4 py-2 bg-primary hover:opacity-90 disabled:opacity-50 text-primary-foreground font-semibold rounded-[10px] text-xs transition-standard shadow-sm"
               >
-                {modalSourceId ? "Save Changes" : "Add to Notebook"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Written Note CRUD Modal */}
-      {isNoteModalOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-          <div className="bg-white rounded-[12px] border border-border shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 flex flex-col space-y-4">
-            <div className="flex items-center justify-between border-b border-border pb-4 mb-4">
-              <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-                <Bookmark className="w-5 h-5 text-primary" />
-                {modalNoteId ? "Edit Study Note" : "Write Custom Note"}
-              </h2>
-              <button
-                onClick={() => {
-                  setIsNoteModalOpen(false);
-                  setNoteModalTitle("");
-                  setNoteModalContent("");
-                  setModalNoteId(null);
-                }}
-                className="p-1 hover:bg-accent rounded-full text-muted-foreground transition-standard cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">Note Title *</label>
-                <input
-                  type="text"
-                  value={noteModalTitle}
-                  onChange={(e) => setNoteModalTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-border rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
-                  placeholder="Summary points"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">Note Content *</label>
-                <textarea
-                  value={noteModalContent}
-                  onChange={(e) => setNoteModalContent(e.target.value)}
-                  className="w-full h-44 px-3 py-2 bg-white border border-border rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-ring resize-none text-foreground font-sans leading-relaxed"
-                  placeholder="Write note details..."
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-border mt-6">
-              <button
-                onClick={() => {
-                  setIsNoteModalOpen(false);
-                  setNoteModalTitle("");
-                  setNoteModalContent("");
-                  setModalNoteId(null);
-                }}
-                className="px-4 py-2 border border-border hover:bg-[#f1ecf8] text-foreground font-semibold rounded-[10px] text-xs transition-standard"
-              >
-                Cancel
-              </button>
-              
-              <button
-                onClick={handleSaveNote}
-                className="px-4 py-2 bg-primary hover:opacity-90 text-primary-foreground font-semibold rounded-[10px] text-xs transition-standard shadow-sm"
-              >
-                {modalNoteId ? "Save Note" : "Create Note"}
+                {loading ? "Generating..." : "Generate Flashcards"}
               </button>
             </div>
           </div>
