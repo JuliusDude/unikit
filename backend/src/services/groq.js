@@ -1,4 +1,4 @@
-const Groq = require("groq-sdk");
+﻿const Groq = require("groq-sdk");
 
 let groq = null;
 try {
@@ -118,11 +118,11 @@ LEVEL 1: Main Concept
     case 'explain-concept':
       return `### Concept Explanation: ${content.substring(0, 40) || "Topic"}
       
-**💡 The Analogy**: Think of it like a train station. Passengers (data packages) board trains (requests) and routes are managed by central track controllers (logic routers) to prevent collisions.
+**ðŸ’¡ The Analogy**: Think of it like a train station. Passengers (data packages) board trains (requests) and routes are managed by central track controllers (logic routers) to prevent collisions.
 
-**📖 Simple Definition**: A structured explanation detailing components, configurations, and core mathematical formulas.
+**ðŸ“– Simple Definition**: A structured explanation detailing components, configurations, and core mathematical formulas.
 
-**🚀 Real-world Examples**:
+**ðŸš€ Real-world Examples**:
 1. Web server load balancers distributing network traffic.
 2. File systems mapping blocks to disk sectors.`;
 
@@ -130,11 +130,11 @@ LEVEL 1: Main Concept
       return `### Attendance Assessment (Mock)
 * Current analysis based on submitted subject percentages.
 
-**⚠️ At Risk (Below 75%)**:
+**âš ï¸ At Risk (Below 75%)**:
 * *Operating Systems*: 62% attendance. (Needs 4 consecutive classes to pass).
 * *Database Systems*: 71% attendance. (Needs 2 consecutive classes to pass).
 
-**🚀 Action Steps**:
+**ðŸš€ Action Steps**:
 1. Email department regarding excused logs.
 2. Review notices for upcoming calendar deadlines.`;
 
@@ -175,12 +175,12 @@ async function summarizeNotice(text) {
 
 async function getStudyTip() {
   const tips = [
-    "Take regular breaks using the Pomodoro technique — 25 minutes of focused study, then 5 minutes off.",
+    "Take regular breaks using the Pomodoro technique â€” 25 minutes of focused study, then 5 minutes off.",
     "Review your notes within 24 hours of taking them to improve retention by up to 60%.",
-    "Teach what you've learned to someone else — it's the best way to solidify understanding.",
+    "Teach what you've learned to someone else â€” it's the best way to solidify understanding.",
     "Get 7-8 hours of sleep before an exam. Your brain consolidates memories during sleep.",
     "Start with the hardest task when your energy is highest, usually in the morning.",
-    "Use active recall instead of re-reading — test yourself on the material.",
+    "Use active recall instead of re-reading â€” test yourself on the material.",
     "Break large assignments into smaller tasks with their own mini-deadlines.",
     "Study in different locations to create multiple memory associations.",
   ];
@@ -197,7 +197,7 @@ async function attendanceAlert(subject, total, attended, threshold = 75) {
     return { percentage: pct, message: `${subject}: ${pct}%. You can skip ${canSkip} more classes.`, isAtRisk: false };
   } else {
     const needed = Math.ceil((threshold * total - 100 * attended) / (100 - threshold));
-    return { percentage: pct, message: `${subject}: ⚠️ ${pct}%. Need ${needed} more classes to reach ${threshold}%.`, isAtRisk: true };
+    return { percentage: pct, message: `${subject}: âš ï¸ ${pct}%. Need ${needed} more classes to reach ${threshold}%.`, isAtRisk: true };
   }
 }
 
@@ -207,7 +207,7 @@ async function chatResponse(messages) {
 
   if (!isGroqAvailable()) {
     if (isDiagram) return generateMockDiagram(lastMsg);
-    return `### CampusFlow AI Assistant (Demo Mode)
+    return `### Uki (Demo Mode)
 
 Since the Groq API key is not configured, I'm responding in offline fallback mode.
 * **To fix this**: Add a valid \`GROQ_API_KEY\` in your \`backend/.env\` file.
@@ -218,7 +218,7 @@ Since the Groq API key is not configured, I'm responding in offline fallback mod
     const res = await groq.chat.completions.create({
       model: "groq/compound",
       messages: [
-        { role: "system", content: "You are a helpful AI study assistant named CampusFlow AI. You assist college students with their homework, study planning, exam preparation, and notices clarification. Keep responses helpful, structured, and friendly." },
+        { role: "system", content: "You are a helpful AI study assistant named Uki. You assist college students with their homework, study planning, exam preparation, and notices clarification. Keep responses helpful, structured, and friendly." },
         ...messages
       ],
       temperature: 0.7,
@@ -228,7 +228,7 @@ Since the Groq API key is not configured, I'm responding in offline fallback mod
   } catch (err) {
     console.error("Groq chat error, falling back to mock:", err.message);
     if (isDiagram) return generateMockDiagram(lastMsg);
-    return `### CampusFlow AI Assistant (Offline Fallback)
+    return `### Uki (Offline Fallback)
 
 There was an error communicating with the AI server. 
 * **Details**: ${err.message}
@@ -399,17 +399,17 @@ async function executeSmartTool(tool, content, options = {}) {
     case 'summarize-notes':
       systemPrompt = `You are an expert academic note summarizer. Create a highly structured, comprehensive summary of the provided text.
 Your response must strictly follow this structure:
-### 📌 Executive Summary
+### ðŸ“Œ Executive Summary
 (1-2 sentences capturing the core essence)
 
-### 🔑 Key Concepts
+### ðŸ”‘ Key Concepts
 - **Concept 1:** Brief definition.
 - **Concept 2:** Brief definition.
 
-### 📝 Detailed Breakdown
+### ðŸ“ Detailed Breakdown
 (Use nested bullet points and bold text to organize the main ideas and supporting details logically)
 
-### 💡 Crucial Takeaways
+### ðŸ’¡ Crucial Takeaways
 (2-3 critical points the student MUST remember for an exam)
 
 Rules:
@@ -426,18 +426,18 @@ Available study hours per day: ${studyHours}.
 Target Exam Date: ${examDate}.
 
 Format your response exactly as follows:
-### 📅 Overall Strategy
+### ðŸ“… Overall Strategy
 (Brief overview of how the time is distributed, prioritizing difficult topics)
 
-### 🗓️ Daily Breakdown
+### ðŸ—“ï¸ Daily Breakdown
 **Day 1 (Date):**
-- 🕒 [Time Block 1] (e.g., 2 hours): Topic A - Deep Work
-- ☕ [Break] (e.g., 15 mins): Active rest
-- 🕒 [Time Block 2]: Topic B - Practice
+- ðŸ•’ [Time Block 1] (e.g., 2 hours): Topic A - Deep Work
+- â˜• [Break] (e.g., 15 mins): Active rest
+- ðŸ•’ [Time Block 2]: Topic B - Practice
 
 (Continue for the required days)
 
-### 🔄 Revision & Testing Strategy
+### ðŸ”„ Revision & Testing Strategy
 (How to incorporate active recall and spaced repetition before the exam)
 
 Rules:
@@ -484,20 +484,20 @@ Rules:
 Explain the requested concept using the Feynman Technique.
 
 Follow this strict structure:
-### 📖 The Simple Definition
+### ðŸ“– The Simple Definition
 (Explain it in 2 sentences as if speaking to a high schooler. No jargon.)
 
-### 🍕 The Analogy
+### ðŸ• The Analogy
 (Provide a vivid, relatable real-world analogy that perfectly maps to the concept.)
 
-### ⚙️ How It Works (The Mechanics)
+### âš™ï¸ How It Works (The Mechanics)
 (Step-by-step breakdown using bullet points. Bold the key terms.)
 
-### 🌍 Real-World Applications
+### ðŸŒ Real-World Applications
 - **Application 1:** (Brief description)
 - **Application 2:** (Brief description)
 
-### ⚠️ Common Traps & Misconceptions
+### âš ï¸ Common Traps & Misconceptions
 - **Myth:** [Myth] -> **Reality:** [Truth]
 
 Rules:
@@ -511,21 +511,21 @@ Rules:
 Analyze the provided attendance records based on a standard 75% requirement.
 
 Format your response using this precise layout:
-### 📊 Attendance Overview
+### ðŸ“Š Attendance Overview
 (Provide a Markdown table summarizing: Subject | Current % | Status)
 
-### 🚨 Critical Risks (Below 75%)
+### ðŸš¨ Critical Risks (Below 75%)
 - **[Subject Name]:** [Advice on how many classes to attend to recover]
 
-### 🟢 Safe Zone (Above 75%)
+### ðŸŸ¢ Safe Zone (Above 75%)
 - **[Subject Name]:** [Advice on how many classes can safely be missed]
 
-### 🎯 Action Plan
+### ðŸŽ¯ Action Plan
 (Bullet points with realistic, actionable advice for recovery and maintaining good standing)
 
 Rules:
 - If raw numbers are provided, calculate mathematically accurately.
-- Use emojis (🚨, ⚠️, 🟢) to visually indicate risk levels.
+- Use emojis (ðŸš¨, âš ï¸, ðŸŸ¢) to visually indicate risk levels.
 - Do NOT hallucinate data not provided.`;
       userPrompt = `Analyze these attendance records:\n\n${content}`;
       break;
@@ -534,20 +534,20 @@ Rules:
       systemPrompt = `You are an administrative assistant AI trained to extract critical information from dense college circulars.
 
 Extract and format the information exactly as follows:
-### 📢 Notice TL;DR
+### ðŸ“¢ Notice TL;DR
 (One bold sentence summarizing the exact purpose of the notice)
 
-### 🗓️ Critical Dates & Deadlines
+### ðŸ—“ï¸ Critical Dates & Deadlines
 - **[Date/Time]:** [Event/Deadline description]
 
-### 👥 Who is Affected?
+### ðŸ‘¥ Who is Affected?
 (e.g., "All 3rd-year CSE students", "Faculty only")
 
-### 📝 Required Actions
+### ðŸ“ Required Actions
 1. Step 1 (if any)
 2. Step 2 (if any)
 
-### ℹ️ Additional Details
+### â„¹ï¸ Additional Details
 (Any other relevant context, formatted as brief bullet points)
 
 Rules:
@@ -588,3 +588,4 @@ module.exports = {
   gradeShortAnswer,
   executeSmartTool
 };
+
