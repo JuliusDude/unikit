@@ -32,7 +32,9 @@ interface Question {
   id: string;
   question: string;
   options: string[];
-  correctIndex: number;
+  correct_index: number;
+  user_answer_index?: number;
+  is_correct?: boolean;
   explanation: string;
   citation?: string;
 }
@@ -107,7 +109,15 @@ export default function QuizPage() {
         const res = await api.get<{ quiz: Quiz; questions: Question[] }>(`/api/quizzes/${selectedQuizId}`);
         setQuiz(res.quiz);
         setQuestions(res.questions);
-        setAnswers({});
+        
+        const loadedAnswers: Record<number, number> = {};
+        res.questions.forEach((q, idx) => {
+          if (q.user_answer_index !== null && q.user_answer_index !== undefined) {
+            loadedAnswers[idx] = q.user_answer_index;
+          }
+        });
+        
+        setAnswers(loadedAnswers);
         setSubmitted(res.quiz.score !== null);
         setActiveQuestionIndex(0);
         setActiveView("interactive");
@@ -262,7 +272,7 @@ export default function QuizPage() {
       let scoreCount = 0;
       const submissionAnswers = questions.map((q, i) => {
         const userAnswerIndex = answers[i] ?? -1;
-        const isCorrect = userAnswerIndex === q.correctIndex;
+        const isCorrect = userAnswerIndex === q.correct_index;
         if (isCorrect) scoreCount++;
         return {
           question_id: q.id,
@@ -300,7 +310,7 @@ export default function QuizPage() {
   const calculateScore = () => {
     let scoreCount = 0;
     questions.forEach((q, qi) => {
-      if (answers[qi] === q.correctIndex) {
+      if (answers[qi] === q.correct_index) {
         scoreCount++;
       }
     });
@@ -507,7 +517,7 @@ export default function QuizPage() {
                         </span>
                         
                         {submitted && (
-                          answers[activeQuestionIndex] === questions[activeQuestionIndex].correctIndex ? (
+                          answers[activeQuestionIndex] === questions[].correct_index ? (
                             <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-[10px]">✓ Correct</span>
                           ) : (
                             <span className="text-[10px] font-bold text-red-700 bg-destructive/10 px-2.5 py-0.5 rounded-[10px]">✗ Incorrect</span>
@@ -524,7 +534,7 @@ export default function QuizPage() {
                     <div className="grid grid-cols-1 gap-3">
                       {questions[activeQuestionIndex].options?.map((option, optIdx) => {
                         const isSelected = answers[activeQuestionIndex] === optIdx;
-                        const isCorrect = questions[activeQuestionIndex].correctIndex === optIdx;
+                        const isCorrect = questions[].correct_index === optIdx;
                         const optionLetter = String.fromCharCode(65 + optIdx);
                         
                         let cardStyle = "flex items-center gap-3.5 p-4 border border-border rounded-[10px] text-sm cursor-pointer transition-standard hover:bg-background hover:border-[#5b21b6]/50 text-foreground";
@@ -612,7 +622,7 @@ export default function QuizPage() {
                         const isCurrent = activeQuestionIndex === idx;
                         const isAnswered = answers[idx] !== undefined;
                         
-                        const correct = answers[idx] === questions[idx].correctIndex;
+                        const correct = answers[idx] === questions[].correct_index;
                         
                         let dotStyle = "h-9 w-9 rounded-full flex items-center justify-center text-xs font-bold font-sans cursor-pointer transition-standard border ";
                         
@@ -687,7 +697,7 @@ export default function QuizPage() {
 
                   <div className="bg-white border border-border rounded-[10px] overflow-hidden divide-y divide-[#e0d4f0] shadow-sm">
                     {questions.map((q, qidx) => {
-                      const passed = answers[qidx] === q.correctIndex;
+                      const passed = answers[qidx] === q.correct_index;
                       return (
                         <div key={qidx} className="p-6 space-y-4 hover:bg-background relative group">
                           <div className="flex items-center justify-between flex-shrink-0 mb-6">
@@ -703,7 +713,7 @@ export default function QuizPage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pl-2">
                               {q.options.map((opt, oidx) => {
                                 const selectedByUs = answers[qidx] === oidx;
-                                const correctOne = q.correctIndex === oidx;
+                                const correctOne = q.correct_index === oidx;
                                 let style = "text-xs p-2.5 border rounded-[10px] flex items-center gap-2 font-sans ";
                                 if (correctOne) style += "border-purple-300 bg-purple-50/65 text-purple-800 font-semibold";
                                 else if (selectedByUs) style += "border-red-300 bg-destructive/10/65 text-red-800 font-semibold";
