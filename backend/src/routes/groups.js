@@ -10,7 +10,7 @@ const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 // Registers a Telegram group and returns an invite link
 router.post("/register", async (req, res) => {
   try {
-    const { telegram_chat_id, name } = req.body;
+    const { telegram_chat_id, name, sender_username } = req.body;
 
     if (!telegram_chat_id || !name) {
       return res.status(400).json({ message: "telegram_chat_id and name are required" });
@@ -42,6 +42,7 @@ router.post("/register", async (req, res) => {
         telegram_chat_id,
         name,
         invite_link,
+        authorized_usernames: sender_username ? [sender_username.replace('@', '')] : [],
       })
       .select()
       .single();
@@ -55,6 +56,42 @@ router.post("/register", async (req, res) => {
     });
   } catch (error) {
     console.error("Group registration error:", error.message);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// POST /api/groups/authorize - called by n8n to authorize new teachers (/conf-teachers)
+router.post("/authorize", async (req, res) => {
+  try {
+    const { chat_id, requestor_username, target_username } = req.body;
+    if (!chat_id || !requestor_username || !target_username) {
+      return res.status(400).json({ message: "chat_id, requestor_username, and target_username are required" });
+    }
+
+    const supabase = getClient();
+    const { data: group, error: groupError } = await supabase
+      .from("telegram_groups")
+      .select("id, authorized_usernames")
+      .eq("telegram_chat_id", chat_id)
+      .single();
+
+    if (groupError || !group) return res.status(404).json({ message: "Group not found" });
+
+    const authUsers = group.authorized_usernames || [];
+    const cleanRequestor = requestor_username.replace('@', '');
+    if (authUsers.length > 0 && !authUsers.includes(cleanRequestor)) {
+      return res.status(403).json({ message: "Requestor is not an authorized teacher for this group." });
+    }
+
+    // Add target if not already there
+    const cleanTarget = target_username.replace('@', '');
+    if (!authUsers.includes(cleanTarget)) {
+      authUsers.push(cleanTarget);
+      await supabase.from("telegram_groups").update({ authorized_usernames: authUsers }).eq("id", group.id);
+    }
+
+    res.json({ message: "Teacher authorized successfully", authorized_usernames: authUsers });
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
@@ -190,7 +227,7 @@ router.get("/events", authMiddleware, async (req, res) => {
 // POST /api/groups/webhook/message - n8n Webhook for processing telegram messages
 router.post("/webhook/message", async (req, res) => {
   try {
-    const { chat_id, text, sender_name } = req.body;
+    const { chat_id, text, sender_name, sender_username } = req.body;
     
     if (!chat_id || !text) {
       return res.status(400).json({ message: "chat_id and text are required" });
@@ -201,12 +238,18 @@ router.post("/webhook/message", async (req, res) => {
     // 1. Find group by chat_id
     const { data: group, error: groupError } = await supabase
       .from("telegram_groups")
-      .select("id")
+      .select("id, authorized_usernames")
       .eq("telegram_chat_id", chat_id)
       .single();
 
     if (groupError || !group) {
       return res.status(404).json({ message: "Group not found for chat_id" });
+    }
+
+    const authUsers = group.authorized_usernames || [];
+    const cleanSender = sender_username ? sender_username.replace('@', '') : '';
+    if (authUsers.length > 0 && !authUsers.includes(cleanSender)) {
+      return res.status(403).json({ message: "Ignored: Sender is not an authorized teacher." });
     }
 
     // 2. Extract Event via AI
