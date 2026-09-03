@@ -21,6 +21,50 @@ import { ListTodo, Clock, CheckCircle, CalendarDays } from "lucide-react";
 import { api } from "@/lib/api";
 import type { Task, Attendance } from "@/features/types";
 
+
+function PopoutWidget({ children }: { children: React.ReactNode }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div className="relative w-full h-full">
+      {/* Placeholder to keep grid layout intact when popped out */}
+      {isExpanded && <div className="w-full h-full min-h-[250px] bg-muted/20 rounded-xl border border-dashed border-border" />}
+
+      {/* The actual widget */}
+      <div
+        className={
+          isExpanded
+            ? "fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+            : "relative w-full h-full cursor-pointer transition-transform hover:-translate-y-1 hover:shadow-md rounded-xl"
+        }
+        onClick={() => {
+          if (!isExpanded) setIsExpanded(true);
+        }}
+      >
+        {isExpanded && (
+          <div
+            className="absolute inset-0"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsExpanded(false);
+            }}
+          />
+        )}
+        <div
+          className={
+            isExpanded
+              ? "relative z-10 w-full max-w-4xl max-h-[90vh] overflow-y-auto animate-in zoom-in-95 duration-200 rounded-xl shadow-2xl ring-1 ring-border bg-background"
+              : "w-full h-full"
+          }
+          onClick={isExpanded ? (e) => e.stopPropagation() : undefined}
+        >
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const { user } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -66,29 +110,21 @@ export default function DashboardPage() {
   return (
     <div className="max-w-[1400px] mx-auto space-y-6">
 
-      {/* ── Hero banner ── */}
-      <div className="bg-gradient-to-r from-primary to-primary/80 rounded-2xl p-6 md:p-8 text-white shadow-lg">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <h1
-              className="text-3xl md:text-4xl font-bold mb-1 tracking-tight"
-              style={{ letterSpacing: "-0.04em" }}
-            >
-              {getGreeting()}, {user?.name?.split(" ")[0] || "Student"} 👋
-            </h1>
-            <p className="text-white/70 text-sm">
-              Here&apos;s what&apos;s happening with your deadlines today.
-            </p>
+      {/* ✨ Elegant Hero Header ✨ */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border/60">
+        <div>
+          <h1 className="text-4xl md:text-[2.75rem] font-serif text-foreground tracking-tight leading-tight mb-2">
+            {getGreeting()}, {user?.name?.split(" ")[0] || "Student"}.
+          </h1>
+          
+        </div>
+        <div className="flex flex-col md:items-end gap-1">
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-primary">
+            <CalendarDays className="w-3.5 h-3.5" />
+            {getFormattedDate()}
           </div>
-          <div className="flex items-center gap-3 text-sm flex-wrap">
-            <div className="flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1.5">
-              <CalendarDays className="w-4 h-4" />
-              <span className="font-medium">{getFormattedDate()}</span>
-            </div>
-            <div className="flex items-center gap-1.5 bg-white/10 rounded-full px-3 py-1.5">
-              <Clock className="w-4 h-4" />
-              <span className="font-medium">{getFormattedTime()}</span>
-            </div>
+          <div className="flex items-center gap-2 text-3xl font-medium tracking-tighter text-foreground font-serif">
+            {getFormattedTime()}
           </div>
         </div>
       </div>
@@ -110,16 +146,16 @@ export default function DashboardPage() {
 
       {/* ── Row 2: Calendar  |  Tasks + Deadlines ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-        <MonthlyCalendarWidget />
+        <PopoutWidget><MonthlyCalendarWidget /></PopoutWidget>
         <div className="grid grid-cols-1 gap-6">
-          <TodayTasksWidget tasks={tasks} />
-          <UpcomingDeadlinesWidget tasks={tasks} />
+          <PopoutWidget><TodayTasksWidget tasks={tasks} /></PopoutWidget>
+          <PopoutWidget><UpcomingDeadlinesWidget tasks={tasks} /></PopoutWidget>
         </div>
       </div>
 
       {/* ── Row 3: Attendance  |  Study Streak ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-        <AttendanceWidget attendance={attendance} />
+        <PopoutWidget><AttendanceWidget attendance={attendance} /></PopoutWidget>
         <StudyStreakWidget attendance={attendance} />
       </div>
 
@@ -127,19 +163,19 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
         <QuickActionsWidget />
         <WeeklyProgressWidget tasks={tasks} />
-        <UpcomingEventsWidget />
+        <PopoutWidget><UpcomingEventsWidget /></PopoutWidget>
       </div>
 
       {/* ── Row 5: Recent Activity  |  Productivity Score  |  Focus Timer ── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
         <RecentActivityWidget />
         <ProductivityScoreWidget tasks={tasks} attendance={attendance} />
-        <FocusTimerWidget />
+        <PopoutWidget><FocusTimerWidget /></PopoutWidget>
       </div>
 
       {/* ── Row 6: Campus News  |  Achievements ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-        <CampusNewsWidget />
+        <PopoutWidget><CampusNewsWidget /></PopoutWidget>
         <AchievementWidget tasks={tasks} attendance={attendance} />
       </div>
 

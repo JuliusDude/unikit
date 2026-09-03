@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { ReactLenis } from 'lenis/react';
-import {
+import { 
   CalendarClock,
   Sparkles,
   BarChart3,
@@ -26,13 +26,13 @@ import {
   CheckSquare,
   Calendar,
   LayoutDashboard,
-} from "lucide-react";
+Plus, Minus } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { HandwritingText } from "@/components/ui/handwriting-text";
 
 function Header() {
   const { user } = useAuth();
   const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -41,201 +41,131 @@ function Header() {
   }, []);
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-white/95 backdrop-blur-md shadow-sm"
-          : "bg-transparent"
-      }`}
-    >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2">
-            <img src="/logo-ukit.png" alt="UniKit Logo" className="w-8 h-8 object-contain" />
-            <span className="text-xl font-bold text-foreground">UniKit</span>
+    <header className="fixed top-0 left-0 right-0 z-50 pt-4 px-4 pointer-events-none">
+      <div className="max-w-5xl mx-auto flex items-center justify-center">
+        <div 
+          className={`pointer-events-auto flex items-center justify-between w-full rounded-2xl border transition-all duration-300 ${
+            scrolled 
+              ? "bg-background/90 backdrop-blur-md border-border shadow-lg shadow-black/5 py-3 px-6" 
+              : "bg-transparent border-transparent py-4 px-2"
+          }`}
+        >
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <img src="/logo-ukit.png" alt="UniKit Logo" className="w-5 h-5 object-contain" />
+            </div>
+            <span className="text-xl font-bold font-serif text-foreground tracking-tight">UniKit</span>
           </Link>
-
+          
           <nav className="hidden md:flex items-center gap-8">
-            <Link href="#modules" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-standard">
-              Features
-            </Link>
-            <Link href="#ai-features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-standard">
-              AI Tools
-            </Link>
-            <Link href="#why-us" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-standard">
-              Why Us
-            </Link>
-            <a
-              href="https://github.com/ArrinPaul/Hackathon"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground transition-standard"
-            >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-              </svg>
-              GitHub
-            </a>
+            <Link href="#modules" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Features</Link>
+            <Link href="#ai-features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">AI Tools</Link>
+            <Link href="#faq" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">FAQ</Link>
           </nav>
 
-          <div className="hidden md:flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {user ? (
-              <Link
-                href="/dashboard"
-                className="px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-[10px] hover:opacity-90 transition-standard"
-              >
+              <Link href="/dashboard" className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors">
                 Dashboard
               </Link>
             ) : (
               <>
-                <Link
-                  href="/login"
-                  className="px-4 py-2 text-sm font-medium text-foreground border border-border rounded-[10px] hover:bg-accent transition-standard"
-                >
-                  Sign In
+                <Link href="/login" className="hidden sm:block text-sm font-semibold text-foreground hover:text-primary transition-colors">
+                  Log in
                 </Link>
-                <Link
-                  href="/signup"
-                  className="px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-full hover:opacity-90 transition-standard shadow-md shadow-primary/20"
-                >
+                <Link href="/signup" className="text-sm font-semibold bg-primary text-primary-foreground px-5 py-2.5 rounded-[12px] hover:opacity-90 transition-opacity shadow-sm">
                   Get Started
                 </Link>
               </>
             )}
           </div>
-
-          <button
-            className="md:hidden p-2"
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
         </div>
       </div>
-
-      {mobileOpen && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          className="md:hidden bg-white border-t border-border"
-        >
-          <div className="px-4 py-4 space-y-3">
-            <Link href="#modules" className="block text-sm font-medium text-foreground" onClick={() => setMobileOpen(false)}>
-              Features
-            </Link>
-            <Link href="#ai-features" className="block text-sm font-medium text-foreground" onClick={() => setMobileOpen(false)}>
-              AI Tools
-            </Link>
-            <Link href="#why-us" className="block text-sm font-medium text-foreground" onClick={() => setMobileOpen(false)}>
-              Why Us
-            </Link>
-            {user ? (
-              <Link href="/dashboard" className="block px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-[10px] text-center" onClick={() => setMobileOpen(false)}>
-                Dashboard
-              </Link>
-            ) : (
-              <>
-                <Link href="/login" className="block px-4 py-2 text-sm font-medium text-foreground border border-border rounded-[10px] text-center" onClick={() => setMobileOpen(false)}>
-                  Sign In
-                </Link>
-                <Link href="/signup" className="block px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-[10px] text-center" onClick={() => setMobileOpen(false)}>
-                  Get Started
-                </Link>
-              </>
-            )}
-          </div>
-        </motion.div>
-      )}
     </header>
   );
 }
-
 function Hero() {
   return (
-    <section className="relative w-full pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden">
+    <section className="relative w-full pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden min-h-[85vh] flex items-center">
       <div className="absolute inset-0 -z-10">
-        <div className="absolute -top-[30%] -right-[10%] w-[60%] h-[60%] rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute -bottom-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-secondary/5 blur-3xl" />
+        {/* Subtle glowing orbs */}
+        <div className="absolute -top-[30%] -right-[10%] w-[60%] h-[60%] rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute -bottom-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-secondary/15 blur-3xl" />
+        
+        {/* Watermelon-inspired linear gradient overlays */}
+        <div
+          className="absolute inset-0 bg-[linear-gradient(90deg,hsl(var(--background)/0.94)_0%,hsl(var(--background)/0.76)_34%,hsl(var(--background)/0.2)_66%,hsl(var(--background)/0.03)_100%)]"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute inset-0 bg-[linear-gradient(180deg,hsl(var(--background)/0.72)_0%,hsl(var(--background)/0.04)_42%,hsl(var(--background)/0.12)_100%)]"
+          aria-hidden="true"
+        />
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10 w-full">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.12 } }
+          }}
+          className="max-w-[640px] flex flex-col items-start text-left"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-semibold text-primary bg-primary/10 rounded-[10px] mb-6">
-            <Sparkles className="w-3.5 h-3.5" />
-            AI-Powered Student Hub
-          </span>
-        </motion.div>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-4xl sm:text-5xl lg:text-7xl font-bold text-foreground tracking-tight mb-6 leading-[1.1]"
-        >
-          Your Smart{" "}
-          <span className="relative">
-            Campus
-            <span className="absolute bottom-1 left-0 right-0 h-3 bg-secondary/20 -z-10 rounded-full" />
-          </span>{" "}
-          <br className="hidden sm:block" />
-          Workflow Suite
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed"
-        >
-          UniKit unifies deadlines, attendance, notices, and AI tools so your academic life
-          moves from chaos to clarity — automatically.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
-        >
-          <Link
-            href="/signup"
-            className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-medium text-primary-foreground bg-primary rounded-full hover:opacity-90 transition-standard shadow-lg shadow-primary/25"
+          <motion.h1
+            variants={{
+              hidden: { opacity: 0, y: 18, filter: 'blur(8px)' },
+              visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { type: 'spring', duration: 0.72, bounce: 0 } }
+            }}
+            className="text-[clamp(3.05rem,5.05vw,5.5rem)] leading-[1.02] font-medium tracking-[-0.03em] text-foreground font-serif text-balance"
           >
-            Get Started Free
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-          <a
-            href="#modules"
-            className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-medium text-foreground border border-border rounded-[10px] hover:bg-accent transition-standard"
-          >
-            Learn More
-          </a>
-        </motion.div>
+            Your Smart Campus
+            <br />
+            <HandwritingText
+              words={["Workflow Suite.", "Task Manager.", "Notice Board.", "Study Buddy."]}
+              className="text-primary"
+              height="1.15em"
+            />
+          </motion.h1>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          className="mt-12 flex justify-center"
-        >
-          <button
-            onClick={() => document.getElementById("modules")?.scrollIntoView({ behavior: "smooth" })}
-            className="flex flex-col items-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+          <motion.p
+            variants={{
+              hidden: { opacity: 0, y: 18, filter: 'blur(8px)' },
+              visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { type: 'spring', duration: 0.72, bounce: 0 } }
+            }}
+            className="mt-8 max-w-[480px] text-[clamp(1rem,1.2vw,1.18rem)] leading-[1.42] font-medium text-pretty text-muted-foreground backdrop-blur-[1px]"
           >
-            <span className="text-sm font-medium mb-2">Discover More</span>
-            <ChevronDown className="w-5 h-5 animate-bounce" />
-          </button>
+            UniKit unifies deadlines, attendance, notices, and AI tools so your academic life
+            moves from chaos to clarity — automatically.
+          </motion.p>
+
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, y: 18, filter: 'blur(8px)' },
+              visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { type: 'spring', duration: 0.72, bounce: 0 } }
+            }}
+            className="mt-10 flex flex-wrap items-center gap-4"
+          >
+            <Link
+              href="/signup"
+              className="inline-flex min-h-12 items-center gap-2 bg-primary px-7 text-[15px] leading-none font-semibold text-primary-foreground shadow-[0_1px_2px_rgba(0,0,0,0.16)] transition-all duration-200 ease-out hover:opacity-90 hover:shadow-[0_2px_7px_rgba(0,0,0,0.18)] rounded-[10px]"
+            >
+              <span>Get Started Free</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <a
+              href="#modules"
+              className="inline-flex min-h-12 items-center gap-2 bg-secondary px-7 text-[15px] leading-none font-semibold text-secondary-foreground transition-all duration-200 ease-out hover:opacity-80 rounded-[10px]"
+            >
+              Learn More
+            </a>
+          </motion.div>
         </motion.div>
       </div>
     </section>
   );
 }
-
 const modules = [
   {
     id: "deadlines",
@@ -282,21 +212,7 @@ const modules = [
       "Searchable notice archive",
     ],
   },
-  {
-    id: "automation",
-    icon: Zap,
-    label: "Automations",
-    title: "Smart Automation",
-    description: "Fully automated workflows powered by n8n. Create a task and everything else happens automatically.",
-    color: "bg-amber-500",
-    iconBg: "bg-amber-500",
-    items: [
-      "n8n workflow engine integration",
-      "Zero manual work after setup",
-      "Cross-platform event sync",
-      "Custom triggers and conditions",
-    ],
-  },
+  
 ];
 
 function Modules() {
@@ -306,121 +222,99 @@ function Modules() {
   const activeModule = modules.find((m) => m.id === active)!;
 
   return (
-    <section id="modules" ref={ref} className="py-16 md:py-24 bg-muted/30 relative overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden">
+    <section id="modules" ref={ref} className="bg-background w-full min-h-screen flex items-center py-24 relative overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[10%] -right-[10%] w-[40%] h-[40%] rounded-full bg-primary/5 blur-3xl" />
         <div className="absolute bottom-[20%] -left-[5%] w-[30%] h-[30%] rounded-full bg-secondary/5 blur-3xl" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 relative z-10">
+      <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 lg:px-8 lg:grid-cols-2 relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          initial={{ opacity: 0, x: -20 }}
+          animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="text-center mb-10"
+          className="space-y-8"
         >
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4 tracking-tight">
-            Powerful <span className="text-primary">Tools</span> for Every Need
-          </h2>
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            Each tool works perfectly on its own or as part of the integrated ecosystem.
-          </p>
-        </motion.div>
+          <div>
+            <h2 className="text-[clamp(2.5rem,4vw,3.5rem)] font-serif leading-[1.1] font-medium tracking-tight text-foreground">
+              Run your campus life, <br/>not just your tasks
+            </h2>
+            <p className="text-muted-foreground max-w-lg mt-4 text-lg">
+              Coordinate deadlines, track attendance, and process notices without constant manual input or switching between tools.
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-white rounded-[10px] shadow-md p-4 md:p-6 flex flex-col"
-          >
-            <h3 className="text-lg font-bold mb-4 text-foreground">Modules</h3>
-            <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 flex-grow scrollbar-hide">
-              {modules.map((mod) => (
+          <div className="space-y-2">
+            {modules.map((mod) => {
+              const isActive = active === mod.id;
+              return (
                 <button
                   key={mod.id}
                   onClick={() => setActive(mod.id)}
                   onMouseEnter={() => setActive(mod.id)}
-                  className={`flex items-center gap-3 p-3 rounded-[10px] text-left transition-all duration-200 shrink-0 ${
-                    active === mod.id
-                      ? "bg-primary/5 text-primary"
-                      : "text-muted-foreground hover:bg-muted"
+                  className={`w-full flex items-start gap-4 rounded-xl p-4 transition-all duration-200 text-left ${
+                    isActive ? "bg-muted shadow-sm ring-1 ring-border" : "hover:bg-muted/50"
                   }`}
                 >
-                  <div className={`p-2 rounded-[10px] text-white ${mod.iconBg}`}>
-                    <mod.icon className="w-5 h-5" />
+                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${isActive ? "bg-primary text-primary-foreground shadow-md" : "bg-primary/10 text-primary"}`}>
+                    <mod.icon className="h-5 w-5" />
                   </div>
-                  <span className="font-medium whitespace-nowrap">{mod.label}</span>
-                </button>
-              ))}
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="lg:col-span-2 bg-white rounded-[10px] shadow-md overflow-hidden min-h-[400px]"
-          >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={active}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                className="grid grid-cols-1 md:grid-cols-2 h-full"
-              >
-                <div className="p-6 md:p-8 flex flex-col justify-between">
                   <div>
-                    <div className={`p-3 rounded-[10px] text-white w-fit mb-4 ${activeModule.iconBg}`}>
-                      <activeModule.icon className="w-6 h-6" />
+                    <div className={`text-sm font-semibold ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
+                      {mod.title}
                     </div>
-                    <h3 className="text-xl font-bold mb-3 text-foreground">{activeModule.title}</h3>
-                    <p className="text-muted-foreground mb-6">{activeModule.description}</p>
-                    <h4 className="text-sm font-semibold text-muted-foreground uppercase mb-3">Key Features</h4>
-                    <ul className="space-y-3">
-                      {activeModule.items.map((item) => (
-                        <li key={item} className="flex items-start gap-2">
-                          <ArrowRight className="w-4 h-4 text-primary mt-1 shrink-0" />
-                          <span className="text-foreground">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
+                    <div className="text-muted-foreground text-xs mt-1 leading-relaxed">
+                      {mod.description}
+                    </div>
                   </div>
-                </div>
-                <div className="bg-muted/50 p-6 md:p-8 flex items-center justify-center">
-                  <div className="w-full max-w-sm bg-white rounded-[10px] shadow-sm border border-border p-5">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className={`w-10 h-10 rounded-[10px] ${activeModule.iconBg} flex items-center justify-center`}>
-                        <activeModule.icon className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <div className="h-3 bg-foreground/10 rounded-full w-28 mb-1.5" />
-                        <div className="h-2 bg-foreground/5 rounded-full w-20" />
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="flex items-center gap-3">
-                          <div className={`w-6 h-6 rounded-full ${activeModule.iconBg}/10 flex items-center justify-center shrink-0`}>
-                            <CheckCircle className={`w-3.5 h-3.5 ${activeModule.iconBg === "bg-primary" ? "text-primary" : activeModule.iconBg === "bg-green-500" ? "text-green-500" : activeModule.iconBg === "bg-blue-500" ? "text-blue-500" : "text-amber-500"}`} />
-                          </div>
-                          <div className="h-2.5 bg-foreground/5 rounded-full flex-1" />
-                        </div>
-                      ))}
-                    </div>
-                    <div className="mt-4 pt-4 border-t border-border">
-                      <div className={`h-9 rounded-[10px] ${activeModule.iconBg} flex items-center justify-center`}>
-                        <span className="text-white text-sm font-medium">Add New</span>
-                      </div>
+                </button>
+              );
+            })}
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={inView ? { opacity: 1, scale: 1 } : {}}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="bg-muted dark:bg-card/50 relative flex items-center justify-center rounded-[24px] p-8 shadow-[inset_0_0px_6px_rgba(0,0,0,0.08)] min-h-[500px]"
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              initial={{ opacity: 0, y: 15, filter: "blur(4px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -15, filter: "blur(4px)" }}
+              transition={{ duration: 0.3 }}
+              className="relative w-full max-w-sm"
+            >
+              <div className="bg-background/90 dark:bg-card/80 ring-1 ring-border/50 rounded-2xl p-6 shadow-[0_12px_40px_rgba(0,0,0,0.12)] backdrop-blur-md">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className={`w-12 h-12 rounded-xl ${activeModule.iconBg} flex items-center justify-center shadow-inner`}>
+                    <activeModule.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-foreground">{activeModule.label}</h3>
+                    <div className="flex gap-2 mt-1">
+                      <span className="bg-primary/10 text-primary rounded-md px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider">Active</span>
+                      <span className="bg-muted rounded-md px-2 py-0.5 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Synced</span>
                     </div>
                   </div>
                 </div>
-              </motion.div>
-            </AnimatePresence>
-          </motion.div>
-        </div>
+
+                <div className="space-y-4">
+                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b border-border pb-2">Execution Flow</div>
+                  {activeModule.items.map((item, idx) => (
+                    <div key={idx} className="flex items-start gap-3 bg-muted/40 p-3 rounded-lg border border-border/50">
+                      <ArrowRight className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                      <span className="text-sm font-medium text-foreground">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
       </div>
     </section>
   );
@@ -502,37 +396,56 @@ function AIFeatures() {
   const inView = useInView(ref, { once: true });
 
   return (
-    <section id="ai-features" ref={ref} className="py-16 md:py-24 bg-white relative overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-[20%] -right-[5%] w-[25%] h-[25%] rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute bottom-[30%] -left-[5%] w-[30%] h-[30%] rounded-full bg-secondary/5 blur-3xl" />
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 relative z-10">
+    <section id="ai-features" ref={ref} className="min-h-screen flex items-center py-24 bg-background relative overflow-hidden w-full">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+          className="text-center mb-16"
         >
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-semibold text-primary bg-primary/10 rounded-[10px] mb-4">
-            <Sparkles className="w-3.5 h-3.5" />
-            AI-POWERED FEATURES
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4 tracking-tight">
-            Smart Tools That <span className="text-primary">Amplify</span> Your Productivity
+          
+          <h2 className="text-[clamp(2.2rem,3.5vw,3rem)] font-serif leading-[1.1] font-medium tracking-tight text-foreground text-balance mx-auto">
+            Smart tools that amplify<br />your productivity
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {aiFeatures.map((feature, i) => (
             <motion.div
               key={feature.title}
               initial={{ opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: i * 0.1 }}
+              className="bg-muted/30 flex h-full flex-col rounded-[24px] border border-border overflow-hidden group hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
             >
-              <AIFeatureCard feature={feature} index={i} />
+              <div className="flex flex-col gap-4 p-6">
+                <div className={`w-12 h-12 rounded-2xl ${feature.color} flex items-center justify-center text-white shadow-inner mb-2`}>
+                  <feature.icon className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-foreground text-xl font-bold mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    {feature.description}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="mt-auto p-4 pt-0">
+                <div className="bg-background flex min-h-[160px] flex-col justify-center rounded-[20px] p-5 shadow-[0px_2px_8px_rgba(0,0,0,0.04)] border border-border/50 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full pointer-events-none" />
+                  <div className="flex items-start gap-3 relative z-10">
+                    <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <div className="space-y-2 w-full">
+                      <div className="h-2.5 bg-muted rounded-full w-[85%]" />
+                      <div className="h-2.5 bg-muted rounded-full w-[60%]" />
+                      <div className="h-2.5 bg-muted rounded-full w-[75%]" />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -540,7 +453,6 @@ function AIFeatures() {
     </section>
   );
 }
-
 const comparisons = [
   { feature: "Tool Management", traditional: "Multiple disconnected tools with separate logins", UniKit: "Single platform with integrated modules", icon: LayoutDashboard },
   { feature: "Context Switching", traditional: "Constant switching between apps disrupts focus", UniKit: "Seamless workflow with everything in one place", icon: Zap },
@@ -757,7 +669,7 @@ function ReplaceTools() {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                {["Deadlines", "Attendance", "Notices", "AI Tools", "Automations", "Telegram"].map((feat) => (
+                {["Deadlines", "Attendance", "Notices", "AI Tools", "Telegram"].map((feat) => (
                   <div key={feat} className="flex items-center gap-2 text-sm text-foreground">
                     <CheckCircle className="w-4 h-4 text-green-500 shrink-0" />
                     {feat}
@@ -766,6 +678,76 @@ function ReplaceTools() {
               </div>
             </div>
           </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
+const faqs = [
+  { question: "Is UniKit completely free?", answer: "Yes! UniKit is free for students during our public beta. We want to ensure every student has access to these tools without barriers." },
+  { question: "How does the Telegram bot work?", answer: "We connect directly to your college notice groups. Our AI reads the incoming messages and sends you a 3-bullet summary instantly." },
+  { question: "Can I manage multiple subjects?", answer: "Absolutely. You can track attendance, deadlines, and tasks for as many subjects as you need in one centralized dashboard." },
+  { question: "Is my data secure?", answer: "Your data is encrypted and securely stored. We never share your personal information or academic data with third parties." }
+];
+
+function FAQ() {
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true });
+
+  return (
+    <section id="faq" ref={ref} className="py-24 bg-background relative border-t border-border/40">
+      <div className="max-w-3xl mx-auto px-6">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-[clamp(2.2rem,3.5vw,3rem)] font-serif leading-[1.1] font-medium tracking-tight text-foreground text-balance mx-auto mb-4">
+            Frequently Asked Questions
+          </h2>
+          <p className="text-muted-foreground text-lg">
+            Everything you need to know about the platform.
+          </p>
+        </motion.div>
+        
+        <div className="space-y-4">
+          {faqs.map((faq, i) => (
+            <motion.div 
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.4, delay: i * 0.1 }}
+              className="border border-border/60 rounded-2xl overflow-hidden bg-background/50 transition-colors hover:bg-muted/20"
+            >
+              <button
+                onClick={() => setOpenIdx(openIdx === i ? null : i)}
+                className="w-full flex items-center justify-between p-6 text-left"
+              >
+                <span className="font-semibold text-lg text-foreground pr-8">{faq.question}</span>
+                <span className="text-muted-foreground shrink-0">
+                  {openIdx === i ? <Minus className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                </span>
+              </button>
+              <AnimatePresence>
+                {openIdx === i && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="p-6 pt-0 text-muted-foreground leading-relaxed">
+                      {faq.answer}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
@@ -790,10 +772,7 @@ function CTA() {
             <div className="absolute bottom-10 right-10 w-48 h-48 bg-white/5 rounded-full blur-3xl" />
           </div>
           <div className="relative z-10">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-semibold bg-white/20 rounded-[10px] mb-6">
-              <Zap className="w-3.5 h-3.5" />
-              Free for Students
-            </span>
+            
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight">
               Start Building with UniKit Today
             </h2>
@@ -815,9 +794,7 @@ function CTA() {
                 Learn More
               </a>
             </div>
-            <p className="text-xs text-white/60 mt-6">
-              No credit card required • Free during public beta • Full platform access
-            </p>
+            
           </div>
         </motion.div>
       </div>
@@ -884,9 +861,10 @@ export default function Home() {
           <Hero />
           <Modules />
           <AIFeatures />
-          <WhyUs />
+          
           <ReplaceTools />
-          <CTA />
+            <FAQ />
+            <CTA />
         </main>
         <Footer />
       </div>
