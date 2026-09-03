@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Settings, Calendar, User, Save, RefreshCw, Loader2, ShieldCheck, ShieldAlert, Sparkles, X, Plus } from "lucide-react";
+import { Settings, Calendar, User, Users, Save, RefreshCw, Loader2, ShieldCheck, ShieldAlert, Sparkles, X, Plus } from "lucide-react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -24,6 +24,10 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [calendarConnected, setCalendarConnected] = useState(false);
   const [checkingCalendar, setCheckingCalendar] = useState(true);
+  
+  const [joinedGroups, setJoinedGroups] = useState<{ id: string; name: string; telegram_chat_id: number; created_at: string }[]>([]);
+  const [loadingGroups, setLoadingGroups] = useState(true);
+
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
@@ -41,6 +45,12 @@ export default function SettingsPage() {
         .then((res) => setCalendarConnected(res.connected))
         .catch(() => setCalendarConnected(false))
         .finally(() => setCheckingCalendar(false));
+
+      // Fetch joined groups
+      api.get<{ groups: any[] }>("/api/groups/my-groups")
+        .then((res) => setJoinedGroups(res.groups || []))
+        .catch(() => setJoinedGroups([]))
+        .finally(() => setLoadingGroups(false));
     }
   }, [user]);
 
@@ -179,9 +189,34 @@ export default function SettingsPage() {
                   </button>
                 </div>
               )}
+              </div>
+            </div>
+
+            {/* Joined Groups Card */}
+            <div className="bg-white border border-border rounded-[10px] p-6 shadow-sm mt-6">
+              <h3 className="font-semibold text-foreground text-base flex items-center gap-2 border-b border-border pb-3 mb-4">
+                <Users className="w-4 h-4 text-primary" />
+                Joined Classes
+              </h3>
+              
+              <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
+                {loadingGroups ? (
+                  <div className="flex justify-center p-4">
+                    <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                  </div>
+                ) : joinedGroups.length === 0 ? (
+                  <p className="text-xs text-muted-foreground italic text-center p-4">No groups joined yet.</p>
+                ) : (
+                  joinedGroups.map(g => (
+                    <div key={g.id} className="p-3 bg-background border border-border rounded-[10px] shadow-sm">
+                      <div className="font-semibold text-sm text-foreground mb-1">{g.name}</div>
+                      <div className="text-[10px] text-muted-foreground font-mono truncate">Chat ID: {g.telegram_chat_id}</div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
         {/* Right Side: Profile Details */}
         <div className="md:col-span-2 space-y-6">

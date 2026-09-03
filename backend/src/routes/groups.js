@@ -154,6 +154,7 @@ router.post("/join", authMiddleware, async (req, res) => {
     }
 
     const supabase = getClient();
+    console.log(`[Join API] Attempting to join chat_id: ${chat_id} for student: ${req.student.id}`);
 
     // Find the group
     const { data: group, error: groupError } = await supabase
@@ -163,6 +164,7 @@ router.post("/join", authMiddleware, async (req, res) => {
       .single();
 
     if (groupError || !group) {
+      console.log("[Join API] Group not found:", groupError);
       return res.status(404).json({ message: "Group not found" });
     }
 
@@ -175,6 +177,7 @@ router.post("/join", authMiddleware, async (req, res) => {
       .single();
 
     if (existing) {
+      console.log("[Join API] Already a member");
       return res.json({ message: "Already a member of this group", group_name: group.name });
     }
 
@@ -186,10 +189,15 @@ router.post("/join", authMiddleware, async (req, res) => {
         student_id: req.student.id,
       });
 
-    if (insertError) throw insertError;
+    if (insertError) {
+      console.error("[Join API] Insert error:", insertError);
+      throw insertError;
+    }
 
+    console.log("[Join API] Successfully joined");
     res.json({ message: "Successfully joined group", group_name: group.name });
   } catch (error) {
+    console.error("[Join API] Uncaught error:", error);
     res.status(500).json({ message: error.message });
   }
 });
