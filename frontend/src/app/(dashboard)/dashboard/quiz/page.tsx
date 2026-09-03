@@ -29,120 +29,96 @@ import {
 import { api } from "@/lib/api";
 
 interface Question {
+  id: string;
   question: string;
-  options?: string[];
-  correctIndex?: number;
-  modelAnswer?: string;
+  options: string[];
+  correctIndex: number;
   explanation: string;
   citation?: string;
 }
 
-interface SourceDoc {
-  id: string;
-  title: string;
-  content: string;
-  createdAt: string;
+interface GeneratedQuestion {
+  question: string;
+  options: string[];
+  correctIndex: number;
+  explanation: string;
+  citation?: string;
 }
 
-interface WrittenNote {
+interface Quiz {
   id: string;
   title: string;
-  content: string;
+  score: number | null;
   createdAt: string;
-}
-
-interface ShortAnswerGrade {
-  score: number;
-  feedback: string;
-  isCorrect: boolean;
 }
 
 export default function QuizPage() {
-  // Sidebar Tabs: "sources" | "notes"
-  const [sidebarTab, setSidebarTab] = useState<"sources" | "notes">("sources");
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [selectedQuizId, setSelectedQuizId] = useState<string | null>(null);
 
-  // Sources State
-  const [sources, setSources] = useState<SourceDoc[]>([]);
-  const [selectedSourceIds, setSelectedSourceIds] = useState<string[]>([]);
+  // Modal state for New Quiz
+  const [isNewQuizModalOpen, setIsNewQuizModalOpen] = useState(false);
+  const [newQuizTitle, setNewQuizTitle] = useState("");
+  const [newQuizContent, setNewQuizContent] = useState("");
+  const [newQuizCount, setNewQuizCount] = useState(5);
+  const [newQuizType, setNewQuizType] = useState<"mcq" | "tf">("mcq");
   
-  // Pinned Notes State
-  const [notesList, setNotesList] = useState<WrittenNote[]>([]);
-  
-  // Modal State for Adding/Editing Sources
-  const [isSourceModalOpen, setIsSourceModalOpen] = useState(false);
-  const [modalSourceId, setModalSourceId] = useState<string | null>(null);
-  const [modalTitle, setModalTitle] = useState("");
-  const [modalContent, setModalContent] = useState("");
-  const [modalTab, setModalTab] = useState<"text" | "upload">("text");
-
   // File Upload Status
   const [fileLoading, setFileLoading] = useState(false);
   const [uploadError, setUploadError] = useState("");
+  const [modalTab, setModalTab] = useState<"text" | "upload">("text");
 
-  // Modal State for Manual Written Note Creation
-  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
-  const [modalNoteId, setModalNoteId] = useState<string | null>(null);
-  const [noteModalTitle, setNoteModalTitle] = useState("");
-  const [noteModalContent, setNoteModalContent] = useState("");
-
-  // Quiz States
-  const [questionCount, setQuestionCount] = useState(5);
-  const [quizType, setQuizType] = useState<"mcq" | "tf" | "short_answer">("mcq");
-  
+  // Active Quiz State
+  const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<Record<number, number>>({});
-  const [shortAnswerInputs, setShortAnswerInputs] = useState<Record<number, string>>({});
   
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [activeQuestionIndex, setActiveQuestionIndex] = useState(0);
   
-  // Short Answer AI Grading
-  const [shortAnswerGrades, setShortAnswerGrades] = useState<Record<number, ShortAnswerGrade>>({});
-  const [gradingProgress, setGradingProgress] = useState("");
-  
   // Workspace Views: "interactive" | "review-sheet"
   const [activeView, setActiveView] = useState<"interactive" | "review-sheet">("interactive");
-  
-  // Feedbacks
-  const [pinnedFeedback, setPinnedFeedback] = useState<number | null>(null);
 
-  // Initialize Sources and Notes from localStorage (shares the exact same lists!)
+  const fetchQuizzes = async () => {
+    try {
+      const res = await api.get<{ quizzes: Quiz[] }>("/api/quizzes");
+      setQuizzes(res.quizzes || []);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
-    // 1. Load Sources
-    const savedSources = localStorage.getItem("UniKit_notebook_sources");
-    if (savedSources) {
-      try {
-        const parsed = JSON.parse(savedSources) as SourceDoc[];
-        setSources(parsed);
-        setSelectedSourceIds(parsed.map(s => s.id));
-      } catch (e) {
-        console.error(e);
-      }
-    } else {
-      // Seed with a default source
-      const defaultSource: SourceDoc = {
-        id: "default-1",
-        title: "Active Recall & Spaced Repetition",
-        content: "Active recall is a highly effective learning technique that involves testing your memory rather than passively reviewing notes. Instead of reading transcripts, you force your brain to retrieve the concept. Spaced repetition utilizes expanding time intervals (e.g. 1 day, 3 days, 7 days) before reviewing cards again. This leverages the psychological spacing effect, strengthening synapses and encoding information into long-term memory. Combined, these methods optimize cognitive efficiency.",
-        createdAt: new Date().toISOString()
-      };
-      setSources([defaultSource]);
-      setSelectedSourceIds([defaultSource.id]);
-      localStorage.setItem("UniKit_notebook_sources", JSON.stringify([defaultSource]));
-    }
-
-    // 2. Load Notes
-    const savedNotes = localStorage.getItem("UniKit_notebook_notes");
-    if (savedNotes) {
-      try {
-        setNotesList(JSON.parse(savedNotes));
-      } catch (e) {
-        console.error(e);
-      }
-    }
+    fetchQuizzes();
   }, []);
+
+  useEffect(() => {
+    if (!selectedQuizId) {
+      setQuiz(null);
+      setQuestions([]);
+      return;
+    }
+    const loadQuiz = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const res = await api.get<{ quiz: Quiz; questions: Question[] }>(`/api/quizzes/${selectedQuizId}`);
+        setQuiz(res.quiz);
+        setQuestions(res.questions);
+        setAnswers({});
+        setSubmitted(res.quiz.score !== null);
+        setActiveQuestionIndex(0);
+        setActiveView("interactive");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load quiz");
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadQuiz();
+  }, [selectedQuizId]);
 
   // PDF.js dynamic CDN Loader helper
   const loadPdfJs = async () => {
@@ -201,8 +177,8 @@ export default function QuizPage() {
         throw new Error("No readable text content could be extracted from this document.");
       }
 
-      setModalTitle(file.name.replace(/\.[^/.]+$/, ""));
-      setModalContent(extractedText);
+      setNewQuizTitle(file.name.replace(/\.[^/.]+$/, ""));
+      setNewQuizContent(extractedText);
       setModalTab("text"); // Switch back to text view
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : "Error reading uploaded file.");
@@ -212,181 +188,57 @@ export default function QuizPage() {
     }
   };
 
-  // Save/Edit Source Action
-  const handleSaveSource = () => {
-    if (!modalTitle.trim() || !modalContent.trim()) {
+  const handleGenerateQuiz = async () => {
+    if (!newQuizTitle.trim() || !newQuizContent.trim()) {
       alert("Please provide both a title and notes text content.");
       return;
     }
 
-    let updatedSources = [...sources];
-    if (modalSourceId) {
-      updatedSources = updatedSources.map(s => 
-        s.id === modalSourceId 
-          ? { ...s, title: modalTitle.trim(), content: modalContent.trim() } 
-          : s
-      );
-    } else {
-      const newDoc: SourceDoc = {
-        id: Math.random().toString(36).substring(7),
-        title: modalTitle.trim(),
-        content: modalContent.trim(),
-        createdAt: new Date().toISOString()
-      };
-      updatedSources.push(newDoc);
-      setSelectedSourceIds(prev => [...prev, newDoc.id]);
-    }
-
-    setSources(updatedSources);
-    localStorage.setItem("UniKit_notebook_sources", JSON.stringify(updatedSources));
-    
-    setIsSourceModalOpen(false);
-    setModalTitle("");
-    setModalContent("");
-    setModalSourceId(null);
-  };
-
-  const handleStartEditSource = (doc: SourceDoc) => {
-    setModalSourceId(doc.id);
-    setModalTitle(doc.title);
-    setModalContent(doc.content);
-    setModalTab("text");
-    setUploadError("");
-    setIsSourceModalOpen(true);
-  };
-
-  const handleDeleteSource = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!confirm("Are you sure you want to delete this source document?")) return;
-
-    const updated = sources.filter(s => s.id !== id);
-    setSources(updated);
-    setSelectedSourceIds(prev => prev.filter(selectedId => selectedId !== id));
-    localStorage.setItem("UniKit_notebook_sources", JSON.stringify(updated));
-  };
-
-  const handleToggleSelectSource = (id: string) => {
-    setSelectedSourceIds(prev => 
-      prev.includes(id) ? prev.filter(sid => sid !== id) : [...prev, id]
-    );
-  };
-
-  // Written Notes Handlers
-  const handleSaveNote = () => {
-    if (!noteModalTitle.trim() || !noteModalContent.trim()) {
-      alert("Please enter a note title and text content.");
-      return;
-    }
-
-    let updatedNotes = [...notesList];
-    if (modalNoteId) {
-      updatedNotes = updatedNotes.map(n => 
-        n.id === modalNoteId 
-          ? { ...n, title: noteModalTitle.trim(), content: noteModalContent.trim() }
-          : n
-      );
-    } else {
-      const newNote: WrittenNote = {
-        id: Math.random().toString(36).substring(7),
-        title: noteModalTitle.trim(),
-        content: noteModalContent.trim(),
-        createdAt: new Date().toISOString()
-      };
-      updatedNotes.unshift(newNote);
-    }
-
-    setNotesList(updatedNotes);
-    localStorage.setItem("UniKit_notebook_notes", JSON.stringify(updatedNotes));
-
-    setIsNoteModalOpen(false);
-    setNoteModalTitle("");
-    setNoteModalContent("");
-    setModalNoteId(null);
-  };
-
-  const handleStartEditNote = (note: WrittenNote) => {
-    setModalNoteId(note.id);
-    setNoteModalTitle(note.title);
-    setNoteModalContent(note.content);
-    setIsNoteModalOpen(true);
-  };
-
-  const handleDeleteNote = (id: string) => {
-    if (!confirm("Are you sure you want to delete this note?")) return;
-    const updated = notesList.filter(n => n.id !== id);
-    setNotesList(updated);
-    localStorage.setItem("UniKit_notebook_notes", JSON.stringify(updated));
-  };
-
-  // Pin question review
-  const handlePinQuestionToNotes = (q: Question, qidx: number) => {
-    let noteContent = `Quiz Question Review (Type: ${quizType.toUpperCase()}):\nQuestion: ${q.question}\n`;
-    
-    if (quizType === "short_answer") {
-      const studentAns = shortAnswerInputs[qidx] || "No answer provided.";
-      const grade = shortAnswerGrades[qidx];
-      noteContent += `Your Response: "${studentAns}"\nGrade: ${grade?.score || 0}/100\nAI Evaluation: ${grade?.feedback || "Pending"}\nModel Answer: ${q.modelAnswer || ""}`;
-    } else {
-      const selectedOpt = q.options?.[answers[qidx] ?? -1] || "Unanswered";
-      const correctOpt = q.options?.[q.correctIndex ?? 0] || "None";
-      noteContent += `Your Selected Option: ${selectedOpt}\nCorrect Option: ${correctOpt}\nExplanation: ${q.explanation}`;
-    }
-
-    if (q.citation) {
-      noteContent += `\nCitation: "${q.citation}"`;
-    }
-
-    const newNote: WrittenNote = {
-      id: Math.random().toString(36).substring(7),
-      title: `Quiz Result: Q${qidx + 1}`,
-      content: noteContent,
-      createdAt: new Date().toISOString()
-    };
-
-    const updated = [newNote, ...notesList];
-    setNotesList(updated);
-    localStorage.setItem("UniKit_notebook_notes", JSON.stringify(updated));
-    
-    setPinnedFeedback(qidx);
-    setTimeout(() => setPinnedFeedback(null), 1500);
-  };
-
-  // Generate Quiz
-  const handleGenerate = async () => {
-    const activeSources = sources.filter(s => selectedSourceIds.includes(s.id));
-    if (activeSources.length === 0) {
-      setError("Please select or add at least one source document first!");
-      return;
-    }
-
-    const combinedNotes = activeSources.map(s => s.content).join("\n\n");
-
-    setError("");
     setLoading(true);
-    setQuestions([]);
-    setAnswers({});
-    setShortAnswerInputs({});
-    setShortAnswerGrades({});
-    setSubmitted(false);
-    setActiveQuestionIndex(0);
-    setActiveView("interactive");
+    setError("");
+    setIsNewQuizModalOpen(false);
 
     try {
-      const res = await api.post<{ questions: Question[] }>("/api/ai/quiz", {
-        notes: combinedNotes,
-        count: questionCount,
-        type: quizType
+      const aiRes = await api.post<{ questions: GeneratedQuestion[] }>("/api/ai/quiz", {
+        notes: newQuizContent,
+        count: newQuizCount,
+        type: newQuizType
       });
 
-      if (res.questions && res.questions.length > 0) {
-        setQuestions(res.questions);
-      } else {
-        throw new Error("AI did not generate any quiz questions. Try pasting longer notes or checking more sources.");
+      if (!aiRes.questions || aiRes.questions.length === 0) {
+        throw new Error("AI did not generate any quiz questions.");
       }
+
+      const saveRes = await api.post<{ quiz: Quiz }>("/api/quizzes", {
+        title: newQuizTitle,
+        questions: aiRes.questions
+      });
+
+      setQuizzes(prev => [saveRes.quiz, ...prev]);
+      setSelectedQuizId(saveRes.quiz.id);
+      
+      setNewQuizTitle("");
+      setNewQuizContent("");
+      setNewQuizCount(5);
+      setNewQuizType("mcq");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to generate quiz");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteQuiz = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!confirm("Are you sure you want to delete this quiz?")) return;
+    try {
+      await api.delete(`/api/quizzes/${id}`);
+      setQuizzes(prev => prev.filter(q => q.id !== id));
+      if (selectedQuizId === id) {
+        setSelectedQuizId(null);
+      }
+    } catch (err) {
+      alert("Failed to delete quiz.");
     }
   };
 
@@ -395,148 +247,83 @@ export default function QuizPage() {
     setAnswers((prev) => ({ ...prev, [activeQuestionIndex]: optIndex }));
   };
 
-  // Submit Quiz
   const handleSubmitQuiz = async () => {
-    const unanswered = questions.length - (
-      quizType === "short_answer" 
-        ? Object.keys(shortAnswerInputs).length 
-        : Object.keys(answers).length
-    );
-
+    const unanswered = questions.length - Object.keys(answers).length;
     if (unanswered > 0) {
       if (!confirm(`You have ${unanswered} unanswered question${unanswered > 1 ? "s" : ""}. Submit anyway?`)) {
         return;
       }
     }
 
-    if (quizType === "short_answer") {
-      setLoading(true);
-      setError("");
+    setLoading(true);
+    setError("");
       
-      try {
-        const gradesMap: Record<number, ShortAnswerGrade> = {};
-        
-        const gradingPromises = questions.map(async (q, index) => {
-          setGradingProgress(`Grading question ${index + 1} of ${questions.length}...`);
-          const userAnswer = shortAnswerInputs[index] || "";
-          
-          try {
-            const result = await api.post<ShortAnswerGrade>("/api/ai/grade-short-answer", {
-              question: q.question,
-              modelAnswer: q.modelAnswer || "",
-              userAnswer: userAnswer.trim()
-            });
-            return { index, result };
-          } catch (e) {
-            console.error(e);
-            return {
-              index,
-              result: { score: 0, feedback: "AI evaluation failed for this question.", isCorrect: false }
-            };
-          }
-        });
+    try {
+      let scoreCount = 0;
+      const submissionAnswers = questions.map((q, i) => {
+        const userAnswerIndex = answers[i] ?? -1;
+        const isCorrect = userAnswerIndex === q.correctIndex;
+        if (isCorrect) scoreCount++;
+        return {
+          question_id: q.id,
+          user_answer_index: userAnswerIndex,
+          is_correct: isCorrect
+        };
+      });
 
-        const completedGrades = await Promise.all(gradingPromises);
-        completedGrades.forEach(g => {
-          gradesMap[g.index] = g.result;
-        });
+      const finalScore = Math.round((scoreCount / questions.length) * 100);
 
-        setShortAnswerGrades(gradesMap);
-        setSubmitted(true);
-        setActiveQuestionIndex(0);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to grade short answer exam.");
-      } finally {
-        setLoading(false);
-        setGradingProgress("");
-      }
+      await api.patch(`/api/quizzes/${selectedQuizId}/submit`, {
+        score: finalScore,
+        answers: submissionAnswers
+      });
 
-    } else {
       setSubmitted(true);
       setActiveQuestionIndex(0);
+      setQuiz(prev => prev ? { ...prev, score: finalScore } : null);
+      
+      setQuizzes(prev => prev.map(q => q.id === selectedQuizId ? { ...q, score: finalScore } : q));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to submit exam.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleRestart = () => {
+  const handleRetake = () => {
     setAnswers({});
-    setShortAnswerInputs({});
-    setShortAnswerGrades({});
     setSubmitted(false);
     setActiveQuestionIndex(0);
     setActiveView("interactive");
   };
 
-  const handleClearQuiz = () => {
-    setQuestions([]);
-    setAnswers({});
-    setShortAnswerInputs({});
-    setShortAnswerGrades({});
-    setSubmitted(false);
-    setActiveQuestionIndex(0);
-    setError("");
-  };
-
-  // Score metrics
   const calculateScore = () => {
     let scoreCount = 0;
-    if (quizType === "short_answer") {
-      questions.forEach((_, qi) => {
-        if (shortAnswerGrades[qi]?.isCorrect) {
-          scoreCount++;
-        }
-      });
-    } else {
-      questions.forEach((q, qi) => {
-        if (answers[qi] === q.correctIndex) {
-          scoreCount++;
-        }
-      });
-    }
+    questions.forEach((q, qi) => {
+      if (answers[qi] === q.correctIndex) {
+        scoreCount++;
+      }
+    });
     return scoreCount;
   };
 
-  const calculateAverageShortAnswerScore = () => {
-    if (questions.length === 0) return 0;
-    let sum = 0;
-    Object.values(shortAnswerGrades).forEach(g => {
-      sum += g.score;
-    });
-    return Math.round(sum / questions.length);
-  };
-
   const score = calculateScore();
-  const avgSAScore = calculateAverageShortAnswerScore();
-  const unansweredCount = questions.length - (
-    quizType === "short_answer" 
-      ? Object.keys(shortAnswerInputs).length 
-      : Object.keys(answers).length
-  );
-  
-  const totalCharacters = sources
-    .filter(s => selectedSourceIds.includes(s.id))
-    .reduce((sum, s) => sum + s.content.length, 0);
+  const unansweredCount = questions.length - Object.keys(answers).length;
 
   return (
     <div className="max-w-7xl mx-auto h-[calc(100vh-6rem)] flex flex-col">
-      
       {/* Header */}
       <div className="flex items-center justify-between flex-shrink-0 mb-6">
         <h1 className="text-2xl font-bold text-foreground">
           Quizzes
         </h1>
 
-        {/* Global actions */}
-        {questions.length > 0 && (
+        {questions.length > 0 && selectedQuizId && (
           <div className="flex items-center gap-2">
             <button
-              onClick={handleClearQuiz}
-              className="px-4 py-2 border border-border hover:bg-accent text-sm font-medium rounded-[10px] text-foreground transition-standard cursor-pointer"
-            >
-              Clear Quiz
-            </button>
-            <button
-              onClick={handleRestart}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-medium rounded-[10px] hover:opacity-90 transition-standard cursor-pointer"
+              onClick={handleRetake}
+              disabled={!submitted}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-medium rounded-[10px] hover:opacity-90 disabled:opacity-50 transition-standard cursor-pointer"
             >
               <RefreshCw className="w-4 h-4" />
               Retake Quiz
@@ -546,7 +333,7 @@ export default function QuizPage() {
       </div>
 
       {error && (
-        <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-[10px] text-sm text-red-700 animate-in fade-in duration-200 flex items-center gap-2">
+        <div className="p-4 mb-4 bg-destructive/10 border border-destructive/20 rounded-[10px] text-sm text-red-700 animate-in fade-in duration-200 flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-red-600 block flex-shrink-0" />
           {error}
         </div>
@@ -557,278 +344,95 @@ export default function QuizPage() {
         
         {/* Left Sidebar */}
         <div className="lg:col-span-4 space-y-4">
-          <div className="bg-card border border-border rounded-[10px] p-5 space-y-4 shadow-sm">
-            
-            {/* Sidebar Tabs */}
-            <div className="flex gap-2 border-b border-border pb-1">
-              <button
-                onClick={() => setSidebarTab("sources")}
-                className={`px-4 py-2 text-sm font-medium border-b-2 transition-standard capitalize cursor-pointer ${
-                  sidebarTab === "sources"
-                    ? "border-primary text-primary font-semibold"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                }`}
+          <div className="bg-card border border-border rounded-[10px] p-5 space-y-4 shadow-sm h-full flex flex-col">
+            <div className="flex items-center justify-between flex-shrink-0 mb-4 border-b border-border pb-4">
+              <h4 className="font-semibold text-foreground text-xs uppercase tracking-wider font-mono">
+                Your Quizzes
+              </h4>
+              <button 
+                onClick={() => {
+                  setNewQuizTitle("");
+                  setNewQuizContent("");
+                  setModalTab("text");
+                  setUploadError("");
+                  setIsNewQuizModalOpen(true);
+                }}
+                className="text-[10px] font-semibold text-primary hover:text-foreground flex items-center gap-1 transition-standard cursor-pointer"
               >
-                Sources ({sources.length})
-              </button>
-              <button
-                onClick={() => setSidebarTab("notes")}
-                className={`px-4 py-2 text-sm font-medium border-b-2 transition-standard capitalize cursor-pointer ${
-                  sidebarTab === "notes"
-                    ? "border-primary text-primary font-semibold"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                Saved Notes ({notesList.length})
+                <Plus className="w-3 h-3" />
+                New Quiz
               </button>
             </div>
 
-            {/* TAB 1: Sources */}
-            {sidebarTab === "sources" && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between flex-shrink-0 mb-6">
-                  <h4 className="font-semibold text-foreground text-xs uppercase tracking-wider font-mono">
-                    Notebook Documents
-                  </h4>
-                  <button 
-                    onClick={() => {
-                      setModalSourceId(null);
-                      setModalTitle("");
-                      setModalContent("");
-                      setModalTab("text");
-                      setUploadError("");
-                      setIsSourceModalOpen(true);
-                    }}
-                    className="text-[10px] font-semibold text-primary hover:text-foreground flex items-center gap-1 transition-standard cursor-pointer"
-                  >
-                    <Plus className="w-3 h-3" />
-                    Add Source
-                  </button>
+            <div className="space-y-2.5 flex-1 overflow-y-auto pr-1">
+              {quizzes.length === 0 ? (
+                <div className="border border-dashed border-border rounded-[10px] p-6 text-center text-xs text-muted-foreground font-sans italic">
+                  No quizzes found. Create one to start studying.
                 </div>
-
-                <div className="space-y-2.5 max-h-[220px] overflow-y-auto pr-1">
-                  {sources.length === 0 ? (
-                    <div className="border border-dashed border-border rounded-[10px] p-6 text-center text-xs text-muted-foreground font-sans italic">
-                      No source documents found. Add reference notes.
-                    </div>
-                  ) : (
-                    sources.map((doc) => {
-                      const isChecked = selectedSourceIds.includes(doc.id);
-                      return (
-                        <div 
-                          key={doc.id}
-                          onClick={() => handleToggleSelectSource(doc.id)}
-                          className={`group border rounded-[10px] p-3 transition-standard cursor-pointer flex items-start gap-2.5 relative ${
-                            isChecked ? "bg-white border-primary/40 shadow-sm" : "bg-transparent border-border hover:bg-muted/45"
-                          }`}
-                        >
-                          <div className="pt-0.5" onClick={(e) => e.stopPropagation()}>
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={() => handleToggleSelectSource(doc.id)}
-                              className="w-3.5 h-3.5 accent-primary rounded-[10px] cursor-pointer"
-                            />
-                          </div>
-
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-1.5">
-                              <FileText className={`w-3.5 h-3.5 flex-shrink-0 ${isChecked ? "text-primary" : "text-muted-foreground"}`} />
-                              <h4 className="font-semibold text-xs text-foreground truncate pr-12">
-                                {doc.title}
-                              </h4>
-                            </div>
-                            <p className="text-[10px] text-muted-foreground mt-1 font-mono">
-                              {doc.content.split(/\s+/).filter(Boolean).length} words
-                            </p>
-                          </div>
-
-                          {/* Hover Actions */}
-                          <div className="absolute right-2 top-2 flex items-center gap-1 lg:opacity-0 lg:group-hover:opacity-100 transition-standard" onClick={(e) => e.stopPropagation()}>
-                            <button
-                              onClick={() => handleStartEditSource(doc)}
-                              className="p-1 text-muted-foreground hover:text-primary hover:bg-muted rounded-[10px] transition-standard cursor-pointer"
-                            >
-                              <Edit2 className="w-3 h-3" />
-                            </button>
-                            <button
-                              onClick={(e) => handleDeleteSource(doc.id, e)}
-                              className="p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-[10px] transition-standard cursor-pointer"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })
-                  )}
-                </div>
-
-                {sources.length > 0 && (
-                  <div className="pt-2 border-t border-border space-y-3.5">
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <label className="block text-[10px] font-bold text-muted-foreground mb-1 uppercase tracking-wider font-mono">
-                          Format:
-                        </label>
-                        <select
-                          value={quizType}
-                          onChange={(e) => setQuizType(e.target.value as any)}
-                          className="w-full px-2 py-1.5 bg-white border border-border rounded-[10px] text-[11px] focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
-                        >
-                          <option value="mcq">MCQ (4 choices)</option>
-                          <option value="tf">True / False</option>
-                          <option value="short_answer">Short Essay</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="block text-[10px] font-bold text-muted-foreground mb-1 uppercase tracking-wider font-mono">
-                          Quantity:
-                        </label>
-                        <select
-                          value={questionCount}
-                          onChange={(e) => setQuestionCount(Number(e.target.value))}
-                          className="w-full px-2 py-1.5 bg-white border border-border rounded-[10px] text-[11px] focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
-                        >
-                          <option value={3}>3 Items</option>
-                          <option value={5}>5 Items</option>
-                          <option value={10}>10 Items</option>
-                          <option value={15}>15 Items</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-between items-center text-[10px] text-muted-foreground font-mono">
-                      <span>Chars Selected:</span>
-                      <span className="font-bold text-foreground">{totalCharacters.toLocaleString()}</span>
-                    </div>
-                    
-                    <button
-                      onClick={handleGenerate}
-                      disabled={loading || selectedSourceIds.length === 0}
-                      className="w-full py-2.5 bg-primary hover:opacity-90 disabled:opacity-50 text-primary-foreground font-semibold rounded-[10px] text-xs transition-standard cursor-pointer flex items-center justify-center gap-2 shadow-sm"
+              ) : (
+                quizzes.map((q) => {
+                  const isSelected = selectedQuizId === q.id;
+                  return (
+                    <div 
+                      key={q.id}
+                      onClick={() => setSelectedQuizId(q.id)}
+                      className={`group border rounded-[10px] p-3 transition-standard cursor-pointer flex items-start gap-2.5 relative ${
+                        isSelected ? "bg-white border-primary/40 shadow-sm" : "bg-transparent border-border hover:bg-muted/45"
+                      }`}
                     >
-                      {loading ? (
-                        <>
-                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          Formulating...
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="w-3.5 h-3.5" />
-                          Generate Quiz
-                        </>
-                      )}
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* TAB 2: Notes */}
-            {sidebarTab === "notes" && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between flex-shrink-0 mb-6">
-                  <h4 className="font-semibold text-foreground text-xs uppercase tracking-wider font-mono">
-                    Notebook Notes
-                  </h4>
-                  <button 
-                    onClick={() => {
-                      setModalNoteId(null);
-                      setNoteModalTitle("");
-                      setNoteModalContent("");
-                      setIsNoteModalOpen(true);
-                    }}
-                    className="text-[10px] font-semibold text-primary hover:text-foreground flex items-center gap-1 transition-standard cursor-pointer"
-                  >
-                    <Plus className="w-3 h-3" />
-                    Create Note
-                  </button>
-                </div>
-
-                <div className="space-y-3 max-h-[390px] overflow-y-auto pr-1">
-                  {notesList.length === 0 ? (
-                    <div className="border border-dashed border-border rounded-[10px] p-6 text-center text-xs text-muted-foreground font-sans italic">
-                      No written notes saved. Pinned quiz items will show here.
-                    </div>
-                  ) : (
-                    notesList.map((note) => (
-                      <div 
-                        key={note.id}
-                        className="bg-white border border-border rounded-[10px] p-3 shadow-2xs space-y-2 relative group hover:border-primary/30 transition-standard"
-                      >
-                        <div className="flex items-start justify-between gap-6">
-                          <h5 className="font-bold text-xs text-foreground line-clamp-1 pr-6 font-sans">
-                            {note.title}
-                          </h5>
-                          
-                          <div className="absolute right-2 top-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-standard">
-                            <button
-                              onClick={() => handleStartEditNote(note)}
-                              className="p-1 text-muted-foreground hover:text-primary hover:bg-muted rounded-[10px] transition-standard cursor-pointer"
-                            >
-                              <Edit2 className="w-3 h-3" />
-                            </button>
-                            <button
-                              onClick={() => handleDeleteNote(note.id)}
-                              className="p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-[10px] transition-standard cursor-pointer"
-                            >
-                              <Trash2 className="w-3 h-3" />
-                            </button>
-                          </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <BookOpen className={`w-3.5 h-3.5 flex-shrink-0 ${isSelected ? "text-primary" : "text-muted-foreground"}`} />
+                          <h4 className="font-semibold text-xs text-foreground truncate pr-12">
+                            {q.title}
+                          </h4>
                         </div>
-
-                        <p className="text-[11px] text-muted-foreground font-sans leading-relaxed line-clamp-4 whitespace-pre-wrap">
-                          {note.content}
+                        <p className="text-[10px] text-muted-foreground mt-1 font-mono">
+                          {q.score !== null ? `Score: ${q.score}%` : "Not completed"}
                         </p>
                       </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
 
+                      <div className="absolute right-2 top-2 flex items-center gap-1 lg:opacity-0 lg:group-hover:opacity-100 transition-standard" onClick={(e) => e.stopPropagation()}>
+                        <button
+                          onClick={(e) => handleDeleteQuiz(q.id, e)}
+                          className="p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-[10px] transition-standard cursor-pointer"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
           </div>
         </div>
 
         {/* Right Workspace */}
         <div className="lg:col-span-8 space-y-6">
-          
           {/* Empty State */}
-          {questions.length === 0 && !loading && (
+          {!selectedQuizId && !loading && (
             <div className="bg-white border border-border rounded-[10px] p-12 text-center shadow-sm">
               <HelpCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-foreground mb-2">Assessment Center</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Check study notes or upload files on the left, then click <strong className="text-primary">"Generate Quiz"</strong> to study.
+                Select a quiz from the left or create a new one to start studying.
               </p>
               
-              <div className="flex gap-3 mt-6 justify-center">
+              <div className="flex justify-center mt-6">
                 <button
                   onClick={() => {
-                    setSidebarTab("sources");
-                    setModalSourceId(null);
-                    setModalTitle("");
-                    setModalContent("");
-                    setModalTab("upload"); // Open on upload tab
+                    setNewQuizTitle("");
+                    setNewQuizContent("");
+                    setModalTab("text");
                     setUploadError("");
-                    setIsSourceModalOpen(true);
+                    setIsNewQuizModalOpen(true);
                   }}
                   className="px-5 py-2.5 bg-primary hover:opacity-90 text-primary-foreground font-semibold rounded-[10px] text-xs transition-standard cursor-pointer flex items-center gap-1.5 shadow-sm"
                 >
-                  <Upload className="w-4 h-4" />
-                  Upload Document (PDF/Text)
+                  <Sparkles className="w-4 h-4" />
+                  Generate New Quiz
                 </button>
-                
-                {selectedSourceIds.length > 0 && (
-                  <button
-                    onClick={handleGenerate}
-                    className="px-5 py-2.5 bg-muted hover:bg-accent text-foreground font-semibold rounded-[10px] text-xs transition-standard cursor-pointer flex items-center gap-1.5"
-                  >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    Generate Quiz ({questionCount} Qs)
-                  </button>
-                )}
               </div>
             </div>
           )}
@@ -838,16 +442,16 @@ export default function QuizPage() {
             <div className="h-[460px] border border-border rounded-[10px] bg-white flex flex-col items-center justify-center text-center p-8 shadow-sm">
               <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
               <h3 className="text-lg font-bold text-foreground font-sans">
-                {gradingProgress ? "AI Assessment Grader" : "Drafting Questions"}
+                {selectedQuizId && !questions.length ? "Loading Quiz..." : "Drafting Questions..."}
               </h3>
               <p className="text-sm text-muted-foreground max-w-xs font-sans italic mt-1.5 leading-relaxed">
-                {gradingProgress || "Reading active documents and preparing testing keys..."}
+                Please wait while we process the assessment...
               </p>
             </div>
           )}
 
           {/* Active Quiz */}
-          {questions.length > 0 && !loading && (
+          {selectedQuizId && questions.length > 0 && !loading && (
             <div className="space-y-5">
               
               {/* Tabs */}
@@ -879,11 +483,11 @@ export default function QuizPage() {
                 <div className="text-xs font-semibold">
                   {submitted ? (
                     <span className="text-primary bg-purple-50 border border-purple-150 px-2.5 py-1 rounded-[10px] uppercase tracking-wider font-mono">
-                      {quizType === "short_answer" ? `OVERALL: ${avgSAScore}% Avg` : `SCORE: ${score} / ${questions.length}`}
+                      SCORE: {quiz?.score}%
                     </span>
                   ) : (
                     <span className="text-muted-foreground">
-                      Progress: {quizType === "short_answer" ? Object.keys(shortAnswerInputs).length : Object.keys(answers).length} / {questions.length} answered
+                      Progress: {Object.keys(answers).length} / {questions.length} answered
                     </span>
                   )}
                 </div>
@@ -899,22 +503,14 @@ export default function QuizPage() {
                     <div className="space-y-2">
                       <div className="flex items-center justify-between flex-shrink-0 mb-6">
                         <span className="text-[10px] font-bold text-primary tracking-wider uppercase font-mono">
-                          QUESTION {activeQuestionIndex + 1} OF {questions.length} · {quizType.toUpperCase()}
+                          QUESTION {activeQuestionIndex + 1} OF {questions.length}
                         </span>
                         
                         {submitted && (
-                          quizType === "short_answer" ? (
-                            shortAnswerGrades[activeQuestionIndex]?.isCorrect ? (
-                              <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-[10px]">Passed ({shortAnswerGrades[activeQuestionIndex]?.score}%)</span>
-                            ) : (
-                              <span className="text-[10px] font-bold text-red-700 bg-destructive/10 px-2.5 py-0.5 rounded-[10px]">Refine ({shortAnswerGrades[activeQuestionIndex]?.score}%)</span>
-                            )
+                          answers[activeQuestionIndex] === questions[activeQuestionIndex].correctIndex ? (
+                            <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-[10px]">✓ Correct</span>
                           ) : (
-                            answers[activeQuestionIndex] === questions[activeQuestionIndex].correctIndex ? (
-                              <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-[10px]">✓ Correct</span>
-                            ) : (
-                              <span className="text-[10px] font-bold text-red-700 bg-destructive/10 px-2.5 py-0.5 rounded-[10px]">✗ Incorrect</span>
-                            )
+                            <span className="text-[10px] font-bold text-red-700 bg-destructive/10 px-2.5 py-0.5 rounded-[10px]">✗ Incorrect</span>
                           )
                         )}
                       </div>
@@ -924,82 +520,39 @@ export default function QuizPage() {
                       </h3>
                     </div>
 
-                    {/* Options (MCQ/TF) */}
-                    {quizType !== "short_answer" && (
-                      <div className="grid grid-cols-1 gap-3">
-                        {questions[activeQuestionIndex].options?.map((option, optIdx) => {
-                          const isSelected = answers[activeQuestionIndex] === optIdx;
-                          const isCorrect = questions[activeQuestionIndex].correctIndex === optIdx;
-                          const optionLetter = String.fromCharCode(65 + optIdx);
-                          
-                          let cardStyle = "flex items-center gap-3.5 p-4 border border-border rounded-[10px] text-sm cursor-pointer transition-standard hover:bg-background hover:border-[#5b21b6]/50 text-foreground";
-                          let letterBadgeStyle = "w-7 h-7 rounded-full bg-muted text-muted-foreground font-semibold text-xs flex items-center justify-center flex-shrink-0 transition-standard";
-                          
-                          if (submitted) {
-                            if (isCorrect) {
-                              cardStyle = "flex items-center gap-3.5 p-4 border border-purple-200 bg-[#f3edfa] text-purple-800 rounded-[10px] text-sm font-medium";
-                              letterBadgeStyle = "w-7 h-7 rounded-full bg-purple-600 text-primary-foreground font-bold text-xs flex items-center justify-center flex-shrink-0";
-                            } else if (isSelected) {
-                              cardStyle = "flex items-center gap-3.5 p-4 border border-destructive/20 bg-destructive/10 text-red-800 rounded-[10px] text-sm font-medium";
-                              letterBadgeStyle = "w-7 h-7 rounded-full bg-red-600 text-primary-foreground font-bold text-xs flex items-center justify-center flex-shrink-0";
-                            } else {
-                              cardStyle = "flex items-center gap-3.5 p-4 border border-border rounded-[10px] text-sm opacity-55 pointer-events-none";
-                            }
+                    {/* Options */}
+                    <div className="grid grid-cols-1 gap-3">
+                      {questions[activeQuestionIndex].options?.map((option, optIdx) => {
+                        const isSelected = answers[activeQuestionIndex] === optIdx;
+                        const isCorrect = questions[activeQuestionIndex].correctIndex === optIdx;
+                        const optionLetter = String.fromCharCode(65 + optIdx);
+                        
+                        let cardStyle = "flex items-center gap-3.5 p-4 border border-border rounded-[10px] text-sm cursor-pointer transition-standard hover:bg-background hover:border-[#5b21b6]/50 text-foreground";
+                        let letterBadgeStyle = "w-7 h-7 rounded-full bg-muted text-muted-foreground font-semibold text-xs flex items-center justify-center flex-shrink-0 transition-standard";
+                        
+                        if (submitted) {
+                          if (isCorrect) {
+                            cardStyle = "flex items-center gap-3.5 p-4 border border-purple-200 bg-[#f3edfa] text-purple-800 rounded-[10px] text-sm font-medium";
+                            letterBadgeStyle = "w-7 h-7 rounded-full bg-purple-600 text-primary-foreground font-bold text-xs flex items-center justify-center flex-shrink-0";
                           } else if (isSelected) {
-                            cardStyle = "flex items-center gap-3.5 p-4 border border-[#5b21b6] bg-[#f3eefa] text-foreground rounded-[10px] text-sm font-semibold shadow-sm";
-                            letterBadgeStyle = "w-7 h-7 rounded-full bg-primary text-primary-foreground font-bold text-xs flex items-center justify-center flex-shrink-0";
+                            cardStyle = "flex items-center gap-3.5 p-4 border border-destructive/20 bg-destructive/10 text-red-800 rounded-[10px] text-sm font-medium";
+                            letterBadgeStyle = "w-7 h-7 rounded-full bg-red-600 text-primary-foreground font-bold text-xs flex items-center justify-center flex-shrink-0";
+                          } else {
+                            cardStyle = "flex items-center gap-3.5 p-4 border border-border rounded-[10px] text-sm opacity-55 pointer-events-none";
                           }
+                        } else if (isSelected) {
+                          cardStyle = "flex items-center gap-3.5 p-4 border border-[#5b21b6] bg-[#f3eefa] text-foreground rounded-[10px] text-sm font-semibold shadow-sm";
+                          letterBadgeStyle = "w-7 h-7 rounded-full bg-primary text-primary-foreground font-bold text-xs flex items-center justify-center flex-shrink-0";
+                        }
 
-                          return (
-                            <div key={optIdx} onClick={() => handleSelectOption(optIdx)} className={cardStyle}>
-                              <span className={letterBadgeStyle}>{optionLetter}</span>
-                              <span className="font-sans">{option}</span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {/* Short Answer Input */}
-                    {quizType === "short_answer" && (
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-[10px] font-bold text-muted-foreground mb-1.5 uppercase tracking-wider font-mono">
-                            Your Response:
-                          </label>
-                          <textarea
-                            value={shortAnswerInputs[activeQuestionIndex] || ""}
-                            onChange={(e) => setShortAnswerInputs(prev => ({ ...prev, [activeQuestionIndex]: e.target.value }))}
-                            disabled={submitted}
-                            className="w-full h-32 px-3.5 py-2.5 bg-background border border-border focus:bg-white rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-ring resize-none text-foreground font-sans leading-relaxed placeholder-[#b0a3c2]"
-                            placeholder="Synthesize your response..."
-                          />
-                        </div>
-
-                        {submitted && (
-                          <div className="space-y-4 border-t border-[#f3eff8] pt-4">
-                            {shortAnswerGrades[activeQuestionIndex] && (
-                              <div className={`p-4 rounded-[10px] border ${
-                                shortAnswerGrades[activeQuestionIndex].isCorrect ? "bg-[#f3edfa] border-purple-200 text-purple-900" : "bg-destructive/10 border-destructive/20 text-red-900"
-                              }`}>
-                                <div className="flex justify-between items-center mb-1.5">
-                                  <h5 className="font-bold text-xs uppercase tracking-wider font-mono">AI Evaluation Result</h5>
-                                  <span className="text-xs font-bold font-mono">Score: {shortAnswerGrades[activeQuestionIndex].score} / 100</span>
-                                </div>
-                                <p className="text-xs font-sans leading-relaxed">{shortAnswerGrades[activeQuestionIndex].feedback}</p>
-                              </div>
-                            )}
-
-                            {questions[activeQuestionIndex].modelAnswer && (
-                              <div className="bg-card border border-border rounded-[10px] p-4 text-xs text-muted-foreground font-sans">
-                                <strong className="text-primary font-sans block mb-1 uppercase tracking-wider text-[10px]">Model Answer Guide:</strong>
-                                "{questions[activeQuestionIndex].modelAnswer}"
-                              </div>
-                            )}
+                        return (
+                          <div key={optIdx} onClick={() => handleSelectOption(optIdx)} className={cardStyle}>
+                            <span className={letterBadgeStyle}>{optionLetter}</span>
+                            <span className="font-sans">{option}</span>
                           </div>
-                        )}
-                      </div>
-                    )}
+                        );
+                      })}
+                    </div>
 
                     {submitted && (
                       <div className="space-y-3.5 border-t border-[#f3eff8] pt-4">
@@ -1024,20 +577,10 @@ export default function QuizPage() {
                         <button
                           onClick={() => setActiveQuestionIndex((prev) => Math.max(0, prev - 1))}
                           disabled={activeQuestionIndex === 0}
-                          className="inline-flex items-center gap-1 px-3.5 py-2 border border-border hover:bg-[#f1ecf8] text-xs font-semibold rounded-[10px] transition-standard"
+                          className="inline-flex items-center gap-1 px-3.5 py-2 border border-border hover:bg-[#f1ecf8] text-xs font-semibold rounded-[10px] transition-standard disabled:opacity-50"
                         >
                           <ArrowLeft className="w-3.5 h-3.5" /> Previous
                         </button>
-                        
-                        {submitted && (
-                          <button
-                            onClick={() => handlePinQuestionToNotes(questions[activeQuestionIndex], activeQuestionIndex)}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-primary hover:bg-card rounded-[10px] transition-standard cursor-pointer"
-                          >
-                            {pinnedFeedback === activeQuestionIndex ? <Check className="w-3.5 h-3.5 text-purple-700 animate-bounce" /> : <Pin className="w-3.5 h-3.5" />}
-                            <span>{pinnedFeedback === activeQuestionIndex ? "Pinned!" : "Pin Review"}</span>
-                          </button>
-                        )}
                       </div>
                       
                       {activeQuestionIndex < questions.length - 1 ? (
@@ -1053,7 +596,7 @@ export default function QuizPage() {
                             onClick={handleSubmitQuiz}
                             className="px-5 py-2 bg-primary hover:opacity-90 text-primary-foreground text-xs font-bold rounded-[10px] transition-standard shadow-sm"
                           >
-                            {quizType === "short_answer" ? "Grade & Submit" : "Submit Exam"}
+                            Submit Exam
                           </button>
                         )
                       )}
@@ -1067,11 +610,9 @@ export default function QuizPage() {
                     <div className="grid grid-cols-5 gap-2">
                       {questions.map((_, idx) => {
                         const isCurrent = activeQuestionIndex === idx;
-                        const isAnswered = quizType === "short_answer" 
-                          ? shortAnswerInputs[idx] && shortAnswerInputs[idx].trim().length > 0
-                          : answers[idx] !== undefined;
+                        const isAnswered = answers[idx] !== undefined;
                         
-                        const correct = quizType === "short_answer" ? shortAnswerGrades[idx]?.isCorrect : answers[idx] === questions[idx].correctIndex;
+                        const correct = answers[idx] === questions[idx].correctIndex;
                         
                         let dotStyle = "h-9 w-9 rounded-full flex items-center justify-center text-xs font-bold font-sans cursor-pointer transition-standard border ";
                         
@@ -1121,51 +662,44 @@ export default function QuizPage() {
 
                     <div className="max-w-xs mx-auto bg-background border border-border rounded-[10px] p-5 text-center space-y-1 shadow-sm">
                       <div className="text-4xl font-extrabold text-primary">
-                        {quizType === "short_answer" ? `${avgSAScore}%` : `${score} / ${questions.length}`}
+                        {quiz?.score}%
                       </div>
                       <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-mono">
-                        {quizType === "short_answer" ? "Average AI Grade" : "Passed Items"}
+                        Score
                       </div>
                       <div className="w-full bg-muted h-2 rounded-full overflow-hidden mt-3.5">
                         <div 
                           className="h-full bg-primary transition-all duration-500"
-                          style={{ width: `${quizType === "short_answer" ? avgSAScore : (score / questions.length) * 100}%` }}
+                          style={{ width: `${quiz?.score || 0}%` }}
                         />
                       </div>
                     </div>
 
                     <div className="flex justify-center gap-3 pt-4 border-t border-[#f3eff8] max-w-md mx-auto">
-                      <button onClick={handleRestart} className="px-4 py-2 border border-[#5b21b6] hover:bg-[#f1ecf8] text-primary font-semibold rounded-[10px] text-xs transition-standard flex items-center gap-1.5">
+                      <button onClick={handleRetake} className="px-4 py-2 border border-[#5b21b6] hover:bg-[#f1ecf8] text-primary font-semibold rounded-[10px] text-xs transition-standard flex items-center gap-1.5">
                         <RefreshCw className="w-3.5 h-3.5" /> Retake Quiz
                       </button>
                       <button onClick={() => setActiveView("interactive")} className="px-4 py-2 bg-primary hover:opacity-90 text-primary-foreground font-semibold rounded-[10px] text-xs transition-standard shadow-sm">
                         Inspect Citations
-                      </button>
-                      <button onClick={handleClearQuiz} className="px-4 py-2 bg-muted hover:bg-accent text-foreground font-semibold rounded-[10px] text-xs transition-standard">
-                        Change Sources
                       </button>
                     </div>
                   </div>
 
                   <div className="bg-white border border-border rounded-[10px] overflow-hidden divide-y divide-[#e0d4f0] shadow-sm">
                     {questions.map((q, qidx) => {
-                      const passed = quizType === "short_answer" ? shortAnswerGrades[qidx]?.isCorrect : answers[qidx] === q.correctIndex;
+                      const passed = answers[qidx] === q.correctIndex;
                       return (
                         <div key={qidx} className="p-6 space-y-4 hover:bg-background relative group">
-                          <button onClick={() => handlePinQuestionToNotes(q, qidx)} className="absolute right-4 top-4 p-2 text-muted-foreground hover:text-primary hover:bg-card rounded-[10px] opacity-0 group-hover:opacity-100 transition-standard">
-                            {pinnedFeedback === qidx ? <Check className="w-4.5 h-4.5 text-purple-700" /> : <Pin className="w-4.5 h-4.5" />}
-                          </button>
-
                           <div className="flex items-center justify-between flex-shrink-0 mb-6">
                             <span className="bg-muted text-foreground text-[10px] px-2 py-0.5 rounded-[10px] font-mono font-bold">QUESTION {qidx + 1}</span>
                             <span className={`text-xs font-bold px-3 py-0.5 rounded-full ${passed ? "text-purple-700 bg-purple-50 border border-purple-150" : "text-red-700 bg-destructive/10 border border-red-150"}`}>
-                              {quizType === "short_answer" ? `Score (${shortAnswerGrades[qidx]?.score}%)` : passed ? "✓ Correct" : "✗ Incorrect"}
+                              {passed ? "✓ Correct" : "✗ Incorrect"}
                             </span>
                           </div>
 
                           <h3 className="text-base font-bold text-foreground font-sans pr-16">{q.question}</h3>
 
-                          {quizType !== "short_answer" && q.options && (
+                          {q.options && (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 pl-2">
                               {q.options.map((opt, oidx) => {
                                 const selectedByUs = answers[qidx] === oidx;
@@ -1182,27 +716,6 @@ export default function QuizPage() {
                                   </div>
                                 );
                               })}
-                            </div>
-                          )}
-
-                          {quizType === "short_answer" && (
-                            <div className="space-y-3.5 pl-3 border-l-2 border-border">
-                              <div className="text-xs text-foreground font-sans">
-                                <strong className="text-[10px] font-bold text-muted-foreground uppercase block font-sans mb-0.5">Your Response:</strong>
-                                "{shortAnswerInputs[qidx] || "Unanswered"}"
-                              </div>
-                              {shortAnswerGrades[qidx] && (
-                                <div className="text-xs text-muted-foreground font-sans">
-                                  <strong className="text-[10px] font-bold text-primary uppercase block font-sans mb-0.5 font-bold">Feedback ({shortAnswerGrades[qidx].score}/100):</strong>
-                                  {shortAnswerGrades[qidx].feedback}
-                                </div>
-                              )}
-                              {q.modelAnswer && (
-                                <div className="text-xs text-muted-foreground font-sans bg-card p-3 rounded-[10px]">
-                                  <strong className="text-[10px] font-bold text-muted-foreground uppercase block font-sans mb-0.5">Model Answer Guide:</strong>
-                                  "{q.modelAnswer}"
-                                </div>
-                              )}
                             </div>
                           )}
 
@@ -1226,56 +739,46 @@ export default function QuizPage() {
                   </div>
                 </div>
               )}
-
             </div>
           )}
-
         </div>
-
       </div>
 
-      {/* Sources CRUD Modal */}
-      {isSourceModalOpen && (
+      {/* New Quiz Modal */}
+      {isNewQuizModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
           <div className="bg-white rounded-[12px] border border-border shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 flex flex-col space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-4 mb-4">
               <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-                <FileText className="w-5 h-5 text-primary" />
-                {modalSourceId ? "Edit Source Document" : "Add Source Document"}
+                <Sparkles className="w-5 h-5 text-primary" />
+                Generate New Quiz
               </h2>
               <button
-                onClick={() => {
-                  setIsSourceModalOpen(false);
-                  setModalTitle("");
-                  setModalContent("");
-                  setModalSourceId(null);
-                }}
+                onClick={() => setIsNewQuizModalOpen(false)}
                 className="p-1 hover:bg-accent rounded-full text-muted-foreground transition-standard cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {!modalSourceId && (
-              <div className="flex gap-1 bg-muted/60 p-1 rounded-[10px]">
-                <button
-                  onClick={() => setModalTab("text")}
-                  className={`flex-1 py-1.5 text-center text-xs font-semibold rounded-[10px] transition-standard ${
-                    modalTab === "text" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Write / Paste Text
-                </button>
-                <button
-                  onClick={() => setModalTab("upload")}
-                  className={`flex-1 py-1.5 text-center text-xs font-semibold rounded-[10px] transition-standard ${
-                    modalTab === "upload" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Upload File
-                </button>
-              </div>
-            )}
+            <div className="flex gap-1 bg-muted/60 p-1 rounded-[10px]">
+              <button
+                onClick={() => setModalTab("text")}
+                className={`flex-1 py-1.5 text-center text-xs font-semibold rounded-[10px] transition-standard ${
+                  modalTab === "text" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Write / Paste Text
+              </button>
+              <button
+                onClick={() => setModalTab("upload")}
+                className={`flex-1 py-1.5 text-center text-xs font-semibold rounded-[10px] transition-standard ${
+                  modalTab === "upload" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Upload File
+              </button>
+            </div>
 
             {uploadError && (
               <div className="p-3 bg-destructive/10 border border-destructive/20 text-red-700 text-xs rounded-[10px] flex items-center gap-2">
@@ -1287,23 +790,50 @@ export default function QuizPage() {
             {modalTab === "text" && (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">Document Title *</label>
+                  <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">Quiz Title *</label>
                   <input
                     type="text"
-                    value={modalTitle}
-                    onChange={(e) => setModalTitle(e.target.value)}
+                    value={newQuizTitle}
+                    onChange={(e) => setNewQuizTitle(e.target.value)}
                     className="w-full px-3 py-2 bg-white border border-border rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
-                    placeholder="e.g. Photosynthesis Notes"
+                    placeholder="e.g. Photosynthesis Chapter 4"
                   />
                 </div>
 
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">Format</label>
+                    <select
+                      value={newQuizType}
+                      onChange={(e) => setNewQuizType(e.target.value as any)}
+                      className="w-full px-3 py-2 bg-white border border-border rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
+                    >
+                      <option value="mcq">MCQ (4 choices)</option>
+                      <option value="tf">True / False</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">Questions</label>
+                    <select
+                      value={newQuizCount}
+                      onChange={(e) => setNewQuizCount(Number(e.target.value))}
+                      className="w-full px-3 py-2 bg-white border border-border rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
+                    >
+                      <option value={3}>3 Items</option>
+                      <option value={5}>5 Items</option>
+                      <option value={10}>10 Items</option>
+                      <option value={15}>15 Items</option>
+                    </select>
+                  </div>
+                </div>
+
                 <div>
-                  <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">Document Content *</label>
+                  <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">Study Notes / Content *</label>
                   <textarea
-                    value={modalContent}
-                    onChange={(e) => setModalContent(e.target.value)}
+                    value={newQuizContent}
+                    onChange={(e) => setNewQuizContent(e.target.value)}
                     className="w-full h-44 px-3 py-2 bg-white border border-border rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-ring resize-none text-foreground font-sans leading-relaxed"
-                    placeholder="Paste details or notes..."
+                    placeholder="Paste details or notes to generate quiz from..."
                   />
                 </div>
               </div>
@@ -1334,102 +864,26 @@ export default function QuizPage() {
               </div>
             )}
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-border mt-4">
               <button
-                onClick={() => {
-                  setIsSourceModalOpen(false);
-                  setModalTitle("");
-                  setModalContent("");
-                  setModalSourceId(null);
-                }}
+                onClick={() => setIsNewQuizModalOpen(false)}
                 className="px-4 py-2 border border-border hover:bg-[#f1ecf8] text-foreground font-semibold rounded-[10px] text-xs transition-standard"
               >
                 Cancel
               </button>
               
               <button
-                onClick={handleSaveSource}
-                disabled={modalTab !== "text" || !modalTitle.trim() || !modalContent.trim()}
-                className="px-4 py-2 bg-primary hover:opacity-90 disabled:opacity-50 text-primary-foreground font-semibold rounded-[10px] text-xs transition-standard shadow-sm"
+                onClick={handleGenerateQuiz}
+                disabled={modalTab !== "text" || !newQuizTitle.trim() || !newQuizContent.trim()}
+                className="px-4 py-2 bg-primary hover:opacity-90 disabled:opacity-50 text-primary-foreground font-semibold rounded-[10px] text-xs transition-standard shadow-sm flex items-center gap-1.5"
               >
-                {modalSourceId ? "Save Changes" : "Add to Notebook"}
+                <Sparkles className="w-4 h-4" />
+                Generate Quiz
               </button>
             </div>
           </div>
         </div>
       )}
-
-      {/* Written Note CRUD Modal */}
-      {isNoteModalOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-          <div className="bg-white rounded-[12px] border border-border shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 flex flex-col space-y-4">
-            <div className="flex items-center justify-between border-b border-border pb-4 mb-4">
-              <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-                <Bookmark className="w-5 h-5 text-primary" />
-                {modalNoteId ? "Edit Study Note" : "Write Custom Note"}
-              </h2>
-              <button
-                onClick={() => {
-                  setIsNoteModalOpen(false);
-                  setNoteModalTitle("");
-                  setNoteModalContent("");
-                  setModalNoteId(null);
-                }}
-                className="p-1 hover:bg-accent rounded-full text-muted-foreground transition-standard cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">Note Title *</label>
-                <input
-                  type="text"
-                  value={noteModalTitle}
-                  onChange={(e) => setNoteModalTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-white border border-border rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-ring text-foreground"
-                  placeholder="Summary points"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wider">Note Content *</label>
-                <textarea
-                  value={noteModalContent}
-                  onChange={(e) => setNoteModalContent(e.target.value)}
-                  className="w-full h-44 px-3 py-2 bg-white border border-border rounded-[10px] text-xs focus:outline-none focus:ring-2 focus:ring-ring resize-none text-foreground font-sans leading-relaxed"
-                  placeholder="Write note details..."
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-border">
-              <button
-                onClick={() => {
-                  setIsNoteModalOpen(false);
-                  setNoteModalTitle("");
-                  setNoteModalContent("");
-                  setModalNoteId(null);
-                }}
-                className="px-4 py-2 border border-border hover:bg-[#f1ecf8] text-foreground font-semibold rounded-[10px] text-xs transition-standard"
-              >
-                Cancel
-              </button>
-              
-              <button
-                onClick={handleSaveNote}
-                className="px-4 py-2 bg-primary hover:opacity-90 text-primary-foreground font-semibold rounded-[10px] text-xs transition-standard shadow-sm"
-              >
-                {modalNoteId ? "Save Note" : "Create Note"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
     </div>
   );
 }
