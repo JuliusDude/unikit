@@ -517,7 +517,7 @@ export default function QuizPage() {
                         </span>
                         
                         {submitted && (
-                          answers[activeQuestionIndex] === questions[].correct_index ? (
+                          answers[activeQuestionIndex] === questions[activeQuestionIndex].correct_index ? (
                             <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-[10px]">✓ Correct</span>
                           ) : (
                             <span className="text-[10px] font-bold text-red-700 bg-destructive/10 px-2.5 py-0.5 rounded-[10px]">✗ Incorrect</span>
@@ -534,7 +534,7 @@ export default function QuizPage() {
                     <div className="grid grid-cols-1 gap-3">
                       {questions[activeQuestionIndex].options?.map((option, optIdx) => {
                         const isSelected = answers[activeQuestionIndex] === optIdx;
-                        const isCorrect = questions[].correct_index === optIdx;
+                        const isCorrect = questions[activeQuestionIndex].correct_index === optIdx;
                         const optionLetter = String.fromCharCode(65 + optIdx);
                         
                         let cardStyle = "flex items-center gap-3.5 p-4 border border-border rounded-[10px] text-sm cursor-pointer transition-standard hover:bg-background hover:border-[#5b21b6]/50 text-foreground";
@@ -622,7 +622,7 @@ export default function QuizPage() {
                         const isCurrent = activeQuestionIndex === idx;
                         const isAnswered = answers[idx] !== undefined;
                         
-                        const correct = answers[idx] === questions[].correct_index;
+                        const correct = answers[idx] === questions[idx].correct_index;
                         
                         let dotStyle = "h-9 w-9 rounded-full flex items-center justify-center text-xs font-bold font-sans cursor-pointer transition-standard border ";
                         
