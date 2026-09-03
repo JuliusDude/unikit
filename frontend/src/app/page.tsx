@@ -391,6 +391,142 @@ function AIFeatureCard({ feature, index }: { feature: typeof aiFeatures[0]; inde
   );
 }
 
+
+function AIFeatureVisual({ title }: { title: string }) {
+  if (title === "AI Notice Summarizer") {
+    return (
+      <div className="flex flex-col gap-3 w-full relative z-10 h-full">
+        {/* Before (Messy Notice) */}
+        <motion.div 
+          initial={{ opacity: 1, y: 0 }}
+          animate={{ opacity: [1, 1, 0, 0, 1], y: [0, 0, -10, 10, 0], scale: [1, 1, 0.95, 0.95, 1] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute inset-0 flex flex-col justify-center gap-2.5"
+        >
+          <div className="h-1.5 bg-muted-foreground/30 rounded-full w-[95%]" />
+          <div className="h-1.5 bg-muted-foreground/30 rounded-full w-[100%]" />
+          <div className="h-1.5 bg-muted-foreground/30 rounded-full w-[80%]" />
+          <div className="h-1.5 bg-muted-foreground/30 rounded-full w-[90%]" />
+          <div className="h-1.5 bg-muted-foreground/30 rounded-full w-[85%]" />
+        </motion.div>
+        
+        {/* After (Clean Summary) */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: [0, 0, 1, 1, 0], y: [10, 10, 0, 0, -10], scale: [0.95, 0.95, 1, 1, 0.95] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute inset-0 flex flex-col justify-center gap-3.5 bg-background"
+        >
+          <div className="flex items-start gap-2.5">
+            <Sparkles className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+            <div className="h-2 bg-primary/70 rounded-full w-[80%] mt-1" />
+          </div>
+          <div className="flex items-start gap-2.5">
+            <Sparkles className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+            <div className="h-2 bg-primary/70 rounded-full w-[60%] mt-1" />
+          </div>
+          <div className="flex items-start gap-2.5">
+            <Sparkles className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+            <div className="h-2 bg-primary/70 rounded-full w-[75%] mt-1" />
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (title === "Attendance Risk Alerts") {
+    return (
+      <div className="relative flex items-center justify-center w-full h-full z-10">
+        {/* Donut Chart */}
+        <svg className="w-24 h-24 transform -rotate-90 drop-shadow-sm">
+          <circle cx="48" cy="48" r="36" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-muted/50" />
+          <motion.circle 
+            cx="48" cy="48" r="36" stroke="currentColor" strokeWidth="8" fill="transparent" 
+            strokeDasharray="226" 
+            strokeLinecap="round"
+            animate={{ 
+              strokeDashoffset: [226 - (226 * 0.85), 226 - (226 * 0.74), 226 - (226 * 0.85)], 
+              stroke: ['#22c55e', '#ef4444', '#22c55e'] 
+            }} 
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <motion.span 
+            animate={{ color: ['#22c55e', '#ef4444', '#22c55e'] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            className="text-lg font-bold tracking-tight"
+          >
+            <motion.span animate={{ opacity: [1, 0, 1] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute">85%</motion.span>
+            <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>74%</motion.span>
+          </motion.span>
+        </div>
+        
+        {/* Alert Badge */}
+        <motion.div 
+          animate={{ opacity: [0, 1, 0], scale: [0.8, 1.1, 0.8], y: [15, -5, 15] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-1 -right-4 bg-red-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-lg flex items-center gap-1"
+        >
+          <AlertTriangle className="w-2.5 h-2.5" />
+          RISK
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (title === "Telegram Auto-Reminders") {
+    return (
+      <div className="relative flex items-center justify-center w-full h-full z-10 perspective-[800px]">
+        <motion.div 
+          animate={{ y: [15, -5, 15], opacity: [0, 1, 0], rotateX: [10, 0, 10] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          className="w-full max-w-[190px] bg-background border border-border/80 rounded-[14px] rounded-bl-sm p-3.5 shadow-xl shadow-blue-500/5 relative"
+        >
+          <div className="absolute -left-1.5 bottom-0 w-3 h-3 bg-background border-b border-l border-border/80 rounded-bl-sm" style={{ clipPath: 'polygon(100% 0, 0% 100%, 100% 100%)' }}></div>
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-5 h-5 rounded-full bg-blue-500/10 flex items-center justify-center">
+              <Send className="w-3 h-3 text-blue-500 -ml-0.5" />
+            </div>
+            <span className="text-[11px] font-semibold text-foreground">UniKit Bot</span>
+          </div>
+          <p className="text-[11px] text-muted-foreground leading-snug">
+            <strong className="text-foreground font-semibold">Reminder:</strong> DB Assignment is due in 2 hours!
+          </p>
+        </motion.div>
+      </div>
+    );
+  }
+
+  if (title === "Smart Priority Scoring") {
+    return (
+      <div className="relative flex flex-col gap-2 w-full h-full justify-center z-10 px-1">
+        <motion.div 
+          animate={{ y: [0, 42, 0], scale: [1, 0.98, 1], zIndex: [10, 20, 10], opacity: [1, 0.6, 1] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          className="bg-background border border-border p-3 rounded-[10px] flex items-center justify-between shadow-sm relative"
+        >
+          <span className="text-[11px] font-medium text-foreground">Math Homework</span>
+          <span className="text-[9px] font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded">LOW</span>
+        </motion.div>
+
+        <motion.div 
+          animate={{ y: [0, -42, 0], scale: [1, 1.05, 1], zIndex: [20, 10, 20], boxShadow: ["0px 2px 4px rgba(0,0,0,0.05)", "0px 10px 20px rgba(245, 158, 11, 0.15)", "0px 2px 4px rgba(0,0,0,0.05)"] }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          className="bg-amber-500/5 border border-amber-500/30 p-3 rounded-[10px] flex items-center justify-between shadow-md relative bg-background"
+        >
+          <span className="text-[11px] font-medium text-foreground">DB Assignment</span>
+          <span className="text-[9px] font-bold text-amber-600 dark:text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded flex items-center gap-1">
+            <TrendingUp className="w-2.5 h-2.5" /> URGENT
+          </span>
+        </motion.div>
+      </div>
+    );
+  }
+
+  return null;
+}
+
 function AIFeatures() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
@@ -434,16 +570,9 @@ function AIFeatures() {
               </div>
               
               <div className="mt-auto p-4 pt-0">
-                <div className="bg-background flex min-h-[160px] flex-col justify-center rounded-[20px] p-5 shadow-[0px_2px_8px_rgba(0,0,0,0.04)] border border-border/50 relative overflow-hidden">
+                <div className="bg-background flex h-[160px] flex-col justify-center rounded-[20px] p-5 shadow-[0px_2px_8px_rgba(0,0,0,0.04)] border border-border/50 relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-bl-full pointer-events-none" />
-                  <div className="flex items-start gap-3 relative z-10">
-                    <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                    <div className="space-y-2 w-full">
-                      <div className="h-2.5 bg-muted rounded-full w-[85%]" />
-                      <div className="h-2.5 bg-muted rounded-full w-[60%]" />
-                      <div className="h-2.5 bg-muted rounded-full w-[75%]" />
-                    </div>
-                  </div>
+                  <AIFeatureVisual title={feature.title} />
                 </div>
               </div>
             </motion.div>
@@ -871,3 +1000,4 @@ export default function Home() {
     </ReactLenis>
   );
 }
+
