@@ -156,13 +156,13 @@ export function FocusTimerWidget() {
           <div className="flex justify-center gap-2 mb-3">
             <button 
               onClick={(e) => adjustTime(-1, e)} 
-              className="px-2 py-0.5 text-[10px] uppercase font-bold tracking-wider bg-white/10 hover:bg-white/25 rounded-md transition-colors"
+              className="px-2 py-0.5 text-xs uppercase font-bold tracking-wider bg-white/10 hover:bg-white/25 rounded-md transition-colors"
             >
               -1 min
             </button>
             <button 
               onClick={(e) => adjustTime(1, e)} 
-              className="px-2 py-0.5 text-[10px] uppercase font-bold tracking-wider bg-white/10 hover:bg-white/25 rounded-md transition-colors"
+              className="px-2 py-0.5 text-xs uppercase font-bold tracking-wider bg-white/10 hover:bg-white/25 rounded-md transition-colors"
             >
               +1 min
             </button>

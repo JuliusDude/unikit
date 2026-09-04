@@ -90,7 +90,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
 
         <div className="pt-4 pb-2 px-1">
           {!isCollapsed && (
-            <p className="text-[11px] font-semibold text-white/40 uppercase tracking-wider">Tools</p>
+            <p className="text-xs font-semibold text-white/40 uppercase tracking-wider">Tools</p>
           )}
         </div>
 
@@ -112,7 +112,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
 
         <div className="pt-4 pb-2 px-1">
           {!isCollapsed && (
-            <p className="text-[11px] font-semibold text-white/40 uppercase tracking-wider">System</p>
+            <p className="text-xs font-semibold text-white/40 uppercase tracking-wider">System</p>
           )}
         </div>
 

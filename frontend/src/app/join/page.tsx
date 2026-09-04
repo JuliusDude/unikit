@@ -125,7 +125,7 @@ export default function JoinGroupPage() {
           </div>
         )}
 
-        <p className="mt-6 text-[10px] text-slate-300 uppercase tracking-wider">UniKit × NotifyMe</p>
+        <p className="mt-6 text-xs text-slate-300 uppercase tracking-wider">UniKit × NotifyMe</p>
       </div>
     </div>
   );

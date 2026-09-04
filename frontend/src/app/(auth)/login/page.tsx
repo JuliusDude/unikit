@@ -164,9 +164,7 @@ export default function LoginPage() {
           </svg>
           Continue with Google
         </button>
-        <button className="w-full py-2.5 border border-border rounded-full text-sm font-medium text-foreground hover:bg-muted transition-standard">
-          Continue with GitHub
-        </button>
+        
       </div>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">

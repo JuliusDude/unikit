@@ -216,7 +216,7 @@ export default function SignupPage() {
                       />
                     ))}
                   </div>
-                  <p className="text-[10px] text-muted-foreground">{strengthLabels[passwordStrength]}</p>
+                  <p className="text-xs text-muted-foreground">{strengthLabels[passwordStrength]}</p>
                 </div>
               )}
             </div>
@@ -350,7 +350,7 @@ export default function SignupPage() {
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-border" />
             </div>
-            <div className="relative flex justify-center text-[10px] uppercase font-semibold">
+            <div className="relative flex justify-center text-xs uppercase font-semibold">
               <span className="bg-white px-2 text-muted-foreground">or</span>
             </div>
           </div>
@@ -368,9 +368,7 @@ export default function SignupPage() {
               </svg>
               Continue with Google
             </button>
-            <button className="w-full py-2 border border-border rounded-full text-sm font-medium text-foreground hover:bg-muted transition-standard">
-              Continue with GitHub
-            </button>
+            
           </div>
         </>
       )}

@@ -165,7 +165,7 @@ export function MonthlyCalendarWidget() {
           </div>
           <h3 className="font-semibold text-foreground text-sm">Calendar</h3>
           {calendarConnected && (
-            <span className="inline-flex items-center gap-1 text-[10px] font-medium bg-emerald-50 text-emerald-700 rounded-[10px] px-2 py-0.5">
+            <span className="inline-flex items-center gap-1 text-xs font-medium bg-emerald-50 text-emerald-700 rounded-[10px] px-2 py-0.5">
               <Link2 className="w-3 h-3" />
               Google Synced
             </span>
@@ -186,7 +186,7 @@ export function MonthlyCalendarWidget() {
 
       <div className="grid grid-cols-7 gap-px bg-border rounded-[10px] overflow-hidden mb-4">
         {DAY_NAMES.map((day) => (
-          <div key={day} className="bg-muted/50 py-1.5 text-center text-[10px] font-semibold text-muted-foreground uppercase">
+          <div key={day} className="bg-muted/50 py-1.5 text-center text-xs font-semibold text-muted-foreground uppercase">
             {day}
           </div>
         ))}
@@ -295,15 +295,15 @@ export function MonthlyCalendarWidget() {
       {/* Legend */}
       {calendarConnected && (
         <div className="flex items-center gap-4 mt-3 pt-3 border-t border-border">
-          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <div className="w-2 h-2 rounded-full bg-primary" />
             Tasks
           </div>
-          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <div className="w-2 h-2 rounded-full bg-blue-400" />
             Google Calendar
           </div>
-          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
             <div className="w-2 h-2 rounded-full bg-emerald-500" />
             Completed
           </div>

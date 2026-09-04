@@ -75,7 +75,7 @@ export function ProductivityScoreWidget({ tasks = [], attendance = [] }: Product
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="text-2xl font-bold text-foreground">{score}</span>
-            <span className="text-[10px] text-muted-foreground">/ 100</span>
+            <span className="text-xs text-muted-foreground">/ 100</span>
           </div>
         </div>
       </div>

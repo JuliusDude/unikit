@@ -72,7 +72,7 @@ export const WhiteboardToolbar = memo(function WhiteboardToolbar({
       <div className="w-px h-6 bg-border mx-2" />
 
       <div className="flex items-center gap-2">
-        <label className="text-[10px] text-muted-foreground font-medium">Fill</label>
+        <label className="text-xs text-muted-foreground font-medium">Fill</label>
         <input
           type="color"
           value={fillColor}
@@ -82,7 +82,7 @@ export const WhiteboardToolbar = memo(function WhiteboardToolbar({
       </div>
 
       <div className="flex items-center gap-2">
-        <label className="text-[10px] text-muted-foreground font-medium">Stroke</label>
+        <label className="text-xs text-muted-foreground font-medium">Stroke</label>
         <input
           type="color"
           value={strokeColor}
@@ -101,13 +101,13 @@ export const WhiteboardToolbar = memo(function WhiteboardToolbar({
           onChange={e => onSetStrokeWidth(Number(e.target.value))}
           className="w-16 accent-primary"
         />
-        <span className="text-[10px] text-muted-foreground w-4">{strokeWidth}</span>
+        <span className="text-xs text-muted-foreground w-4">{strokeWidth}</span>
       </div>
 
       <div className="w-px h-6 bg-border mx-2" />
 
       <div className="flex items-center gap-2">
-        <label className="text-[10px] text-muted-foreground font-medium">Font</label>
+        <label className="text-xs text-muted-foreground font-medium">Font</label>
         <input
           type="range"
           min={10}
@@ -116,7 +116,7 @@ export const WhiteboardToolbar = memo(function WhiteboardToolbar({
           onChange={e => onSetFontSize(Number(e.target.value))}
           className="w-16 accent-primary"
         />
-        <span className="text-[10px] text-muted-foreground w-4">{fontSize}</span>
+        <span className="text-xs text-muted-foreground w-4">{fontSize}</span>
       </div>
 
       <div className="w-px h-6 bg-border mx-2" />

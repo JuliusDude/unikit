@@ -145,7 +145,7 @@ export function WhiteboardList({
                 )}
               </div>
 
-              <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground border-t border-border/50 pt-2.5 font-medium">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground border-t border-border/50 pt-2.5 font-medium">
                 <Calendar className="w-3.5 h-3.5" />
                 <span>Updated {dateStr}</span>
               </div>

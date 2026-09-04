@@ -348,7 +348,7 @@ export default function NoticesPage() {
                   <p className="text-muted-foreground line-clamp-2 leading-relaxed">
                     {notice.ai_summary || notice.notice_text}
                   </p>
-                  <div className="flex items-center justify-between text-[10px] text-muted-foreground mt-1 pt-1 border-t border-dashed border-border w-full">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground mt-1 pt-1 border-t border-dashed border-border w-full">
                     <span>{new Date(notice.created_at).toLocaleDateString()}</span>
                     <span className={`inline-block px-2 py-0.5 text-xs font-semibold rounded-[10px] ${
                       notice.broadcast_status === "sent" 

@@ -34,7 +34,7 @@ export function MobileFooter({ onMenuClick }: MobileFooterProps) {
                 className="flex flex-col items-center gap-1 text-white/70 hover:text-white transition-standard"
               >
                 <item.icon className="w-5 h-5" />
-                <span className="text-[10px]">{item.label}</span>
+                <span className="text-xs">{item.label}</span>
               </button>
             );
           }
@@ -50,7 +50,7 @@ export function MobileFooter({ onMenuClick }: MobileFooterProps) {
               )}
             >
               <item.icon className="w-5 h-5" />
-              <span className="text-[10px]">{item.label}</span>
+              <span className="text-xs">{item.label}</span>
             </Link>
           );
         })}

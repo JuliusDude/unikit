@@ -170,7 +170,7 @@ export default function SettingsPage() {
                     <ShieldCheck className="w-5 h-5 flex-shrink-0" />
                     <span className="font-semibold">Calendar Synced</span>
                   </div>
-                  <p className="text-[11px] text-muted-foreground text-center">
+                  <p className="text-xs text-muted-foreground text-center">
                     All set! New deadlines with Sync checked will populate in Google Calendar.
                   </p>
                 </div>
@@ -210,7 +210,7 @@ export default function SettingsPage() {
                   joinedGroups.map(g => (
                     <div key={g.id} className="p-3 bg-background border border-border rounded-[10px] shadow-sm">
                       <div className="font-semibold text-sm text-foreground mb-1">{g.name}</div>
-                      <div className="text-[10px] text-muted-foreground font-mono truncate">Chat ID: {g.telegram_chat_id}</div>
+                      <div className="text-xs text-muted-foreground font-mono truncate">Chat ID: {g.telegram_chat_id}</div>
                     </div>
                   ))
                 )}
@@ -299,7 +299,7 @@ export default function SettingsPage() {
                     placeholder="username"
                   />
                 </div>
-                <p className="text-[10px] text-muted-foreground mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Enter your username without the &apos;@&apos;. Telegram bot sends reminders to this account.
                 </p>
               </div>

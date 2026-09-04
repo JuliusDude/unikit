@@ -51,10 +51,10 @@ function Header() {
           }`}
         >
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <img src="/logo-ukit.png" alt="UniKit Logo" className="w-5 h-5 object-contain" />
+            <div className="w-10 h-10 rounded-xl bg-primary shadow-sm flex items-center justify-center">
+              <img src="/logo-ukit.png" alt="UniKit Logo" className="w-6 h-6 object-contain" />
             </div>
-            <span className="text-xl font-bold font-serif text-foreground tracking-tight">UniKit</span>
+            <span className="text-2xl font-bold tracking-tight text-foreground tracking-tight">UniKit</span>
           </Link>
           
           <nav className="hidden md:flex items-center gap-8">
@@ -137,7 +137,7 @@ function TelegramMockup() {
         </div>
         <div>
           <div className="font-semibold text-sm text-foreground leading-tight">UniKit Bot</div>
-          <div className="text-[11px] text-primary font-medium leading-tight">bot</div>
+          <div className="text-xs text-primary font-medium leading-tight">bot</div>
         </div>
       </div>
       
@@ -149,7 +149,7 @@ function TelegramMockup() {
               key="msg1"
               initial={{ opacity: 0, y: 10, scale: 0.95, transformOrigin: 'top left' }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              className="self-start bg-muted/80 text-foreground px-4 py-2.5 rounded-[18px] rounded-tl-sm text-[13px] max-w-[85%] leading-relaxed shadow-sm border border-border/30"
+              className="self-start bg-muted/80 text-foreground px-4 py-2.5 rounded-[18px] rounded-tl-sm text-sm max-w-[85%] leading-relaxed shadow-sm border border-border/30"
             >
               ⚠️ <b className="font-semibold">Heads up!</b> Database Assignment 3 is due in 3 hours. Do you want me to summarize the requirements?
             </motion.div>
@@ -160,7 +160,7 @@ function TelegramMockup() {
               key="msg2"
               initial={{ opacity: 0, y: 10, scale: 0.95, transformOrigin: 'top right' }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              className="self-end bg-primary text-primary-foreground px-4 py-2.5 rounded-[18px] rounded-tr-sm text-[13px] shadow-sm"
+              className="self-end bg-primary text-primary-foreground px-4 py-2.5 rounded-[18px] rounded-tr-sm text-sm shadow-sm"
             >
               Yes please
             </motion.div>
@@ -171,7 +171,7 @@ function TelegramMockup() {
               key="msg3"
               initial={{ opacity: 0, y: 10, scale: 0.95, transformOrigin: 'top left' }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              className="self-start bg-muted/80 text-foreground px-4 py-3 rounded-[18px] rounded-tl-sm text-[13px] max-w-[90%] leading-relaxed shadow-sm border border-border/30 space-y-2"
+              className="self-start bg-muted/80 text-foreground px-4 py-3 rounded-[18px] rounded-tl-sm text-sm max-w-[90%] leading-relaxed shadow-sm border border-border/30 space-y-2"
             >
               <p className="font-medium text-foreground">Here is the AI summary:</p>
               <ul className="list-disc pl-4 space-y-1 text-muted-foreground">
@@ -235,7 +235,7 @@ function Hero() {
               hidden: { opacity: 0, y: 18, filter: 'blur(8px)' },
               visible: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { type: 'spring', duration: 0.72, bounce: 0 } }
             }}
-            className="text-[clamp(3.05rem,5.05vw,5.5rem)] leading-[1.02] font-medium tracking-[-0.03em] text-foreground font-serif text-balance"
+            className="text-[clamp(3.05rem,5.05vw,5.5rem)] leading-[1.02] font-medium tracking-[-0.03em] text-foreground tracking-tight text-balance"
           >
             Your Smart Campus
             <br />
@@ -266,14 +266,14 @@ function Hero() {
           >
             <Link
               href="/signup"
-              className="inline-flex min-h-12 items-center gap-2 bg-primary px-7 text-[15px] leading-none font-semibold text-primary-foreground shadow-[0_1px_2px_rgba(0,0,0,0.16)] transition-all duration-200 ease-out hover:opacity-90 hover:shadow-[0_2px_7px_rgba(0,0,0,0.18)] rounded-[10px]"
+              className="inline-flex min-h-12 items-center gap-2 bg-primary px-7 text-base leading-none font-semibold text-primary-foreground shadow-[0_1px_2px_rgba(0,0,0,0.16)] transition-all duration-200 ease-out hover:opacity-90 hover:shadow-[0_2px_7px_rgba(0,0,0,0.18)] rounded-[10px]"
             >
               <span>Get Started Free</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
             <a
               href="#modules"
-              className="inline-flex min-h-12 items-center gap-2 bg-secondary px-7 text-[15px] leading-none font-semibold text-secondary-foreground transition-all duration-200 ease-out hover:opacity-80 rounded-[10px]"
+              className="inline-flex min-h-12 items-center gap-2 bg-secondary px-7 text-base leading-none font-semibold text-secondary-foreground transition-all duration-200 ease-out hover:opacity-80 rounded-[10px]"
             >
               Learn More
             </a>
@@ -367,7 +367,7 @@ function Modules() {
           className="space-y-8"
         >
           <div>
-            <h2 className="text-[clamp(2.5rem,4vw,3.5rem)] font-serif leading-[1.1] font-medium tracking-tight text-foreground">
+            <h2 className="text-[clamp(2.5rem,4vw,3.5rem)] tracking-tight leading-[1.1] font-medium tracking-tight text-foreground">
               Run your campus life, <br/>not just your tasks
             </h2>
             <p className="text-muted-foreground max-w-lg mt-4 text-lg">
@@ -427,8 +427,8 @@ function Modules() {
                   <div>
                     <h3 className="text-lg font-bold text-foreground">{activeModule.label}</h3>
                     <div className="flex gap-2 mt-1">
-                      <span className="bg-primary/10 text-primary rounded-md px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider">Active</span>
-                      <span className="bg-muted rounded-md px-2 py-0.5 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Synced</span>
+                      <span className="bg-primary/10 text-primary rounded-md px-2 py-0.5 text-xs font-medium uppercase tracking-wider">Active</span>
+                      <span className="bg-muted rounded-md px-2 py-0.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">Synced</span>
                     </div>
                   </div>
                 </div>
@@ -597,7 +597,7 @@ function AIFeatureVisual({ title }: { title: string }) {
         <motion.div 
           animate={{ opacity: [0, 1, 0], scale: [0.8, 1.1, 0.8], y: [15, -5, 15] }}
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -top-1 -right-4 bg-red-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-lg flex items-center gap-1"
+          className="absolute -top-1 -right-4 bg-red-500 text-white text-xs tracking-wide font-bold px-2 py-0.5 rounded-full shadow-lg flex items-center gap-1"
         >
           <AlertTriangle className="w-2.5 h-2.5" />
           RISK
@@ -619,9 +619,9 @@ function AIFeatureVisual({ title }: { title: string }) {
             <div className="w-5 h-5 rounded-full bg-blue-500/10 flex items-center justify-center">
               <Send className="w-3 h-3 text-blue-500 -ml-0.5" />
             </div>
-            <span className="text-[11px] font-semibold text-foreground">UniKit Bot</span>
+            <span className="text-xs font-semibold text-foreground">UniKit Bot</span>
           </div>
-          <p className="text-[11px] text-muted-foreground leading-snug">
+          <p className="text-xs text-muted-foreground leading-snug">
             <strong className="text-foreground font-semibold">Reminder:</strong> DB Assignment is due in 2 hours!
           </p>
         </motion.div>
@@ -637,8 +637,8 @@ function AIFeatureVisual({ title }: { title: string }) {
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
           className="bg-background border border-border p-3 rounded-[10px] flex items-center justify-between shadow-sm relative"
         >
-          <span className="text-[11px] font-medium text-foreground">Math Homework</span>
-          <span className="text-[9px] font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded">LOW</span>
+          <span className="text-xs font-medium text-foreground">Math Homework</span>
+          <span className="text-xs tracking-wide font-bold text-muted-foreground bg-muted px-2 py-0.5 rounded">LOW</span>
         </motion.div>
 
         <motion.div 
@@ -646,8 +646,8 @@ function AIFeatureVisual({ title }: { title: string }) {
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
           className="bg-amber-500/5 border border-amber-500/30 p-3 rounded-[10px] flex items-center justify-between shadow-md relative bg-background"
         >
-          <span className="text-[11px] font-medium text-foreground">DB Assignment</span>
-          <span className="text-[9px] font-bold text-amber-600 dark:text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded flex items-center gap-1">
+          <span className="text-xs font-medium text-foreground">DB Assignment</span>
+          <span className="text-xs tracking-wide font-bold text-amber-600 dark:text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded flex items-center gap-1">
             <TrendingUp className="w-2.5 h-2.5" /> URGENT
           </span>
         </motion.div>
@@ -672,7 +672,7 @@ function AIFeatures() {
           className="text-center mb-16"
         >
           
-          <h2 className="text-[clamp(2.2rem,3.5vw,3rem)] font-serif leading-[1.1] font-medium tracking-tight text-foreground text-balance mx-auto">
+          <h2 className="text-[clamp(2.2rem,3.5vw,3rem)] tracking-tight leading-[1.1] font-medium tracking-tight text-foreground text-balance mx-auto">
             Smart tools that amplify<br />your productivity
           </h2>
         </motion.div>
@@ -966,7 +966,7 @@ function FAQ() {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h2 className="text-[clamp(2.2rem,3.5vw,3rem)] font-serif leading-[1.1] font-medium tracking-tight text-foreground text-balance mx-auto mb-4">
+          <h2 className="text-[clamp(2.2rem,3.5vw,3rem)] tracking-tight leading-[1.1] font-medium tracking-tight text-foreground text-balance mx-auto mb-4">
             Frequently Asked Questions
           </h2>
           <p className="text-muted-foreground text-lg">

@@ -503,7 +503,7 @@ export default function FlashcardsPage() {
                   setUploadError("");
                   setIsDeckModalOpen(true);
                 }}
-                className="text-[10px] font-semibold text-primary hover:text-foreground flex items-center gap-1 transition-standard cursor-pointer"
+                className="text-xs font-semibold text-primary hover:text-foreground flex items-center gap-1 transition-standard cursor-pointer"
               >
                 <Plus className="w-3 h-3" />
                 New Deck
@@ -541,7 +541,7 @@ export default function FlashcardsPage() {
                           {deck.title}
                         </h4>
                       </div>
-                      <p className="text-[10px] text-muted-foreground font-mono pl-5">
+                      <p className="text-xs text-muted-foreground font-mono pl-5">
                         {deck.flashcards?.length || 0} cards
                       </p>
                     </div>
@@ -574,7 +574,7 @@ export default function FlashcardsPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">
+                  <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">
                     Front / Prompt *
                   </label>
                   <input
@@ -586,7 +586,7 @@ export default function FlashcardsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">
+                  <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">
                     Back / Answer Explanation *
                   </label>
                   <textarea
@@ -599,7 +599,7 @@ export default function FlashcardsPage() {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">
+                <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">
                   Source Reference Citation
                 </label>
                 <input
@@ -726,7 +726,7 @@ export default function FlashcardsPage() {
                             
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div>
-                                <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">
+                                <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">
                                   Front Prompt
                                 </label>
                                 <input
@@ -737,7 +737,7 @@ export default function FlashcardsPage() {
                                 />
                               </div>
                               <div>
-                                <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">
+                                <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">
                                   Back Answer
                                 </label>
                                 <textarea
@@ -749,7 +749,7 @@ export default function FlashcardsPage() {
                             </div>
 
                             <div>
-                              <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">
+                              <label className="block text-xs font-bold text-muted-foreground uppercase mb-1">
                                 Citation
                               </label>
                               <input
@@ -786,7 +786,7 @@ export default function FlashcardsPage() {
                               
                               <div className="absolute inset-0 w-full h-full rounded-[10px] border border-border bg-white p-8 flex flex-col justify-between shadow-sm [backface-visibility:hidden]">
                                 <div className="flex items-center justify-between border-b border-[#f3eff8] pb-3">
-                                  <span className="text-[10px] font-bold text-primary tracking-wider uppercase flex items-center gap-1">
+                                  <span className="text-xs font-bold text-primary tracking-wider uppercase flex items-center gap-1">
                                     <Bookmark className="w-3.5 h-3.5 text-primary" />
                                     Concept Prompt
                                   </span>
@@ -823,11 +823,11 @@ export default function FlashcardsPage() {
 
                               <div className="absolute inset-0 w-full h-full rounded-[10px] border border-[#5b21b6]/30 bg-[#f5f0fa] p-8 flex flex-col justify-between shadow-sm [backface-visibility:hidden] [transform:rotateY(180deg)]">
                                 <div className="flex items-center justify-between border-b border-[#e0daf0] pb-3">
-                                  <span className="text-[10px] font-bold text-primary tracking-wider uppercase flex items-center gap-1">
+                                  <span className="text-xs font-bold text-primary tracking-wider uppercase flex items-center gap-1">
                                     <CheckCircle className="w-3.5 h-3.5 text-primary" />
                                     AI Answer Verification
                                   </span>
-                                  <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-[10px] uppercase">
+                                  <span className="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-[10px] uppercase">
                                     Revealed
                                   </span>
                                 </div>
@@ -839,7 +839,7 @@ export default function FlashcardsPage() {
                                   
                                   {flashcards[currentIndex].citation && (
                                     <div className="text-left bg-[#f0e8fa] border-l-2 border-[#5b21b6] px-3.5 py-2 text-xs text-muted-foreground font-sans italic max-w-lg mx-auto rounded-[4px]">
-                                      <strong className="text-[10px] font-bold text-primary font-sans block not-italic uppercase mb-0.5">
+                                      <strong className="text-xs font-bold text-primary font-sans block not-italic uppercase mb-0.5">
                                         Source Citation Document:
                                       </strong>
                                       "{flashcards[currentIndex].citation}"
@@ -859,7 +859,7 @@ export default function FlashcardsPage() {
 
                                   </div>
                                   
-                                  <span className="text-[11px] text-muted-foreground italic font-sans">
+                                  <span className="text-xs text-muted-foreground italic font-sans">
                                     Click card to flip back
                                   </span>
                                 </div>
@@ -915,12 +915,12 @@ export default function FlashcardsPage() {
                         </div>
                       </div>
 
-                      <div className="bg-card border border-border rounded-[10px] px-4 py-2.5 flex items-center justify-between text-[11px] text-muted-foreground font-sans">
+                      <div className="bg-card border border-border rounded-[10px] px-4 py-2.5 flex items-center justify-between text-xs text-muted-foreground font-sans">
                         <div className="flex items-center gap-1.5">
                           <Info className="w-3.5 h-3.5 text-primary" />
                           <span>Keyboard controls active.</span>
                         </div>
-                        <div className="flex items-center gap-4 font-sans text-[10px] tracking-wider uppercase font-semibold">
+                        <div className="flex items-center gap-4 font-sans text-xs tracking-wider uppercase font-semibold">
                           <span>Space: Flip</span>
                           <span>← / →: Navigate</span>
                           <span>1: Learn</span>
@@ -953,7 +953,7 @@ export default function FlashcardsPage() {
                               
                               <div className="absolute inset-0 w-full h-full rounded-[10px] border border-border bg-white p-5 flex flex-col justify-between shadow-sm [backface-visibility:hidden]">
                                 <div className="flex justify-between items-center border-b border-[#f3eff8] pb-2" onClick={(e) => e.stopPropagation()}>
-                                  <span className="text-[10px] font-mono text-muted-foreground">
+                                  <span className="text-xs font-mono text-muted-foreground">
                                     CARD {idx + 1}
                                   </span>
                                   <div className="flex items-center gap-1">
@@ -980,7 +980,7 @@ export default function FlashcardsPage() {
                                   <span className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full ${statusColor}`}>
                                     {cardStatus}
                                   </span>
-                                  <span className="text-[10px] text-muted-foreground italic font-sans flex items-center gap-1">
+                                  <span className="text-xs text-muted-foreground italic font-sans flex items-center gap-1">
                                     <RotateCw className="w-3 h-3 text-primary" /> Flip
                                   </span>
                                 </div>
@@ -988,7 +988,7 @@ export default function FlashcardsPage() {
 
                               <div className="absolute inset-0 w-full h-full rounded-[10px] border border-[#5b21b6]/20 bg-[#fbfbfa] p-5 flex flex-col justify-between shadow-sm [backface-visibility:hidden] [transform:rotateY(180deg)]">
                                 <div className="flex justify-between items-center border-b border-[#e0daf0] pb-2" onClick={(e) => e.stopPropagation()}>
-                                  <span className="text-[10px] font-bold text-primary uppercase">
+                                  <span className="text-xs font-bold text-primary uppercase">
                                     Answer Description
                                   </span>
                                   <div className="flex items-center gap-1">
@@ -1005,7 +1005,7 @@ export default function FlashcardsPage() {
                                     {card.back}
                                   </p>
                                 </div>
-                                <div className="text-center text-[10px] text-muted-foreground italic font-sans pt-1.5 border-t border-[#e0daf0]">
+                                <div className="text-center text-xs text-muted-foreground italic font-sans pt-1.5 border-t border-[#e0daf0]">
                                   Click to flip back
                                 </div>
                               </div>
@@ -1044,7 +1044,7 @@ export default function FlashcardsPage() {
                           </div>
 
                           <div className="flex items-center gap-2">
-                            <span className="bg-muted text-foreground text-[10px] px-2 py-0.5 rounded-[10px] font-mono font-bold">
+                            <span className="bg-muted text-foreground text-xs px-2 py-0.5 rounded-[10px] font-mono font-bold">
                               CONCEPT {idx + 1}
                             </span>
                             {card.status && card.status !== "unseen" && (
@@ -1100,15 +1100,15 @@ export default function FlashcardsPage() {
                   <div className="grid grid-cols-3 gap-4 max-w-md mx-auto pt-2">
                     <div className="bg-[#f3edfa] border border-[#d2c0f0] rounded-[10px] p-4 text-center">
                       <div className="text-3xl font-extrabold text-primary">{masteredCount}</div>
-                      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-1">Mastered</div>
+                      <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mt-1">Mastered</div>
                     </div>
                     <div className="bg-[#fdf9f2] border border-[#eedebb] rounded-[10px] p-4 text-center">
                       <div className="text-3xl font-extrabold text-foreground">{reviewCount}</div>
-                      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-1">Review Needed</div>
+                      <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mt-1">Review Needed</div>
                     </div>
                     <div className="bg-background border border-border rounded-[10px] p-4 text-center">
                       <div className="text-3xl font-extrabold text-muted-foreground">{unseenCount}</div>
-                      <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-1">Unseen</div>
+                      <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mt-1">Unseen</div>
                     </div>
                   </div>
 
@@ -1249,7 +1249,7 @@ export default function FlashcardsPage() {
                     <p className="text-xs font-bold text-foreground">
                       Select study document
                     </p>
-                    <p className="text-[10px] text-muted-foreground mt-1 font-sans max-w-xs leading-normal">
+                    <p className="text-xs text-muted-foreground mt-1 font-sans max-w-xs leading-normal">
                       Drag and drop your file here, or click to browse. Supports <strong className="text-primary">PDF, TXT, and Markdown (.md)</strong>.
                     </p>
                     <input

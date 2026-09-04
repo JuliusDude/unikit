@@ -367,7 +367,7 @@ export default function QuizPage() {
                   setUploadError("");
                   setIsNewQuizModalOpen(true);
                 }}
-                className="text-[10px] font-semibold text-primary hover:text-foreground flex items-center gap-1 transition-standard cursor-pointer"
+                className="text-xs font-semibold text-primary hover:text-foreground flex items-center gap-1 transition-standard cursor-pointer"
               >
                 <Plus className="w-3 h-3" />
                 New Quiz
@@ -397,7 +397,7 @@ export default function QuizPage() {
                             {q.title}
                           </h4>
                         </div>
-                        <p className="text-[10px] text-muted-foreground mt-1 font-mono">
+                        <p className="text-xs text-muted-foreground mt-1 font-mono">
                           {q.score !== null ? `Score: ${q.score}%` : "Not completed"}
                         </p>
                       </div>
@@ -512,15 +512,15 @@ export default function QuizPage() {
                     
                     <div className="space-y-2">
                       <div className="flex items-center justify-between flex-shrink-0 mb-6">
-                        <span className="text-[10px] font-bold text-primary tracking-wider uppercase font-mono">
+                        <span className="text-xs font-bold text-primary tracking-wider uppercase font-mono">
                           QUESTION {activeQuestionIndex + 1} OF {questions.length}
                         </span>
                         
                         {submitted && (
                           answers[activeQuestionIndex] === questions[activeQuestionIndex].correct_index ? (
-                            <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-[10px]">✓ Correct</span>
+                            <span className="text-xs font-bold text-purple-700 bg-purple-50 px-2.5 py-0.5 rounded-[10px]">✓ Correct</span>
                           ) : (
-                            <span className="text-[10px] font-bold text-red-700 bg-destructive/10 px-2.5 py-0.5 rounded-[10px]">✗ Incorrect</span>
+                            <span className="text-xs font-bold text-red-700 bg-destructive/10 px-2.5 py-0.5 rounded-[10px]">✗ Incorrect</span>
                           )
                         )}
                       </div>
@@ -568,14 +568,14 @@ export default function QuizPage() {
                       <div className="space-y-3.5 border-t border-[#f3eff8] pt-4">
                         {questions[activeQuestionIndex].explanation && (
                           <div className="bg-[#f5f0fa] border border-border rounded-[10px] p-4 text-xs text-muted-foreground font-sans leading-relaxed">
-                            <strong className="text-primary font-sans block mb-1 uppercase tracking-wider text-[10px]">Explanation Key:</strong>
+                            <strong className="text-primary font-sans block mb-1 uppercase tracking-wider text-xs">Explanation Key:</strong>
                             {questions[activeQuestionIndex].explanation}
                           </div>
                         )}
 
                         {questions[activeQuestionIndex].citation && (
                           <div className="bg-[#f0e8fa] border-l-2 border-[#5b21b6] p-3 text-xs text-muted-foreground font-sans italic rounded-r-[4px]">
-                            <strong className="text-[10px] font-bold text-primary font-sans block not-italic uppercase mb-0.5">Reference Source Quote:</strong>
+                            <strong className="text-xs font-bold text-primary font-sans block not-italic uppercase mb-0.5">Reference Source Quote:</strong>
                             "{questions[activeQuestionIndex].citation}"
                           </div>
                         )}
@@ -645,7 +645,7 @@ export default function QuizPage() {
                     </div>
 
                     {!submitted && unansweredCount > 0 && (
-                      <div className="p-3 bg-[#f0e6ff] border border-[#d4c0f0] text-foreground rounded-[10px] text-[10px] font-sans leading-normal">
+                      <div className="p-3 bg-[#f0e6ff] border border-[#d4c0f0] text-foreground rounded-[10px] text-xs font-sans leading-normal">
                         ⚠️ <strong>{unansweredCount} item{unansweredCount > 1 ? "s" : ""} left.</strong> Complete all responses.
                       </div>
                     )}
@@ -701,7 +701,7 @@ export default function QuizPage() {
                       return (
                         <div key={qidx} className="p-6 space-y-4 hover:bg-background relative group">
                           <div className="flex items-center justify-between flex-shrink-0 mb-6">
-                            <span className="bg-muted text-foreground text-[10px] px-2 py-0.5 rounded-[10px] font-mono font-bold">QUESTION {qidx + 1}</span>
+                            <span className="bg-muted text-foreground text-xs px-2 py-0.5 rounded-[10px] font-mono font-bold">QUESTION {qidx + 1}</span>
                             <span className={`text-xs font-bold px-3 py-0.5 rounded-full ${passed ? "text-purple-700 bg-purple-50 border border-purple-150" : "text-red-700 bg-destructive/10 border border-red-150"}`}>
                               {passed ? "✓ Correct" : "✗ Incorrect"}
                             </span>
@@ -732,13 +732,13 @@ export default function QuizPage() {
                           <div className="space-y-2.5">
                             {q.explanation && (
                               <div className="bg-[#f5f0fa] border border-border rounded-[10px] p-4 text-xs text-muted-foreground font-sans leading-relaxed">
-                                <strong className="text-primary font-sans block mb-1 uppercase tracking-wider text-[10px]">Concept Explanation:</strong>
+                                <strong className="text-primary font-sans block mb-1 uppercase tracking-wider text-xs">Concept Explanation:</strong>
                                 {q.explanation}
                               </div>
                             )}
                             {q.citation && (
                               <div className="bg-[#f0e8fa] border-l-2 border-[#5b21b6] p-3.5 text-xs text-muted-foreground font-sans italic rounded-r-[4px]">
-                                <strong className="text-[10px] font-bold text-primary font-sans block not-italic uppercase mb-0.5">Supporting Citation:</strong>
+                                <strong className="text-xs font-bold text-primary font-sans block not-italic uppercase mb-0.5">Supporting Citation:</strong>
                                 "{q.citation}"
                               </div>
                             )}
@@ -860,7 +860,7 @@ export default function QuizPage() {
                   <>
                     <Upload className="w-10 h-10 text-muted-foreground mb-2" />
                     <p className="text-xs font-bold text-foreground">Select study document</p>
-                    <p className="text-[10px] text-muted-foreground mt-1 font-sans max-w-xs leading-normal">
+                    <p className="text-xs text-muted-foreground mt-1 font-sans max-w-xs leading-normal">
                       Drag and drop your file here, or click to browse. Supports <strong className="text-primary">PDF, TXT, and Markdown (.md)</strong>.
                     </p>
                     <input

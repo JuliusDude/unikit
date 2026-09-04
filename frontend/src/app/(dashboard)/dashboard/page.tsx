@@ -113,7 +113,7 @@ export default function DashboardPage() {
       {/* ✨ Elegant Hero Header ✨ */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border/60">
         <div>
-          <h1 className="text-4xl md:text-[2.75rem] font-serif text-foreground tracking-tight leading-tight mb-2">
+          <h1 className="text-4xl md:text-5xl tracking-tight text-foreground tracking-tight leading-tight mb-2">
             {getGreeting()}, {user?.name?.split(" ")[0] || "Student"}.
           </h1>
           
@@ -123,7 +123,7 @@ export default function DashboardPage() {
             <CalendarDays className="w-3.5 h-3.5" />
             {getFormattedDate()}
           </div>
-          <div className="flex items-center gap-2 text-3xl font-medium tracking-tighter text-foreground font-serif">
+          <div className="flex items-center gap-2 text-3xl font-medium tracking-tighter text-foreground tracking-tight">
             {getFormattedTime()}
           </div>
         </div>

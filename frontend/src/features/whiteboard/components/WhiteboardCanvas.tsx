@@ -111,7 +111,7 @@ export function WhiteboardCanvas({ whiteboardId, title, onBack }: WhiteboardCanv
           
           {/* Cloud Auto-save indicator */}
           {whiteboardId && (
-            <div className="flex items-center gap-1 text-[10px] text-muted-foreground ml-4 bg-muted px-2 py-0.5 rounded-[10px] font-medium">
+            <div className="flex items-center gap-1 text-xs text-muted-foreground ml-4 bg-muted px-2 py-0.5 rounded-[10px] font-medium">
               {saveStatus === 'saving' && (
                 <>
                   <RefreshCw className="w-3 h-3 animate-spin text-primary" />
@@ -180,7 +180,7 @@ export function WhiteboardCanvas({ whiteboardId, title, onBack }: WhiteboardCanv
           {/* Floating Selection Action Bar — appears when shape(s) are selected */}
           {engine.selectedIds.length > 0 && !engine.editingId && (
             <div className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1 bg-white border border-border shadow-lg rounded-[10px] px-2 py-1.5 animate-in fade-in slide-in-from-top-2 duration-150">
-              <span className="text-[10px] font-semibold text-muted-foreground px-1 border-r border-border mr-1">
+              <span className="text-xs font-semibold text-muted-foreground px-1 border-r border-border mr-1">
                 {engine.selectedIds.length} selected
               </span>
               <button
@@ -232,7 +232,7 @@ export function WhiteboardCanvas({ whiteboardId, title, onBack }: WhiteboardCanv
           />
 
           {/* Status info bar */}
-          <div className="absolute bottom-2 left-2 flex gap-3 text-[10px] text-muted-foreground bg-white/80 px-2 py-1 rounded border border-border/50 pointer-events-none font-medium">
+          <div className="absolute bottom-2 left-2 flex gap-3 text-xs text-muted-foreground bg-white/80 px-2 py-1 rounded border border-border/50 pointer-events-none font-medium">
             <span>{engine.tool.toUpperCase()}</span>
             <span>{engine.cursorPos.x}, {engine.cursorPos.y}</span>
             <span>{engine.zoomPercent}%</span>

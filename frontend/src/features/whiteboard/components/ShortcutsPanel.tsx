@@ -59,12 +59,12 @@ export function ShortcutsPanel({ isOpen, onClose }: ShortcutsPanelProps) {
         <div className="p-4 overflow-y-auto space-y-4 text-xs">
           {groups.map(group => (
             <div key={group.title} className="space-y-2">
-              <h4 className="font-medium text-primary uppercase tracking-wider text-[10px]">{group.title}</h4>
+              <h4 className="font-medium text-primary uppercase tracking-wider text-xs">{group.title}</h4>
               <div className="grid grid-cols-1 gap-2">
                 {group.shortcuts.map(s => (
                   <div key={s.key} className="flex items-center justify-between py-1 border-b border-dashed border-border/50">
                     <span className="text-muted-foreground">{s.desc}</span>
-                    <kbd className="px-1.5 py-0.5 bg-muted rounded border border-border font-mono text-[10px] shadow-sm">
+                    <kbd className="px-1.5 py-0.5 bg-muted rounded border border-border font-mono text-xs shadow-sm">
                       {s.key}
                     </kbd>
                   </div>
