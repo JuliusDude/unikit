@@ -17,7 +17,7 @@ import { CampusNewsWidget } from "@/components/dashboard/CampusNewsWidget";
 import { AchievementWidget } from "@/components/dashboard/AchievementWidget";
 import { QuoteWidget } from "@/components/dashboard/QuoteWidget";
 import { MonthlyCalendarWidget } from "@/components/dashboard/MonthlyCalendarWidget";
-import { ListTodo, Clock, CheckCircle, CalendarDays } from "lucide-react";
+import { Calendar as CalendarDays, CheckCircle, Clock, List as ListTodo } from "@untitledui/icons";
 import { api } from "@/lib/api";
 import type { Task, Attendance } from "@/features/types";
 
@@ -156,7 +156,7 @@ export default function DashboardPage() {
       {/* ── Row 3: Attendance  |  Study Streak ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
         <PopoutWidget><AttendanceWidget attendance={attendance} /></PopoutWidget>
-        <StudyStreakWidget attendance={attendance} />
+        <StudyStreakWidget attendance={attendance} tasks={tasks} />
       </div>
 
       {/* ── Row 4: Quick Actions  |  Weekly Progress  |  Upcoming Events ── */}
@@ -170,7 +170,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
         <RecentActivityWidget />
         <ProductivityScoreWidget tasks={tasks} attendance={attendance} />
-        <PopoutWidget><FocusTimerWidget /></PopoutWidget>
+        <FocusTimerWidget />
       </div>
 
       {/* ── Row 6: Campus News  |  Achievements ── */}

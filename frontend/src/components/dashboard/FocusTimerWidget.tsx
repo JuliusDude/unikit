@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Play, Pause, RotateCcw, Timer, SkipForward, Maximize2, Minimize2, Plus, Minus, X, Settings2 } from "lucide-react";
+import { Clock as Timer, Maximize01 as Maximize2, Minimize01 as Minimize2, Minus, PauseCircle as Pause, Play, Plus, RefreshCcw01 as RotateCcw, Settings02 as Settings2, SkipForward, XClose as X } from "@untitledui/icons";
 
 export function FocusTimerWidget() {
   const [sessionLength, setSessionLength] = useState(25);
@@ -207,8 +207,8 @@ export function FocusTimerWidget() {
 
       {/* Expanded Modal */}
       {isExpanded && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md animate-in fade-in duration-300 p-4">
-          <div className="w-full max-w-4xl h-[80vh] bg-gradient-to-br from-primary to-primary/90 rounded-[32px] p-8 md:p-12 flex flex-col items-center justify-between shadow-2xl relative text-white animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md animate-in fade-in duration-300 p-4" onClick={() => setIsExpanded(false)}>
+          <div className="w-full max-w-4xl h-[80vh] bg-gradient-to-br from-primary to-primary/90 rounded-[32px] p-8 md:p-12 flex flex-col items-center justify-between shadow-2xl relative text-white animate-in zoom-in-95 duration-300" onClick={(e) => e.stopPropagation()}>
             
             <button 
               onClick={() => setIsExpanded(false)}
@@ -313,7 +313,7 @@ export function FocusTimerWidget() {
                   </div>
 
                   {sessionsCompleted > 0 && (
-                    <div className="absolute bottom-0 text-center opacity-70">
+                    <div className="mt-12 text-center opacity-70">
                       <p className="text-lg">
                         {sessionsCompleted} focus session{sessionsCompleted > 1 ? "s" : ""} completed today
                       </p>

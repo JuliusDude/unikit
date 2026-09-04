@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Settings, Calendar, User, Users, Save, RefreshCw, Loader2, ShieldCheck, ShieldAlert, Sparkles, X, Plus } from "lucide-react";
+import { Calendar, Loading01 as Loader2, Plus, RefreshCcw01 as RefreshCw, Save01 as Save, Settings01 as Settings, Shield02 as ShieldAlert, ShieldTick as ShieldCheck, Stars01 as Sparkles, User01 as User, Users01 as Users, XClose as X } from "@untitledui/icons";
 import { api } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 

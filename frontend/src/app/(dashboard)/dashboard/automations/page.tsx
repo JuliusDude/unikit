@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Workflow, RefreshCw, Loader2, CheckCircle2, AlertCircle, Zap } from "lucide-react";
+import { AlertCircle, CheckCircle as CheckCircle2, GitBranch01 as Workflow, Lightning01 as Zap, Loading01 as Loader2, RefreshCcw01 as RefreshCw } from "@untitledui/icons";
 import { api } from "@/lib/api";
 import type { AutomationLog } from "@/features/types";
 

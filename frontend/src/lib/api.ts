@@ -24,11 +24,12 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
   let res: Response;
   try {
     res = await fetch(`${API_URL}${endpoint}`, {
+      cache: "no-store",
       ...fetchOptions,
       headers,
     });
   } catch {
-    throw new Error("Network error — please check your connection and try again.");
+    throw new Error("Network error  please check your connection and try again.");
   }
 
   if (!res.ok) {

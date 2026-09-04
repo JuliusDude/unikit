@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Quote, RefreshCw } from "lucide-react";
+import { MessageSquare01 as Quote, RefreshCcw01 as RefreshCw } from "@untitledui/icons";
 import { api } from "@/lib/api";
 
 export function QuoteWidget() {

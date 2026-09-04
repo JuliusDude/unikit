@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Trash2, Edit2, Calendar, FileText, Check, X } from 'lucide-react';
+import { Calendar, Check, Edit01 as Edit2, File04 as FileText, Plus, Trash01 as Trash2, XClose as X } from "@untitledui/icons";
 import { Whiteboard } from '../hooks/useWhiteboards';
 
 interface WhiteboardListProps {

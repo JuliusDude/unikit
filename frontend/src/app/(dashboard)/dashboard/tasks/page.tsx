@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, ListTodo, Trash2, Edit2, Calendar, Bell, X, Check, ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Bell01 as Bell, Calendar, Check, Edit01 as Edit2, List as ListTodo, Loading01 as Loader2, Plus, Trash01 as Trash2, XClose as X } from "@untitledui/icons";
 import { api } from "@/lib/api";
 import type { Task, TaskStatus } from "@/features/types";
 

@@ -1,19 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { 
-  Sparkles, 
-  FileText, 
-  Calendar, 
-  GitFork, 
-  Lightbulb, 
-  ShieldAlert, 
-  Megaphone, 
-  X, 
-  Loader2, 
-  Copy, 
-  Check 
-} from "lucide-react";
+import { Announcement01 as Megaphone, Calendar, Check, Copy01 as Copy, File04 as FileText, GitBranch01 as GitFork, Lightbulb01 as Lightbulb, Loading01 as Loader2, Shield02 as ShieldAlert, Stars01 as Sparkles, XClose as X } from "@untitledui/icons";
 import { api } from "@/lib/api";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";

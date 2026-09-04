@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CheckCircle, BarChart3, Megaphone, Bell } from "lucide-react";
+import { Announcement01 as Megaphone, BarChart01 as BarChart3, Bell01 as Bell, CheckCircle } from "@untitledui/icons";
 import { api } from "@/lib/api";
 import type { AutomationLog } from "@/features/types";
 

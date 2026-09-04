@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Megaphone, Sparkles, Send, Calendar, Clock, Loader2, RefreshCw, Users, Bell } from "lucide-react";
+import { Announcement01 as Megaphone, Bell01 as Bell, Calendar, Clock, Loading01 as Loader2, RefreshCcw01 as RefreshCw, Send01 as Send, Stars01 as Sparkles, Users01 as Users } from "@untitledui/icons";
 import { api } from "@/lib/api";
 import type { Notice } from "@/features/types";
 

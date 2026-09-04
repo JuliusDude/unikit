@@ -1,6 +1,6 @@
 'use client';
 
-import { Eye, EyeOff, Lock, Unlock, Trash2, Plus, ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowDown, ArrowUp, Eye, EyeOff, Lock01 as Lock, Plus, Star01 as Unlock, Trash01 as Trash2 } from "@untitledui/icons";
 import { Layer } from '../hooks/useCanvasEngine';
 import { memo } from 'react';
 

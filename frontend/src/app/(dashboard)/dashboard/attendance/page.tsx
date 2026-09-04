@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BarChart3, Plus, Trash2, ShieldAlert, CheckCircle, RefreshCw, Loader2, Sparkles } from "lucide-react";
+import { BarChart01 as BarChart3, CheckCircle, Loading01 as Loader2, Plus, RefreshCcw01 as RefreshCw, Shield02 as ShieldAlert, Stars01 as Sparkles, Trash01 as Trash2 } from "@untitledui/icons";
 import { api } from "@/lib/api";
 import type { Attendance } from "@/features/types";
 

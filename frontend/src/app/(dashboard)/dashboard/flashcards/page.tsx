@@ -1,35 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { 
-  Layers, 
-  BookOpen, 
-  Trash2, 
-  Loader2, 
-  ArrowLeft, 
-  ArrowRight, 
-  RotateCw, 
-  CheckCircle, 
-  XCircle, 
-  Bookmark, 
-  HelpCircle,
-  Sparkles,
-  RefreshCw,
-  Plus,
-  FileText,
-  Edit2,
-  Copy,
-  Check,
-  Grid,
-  List,
-  ChevronRight,
-  Info,
-  Pin,
-  Save,
-  CheckSquare,
-  Upload,
-  AlertCircle
-} from "lucide-react";
+import { AlertCircle, ArrowLeft, ArrowRight, BookOpen01 as BookOpen, Bookmark, Check, CheckCircle, CheckSquare, ChevronRight, Copy01 as Copy, Edit01 as Edit2, File04 as FileText, Grid01 as Grid, HelpCircle, InfoCircle as Info, LayersTwo01 as Layers, List, Loading01 as Loader2, Pin01 as Pin, Plus, RefreshCcw01 as RefreshCw, RefreshCw01 as RotateCw, Save01 as Save, Stars01 as Sparkles, Trash01 as Trash2, Upload01 as Upload, XCircle } from "@untitledui/icons";
 import { api } from "@/lib/api";
 
 interface Flashcard {

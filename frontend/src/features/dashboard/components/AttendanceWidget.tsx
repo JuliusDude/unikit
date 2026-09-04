@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, TrendingUp, TrendingDown } from "lucide-react";
+import { BarChart01 as BarChart3, TrendDown01 as TrendingDown, TrendUp01 as TrendingUp } from "@untitledui/icons";
 import type { Attendance } from "@/features/types";
 
 function getPercentage(attended: number, total: number): number {

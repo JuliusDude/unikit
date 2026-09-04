@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Bot, Send, Loader2, User, Sparkles, MessageSquare } from "lucide-react";
+import { FaceSmile as Bot, Loading01 as Loader2, MessageSquare01 as MessageSquare, Send01 as Send, Stars01 as Sparkles, User01 as User } from "@untitledui/icons";
 import { api } from "@/lib/api";
 
 interface Message {

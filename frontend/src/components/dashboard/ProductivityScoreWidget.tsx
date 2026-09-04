@@ -1,6 +1,6 @@
 "use client";
 
-import { Lightbulb } from "lucide-react";
+import { Lightbulb01 as Lightbulb } from "@untitledui/icons";
 import type { Task, Attendance } from "@/features/types";
 
 interface ProductivityScoreWidgetProps {

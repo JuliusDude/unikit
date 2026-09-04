@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
+import { XClose as X } from "@untitledui/icons";
 import { Sidebar } from "./Sidebar";
 
 interface MobileNavProps {

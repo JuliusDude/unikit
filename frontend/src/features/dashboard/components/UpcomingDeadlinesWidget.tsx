@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Clock, ArrowRight, PartyPopper, Plus } from "lucide-react";
+import { ArrowRight, Clock, Plus, Stars01 as PartyPopper } from "@untitledui/icons";
 import type { Task } from "@/features/types";
 
 interface UpcomingDeadlinesWidgetProps {

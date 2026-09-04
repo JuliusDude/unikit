@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { api } from "@/lib/api";
-import { CheckCircle, Loader2, AlertCircle, Users } from "lucide-react";
+import { AlertCircle, CheckCircle, Loading01 as Loader2, Users01 as Users } from "@untitledui/icons";
 
 export default function JoinGroupPage() {
   const searchParams = useSearchParams();

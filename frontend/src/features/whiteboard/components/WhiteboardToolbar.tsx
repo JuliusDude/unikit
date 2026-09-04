@@ -1,11 +1,6 @@
 'use client';
 
-import {
-  MousePointer2, Square, RectangleHorizontal, Circle, Diamond,
-  Type, ArrowRight, StickyNote, Undo2, Redo2, Trash2,
-  Download, Upload, Save, Minus, Pen, Image as ImageIcon,
-  Group, Ungroup, HelpCircle,
-} from 'lucide-react';
+import { ArrowRight, Circle, CornerUpLeft as Undo2, CornerUpRight as Redo2, Diamond01 as Diamond, Download01 as Download, Edit01 as Pen, File01 as StickyNote, HelpCircle, Image01 as ImageIcon, LayoutAlt01 as RectangleHorizontal, Minus, Mouse as MousePointer2, Save01 as Save, Square, Trash01 as Trash2, Type01 as Type, Upload01 as Upload, Users01 as Group, Users02 as Ungroup } from "@untitledui/icons";
 import { ToolId, TOOL_LIST, COLORS } from '../lib/shapes';
 import { memo } from 'react';
 

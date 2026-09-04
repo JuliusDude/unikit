@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import { Eye, EyeOff, ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Eye, EyeOff } from "@untitledui/icons";
 import { api } from "@/lib/api";
 
 const branches = ["CSE", "IT", "ECE", "EEE", "ME", "CE", "Other"];

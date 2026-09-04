@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CalendarDays, Clock, MapPin } from "lucide-react";
+import { Calendar as CalendarDays, Clock, MarkerPin01 as MapPin } from "@untitledui/icons";
 import { api } from "@/lib/api";
 import type { Task } from "@/features/types";
 

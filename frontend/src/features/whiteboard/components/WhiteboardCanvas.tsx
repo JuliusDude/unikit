@@ -9,7 +9,7 @@ import { ShortcutsPanel } from './ShortcutsPanel';
 import { Minimap } from './Minimap';
 import { useState, useCallback, useEffect } from 'react';
 import { api } from '@/lib/api';
-import { Layers, ArrowLeft, Cloud, CloudRain, RefreshCw, AlertCircle, CheckCircle2, Info, X, Trash2, Copy, Group, Ungroup } from 'lucide-react';
+import { AlertCircle, ArrowLeft, CheckCircle as CheckCircle2, Cloud01 as Cloud, Cloud01 as CloudRain, Copy01 as Copy, InfoCircle as Info, LayersTwo01 as Layers, RefreshCcw01 as RefreshCw, Trash01 as Trash2, Users01 as Group, Users02 as Ungroup, XClose as X } from "@untitledui/icons";
 import { worldToScreenShape } from '../lib/canvas-utils';
 
 interface WhiteboardCanvasProps {

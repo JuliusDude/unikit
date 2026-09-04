@@ -1,18 +1,24 @@
 "use client";
 
-import { Flame, Clock, CheckCircle } from "lucide-react";
-import type { Attendance } from "@/features/types";
+import { Activity as Flame, CheckCircle, Clock } from "@untitledui/icons";
+import type { Attendance, Task } from "@/features/types";
 
 interface StudyStreakWidgetProps {
   attendance: Attendance[];
+  tasks?: Task[];
 }
 
-export function StudyStreakWidget({ attendance = [] }: StudyStreakWidgetProps) {
+export function StudyStreakWidget({ attendance = [], tasks = [] }: StudyStreakWidgetProps) {
   const getStreakData = () => {
     const totalAttended = attendance.reduce((s, r) => s + r.attended_classes, 0);
+    // Rough mock for day streak based on attendance for now, since we don't have a real streak table
     const streak = totalAttended > 0 ? Math.min(totalAttended, 7) : 0;
+    
+    // Total hours can be mocked as 0.5 hours per attended class
     const totalHours = (totalAttended * 0.5).toFixed(1);
-    const totalFinished = totalAttended;
+    
+    // Actually use the tasks array to get total finished tasks!
+    const totalFinished = tasks.filter(t => t.status === "completed").length;
 
     return { streak, totalHours, totalFinished };
   };
@@ -44,7 +50,7 @@ export function StudyStreakWidget({ attendance = [] }: StudyStreakWidgetProps) {
         <div className="bg-white/10 rounded-[10px] p-3 text-center">
           <div className="flex items-center justify-center gap-1.5 mb-1">
             <CheckCircle className="w-3.5 h-3.5 text-white/70" />
-            <span className="text-xs text-white/70">Tasks</span>
+            <span className="text-xs text-white/70">Tasks Done</span>
           </div>
           <p className="text-lg font-bold">{totalFinished}</p>
         </div>

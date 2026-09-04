@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CalendarClock, Plus, ArrowRight, ClipboardList } from "lucide-react";
+import { ArrowRight, CalendarCheck01 as CalendarClock, Clipboard as ClipboardList, Plus } from "@untitledui/icons";
 import type { Task } from "@/features/types";
 import { motion } from "framer-motion";
 

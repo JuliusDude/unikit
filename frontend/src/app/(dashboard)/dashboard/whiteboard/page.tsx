@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useWhiteboards } from '@/features/whiteboard/hooks/useWhiteboards';
 import { WhiteboardList } from '@/features/whiteboard/components/WhiteboardList';
 import { WhiteboardCanvas } from '@/features/whiteboard/components/WhiteboardCanvas';
-import { PenTool, Loader2 } from 'lucide-react';
+import { Loading01 as Loader2, PenTool01 as PenTool } from "@untitledui/icons";
 
 export default function WhiteboardPage() {
   const {

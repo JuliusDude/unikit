@@ -1,11 +1,11 @@
 "use client";
 
-import { type LucideIcon } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
 interface StatCardProps {
-  icon: LucideIcon;
+  icon: React.ElementType;
   label: string;
   value: number | string;
   color?: string;

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, Bot, ListTodo, Megaphone, Workflow } from "lucide-react";
+import { Announcement01 as Megaphone, FaceSmile as Bot, GitBranch01 as Workflow, List as ListTodo, Menu01 as Menu } from "@untitledui/icons";
 import { cn } from "@/lib/utils";
 
 interface MobileFooterProps {

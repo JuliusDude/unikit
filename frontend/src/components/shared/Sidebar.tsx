@@ -2,23 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  GraduationCap,
-  LayoutDashboard,
-  Bot,
-  ListTodo,
-  Megaphone,
-  BarChart3,
-  Workflow,
-  LogOut,
-  ChevronsLeft,
-  ChevronsRight,
-  Settings,
-  Layers,
-  HelpCircle,
-  Sparkles,
-  PenTool,
-} from "lucide-react";
+import { Announcement01 as Megaphone, BarChart01 as BarChart3, ChevronLeftDouble as ChevronsLeft, ChevronRightDouble as ChevronsRight, FaceSmile as Bot, GitBranch01 as Workflow, GraduationHat01 as GraduationCap, HelpCircle, LayersTwo01 as Layers, LayoutGrid01 as LayoutDashboard, List as ListTodo, LogOut01 as LogOut, PenTool01 as PenTool, Settings01 as Settings, Stars01 as Sparkles } from "@untitledui/icons";
 import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 

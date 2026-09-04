@@ -1,6 +1,6 @@
 "use client";
 
-import { GraduationCap, Heart, ArrowUp } from "lucide-react";
+import { ArrowUp, GraduationHat01 as GraduationCap, Heart } from "@untitledui/icons";
 import Link from "next/link";
 
 export function DashboardFooter() {

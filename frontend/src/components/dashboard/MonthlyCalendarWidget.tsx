@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, CalendarDays, Link2 } from "lucide-react";
+import { Calendar as CalendarDays, ChevronLeft, ChevronRight, Link01 as Link2 } from "@untitledui/icons";
 import { api } from "@/lib/api";
 import type { Task } from "@/features/types";
 

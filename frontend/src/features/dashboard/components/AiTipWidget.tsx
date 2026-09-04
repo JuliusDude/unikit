@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Sparkles, RefreshCw } from "lucide-react";
+import { RefreshCcw01 as RefreshCw, Stars01 as Sparkles } from "@untitledui/icons";
 import { api } from "@/lib/api";
 
 export function AiTipWidget() {

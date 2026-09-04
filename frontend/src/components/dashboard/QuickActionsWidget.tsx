@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Plus, Megaphone, BarChart3, Bot, Settings } from "lucide-react";
+import { Announcement01 as Megaphone, BarChart01 as BarChart3, FaceSmile as Bot, Plus, Settings01 as Settings } from "@untitledui/icons";
 
 const actions = [
   { icon: Plus, label: "Add Task", href: "/dashboard/tasks", color: "bg-primary text-white" },

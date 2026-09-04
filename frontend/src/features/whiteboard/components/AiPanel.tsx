@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, memo } from 'react';
-import { Bot, Sparkles, Code, Loader2, ChevronRight, ChevronLeft } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Code01 as Code, FaceSmile as Bot, Loading01 as Loader2, Stars01 as Sparkles } from "@untitledui/icons";
 import { api } from '@/lib/api';
 import { Shape, createShape, genId } from '../lib/shapes';
 import { TEXT_TO_DIAGRAM_PROMPT, CANVAS_TO_CODE_PROMPT } from '../lib/ai-prompts';

@@ -1,6 +1,6 @@
 "use client";
 
-import { Trophy, Star, Zap, Target } from "lucide-react";
+import { Lightning01 as Zap, Star01 as Star, Target01 as Target, Trophy01 as Trophy } from "@untitledui/icons";
 import type { Task, Attendance } from "@/features/types";
 
 interface Badge {

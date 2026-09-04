@@ -1,6 +1,6 @@
 'use client';
 
-import { X } from 'lucide-react';
+import { XClose as X } from "@untitledui/icons";
 
 interface ShortcutsPanelProps {
   isOpen: boolean;

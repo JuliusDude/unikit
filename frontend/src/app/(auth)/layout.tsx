@@ -1,6 +1,6 @@
 "use client";
 
-import { GraduationCap, CheckCircle, Bell, CalendarClock } from "lucide-react";
+import { Bell01 as Bell, CalendarCheck01 as CalendarClock, CheckCircle, GraduationHat01 as GraduationCap } from "@untitledui/icons";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
