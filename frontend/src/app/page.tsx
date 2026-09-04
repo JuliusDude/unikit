@@ -84,6 +84,123 @@ function Header() {
     </header>
   );
 }
+function TelegramMockup() {
+  const [messages, setMessages] = useState<number>(0);
+  const [isTyping, setIsTyping] = useState<boolean>(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    const sequence = async () => {
+      // Loop sequence
+      while (isMounted) {
+        setMessages(0);
+        setIsTyping(false);
+        
+        await new Promise(r => setTimeout(r, 1000));
+        if (!isMounted) break;
+        setIsTyping(true);
+        
+        await new Promise(r => setTimeout(r, 1200));
+        if (!isMounted) break;
+        setIsTyping(false);
+        setMessages(1); // Bot alert
+        
+        await new Promise(r => setTimeout(r, 2000));
+        if (!isMounted) break;
+        setMessages(2); // User: "Yes please"
+        
+        await new Promise(r => setTimeout(r, 800));
+        if (!isMounted) break;
+        setIsTyping(true);
+        
+        await new Promise(r => setTimeout(r, 2000));
+        if (!isMounted) break;
+        setIsTyping(false);
+        setMessages(3); // Bot summary
+        
+        await new Promise(r => setTimeout(r, 6000)); // Wait before looping
+      }
+    };
+    sequence();
+    return () => { isMounted = false; };
+  }, []);
+
+  return (
+    <div className="w-[300px] xl:w-[320px] rounded-[32px] border-[6px] border-border/40 bg-background/95 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] shadow-primary/5 flex flex-col overflow-hidden relative">
+      {/* Notch */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[100px] h-[22px] bg-border/40 rounded-b-2xl z-20"></div>
+      
+      {/* Header */}
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-border/30 bg-muted/20 pt-8 z-10 relative">
+        <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
+          <Bot className="w-5 h-5 text-primary" />
+        </div>
+        <div>
+          <div className="font-semibold text-sm text-foreground leading-tight">UniKit Bot</div>
+          <div className="text-[11px] text-primary font-medium leading-tight">bot</div>
+        </div>
+      </div>
+      
+      {/* Chat Body */}
+      <div className="p-4 flex flex-col gap-4 min-h-[340px] relative bg-muted/5 z-10">
+        <AnimatePresence>
+          {messages >= 1 && (
+            <motion.div
+              key="msg1"
+              initial={{ opacity: 0, y: 10, scale: 0.95, transformOrigin: 'top left' }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              className="self-start bg-muted/80 text-foreground px-4 py-2.5 rounded-[18px] rounded-tl-sm text-[13px] max-w-[85%] leading-relaxed shadow-sm border border-border/30"
+            >
+              ⚠️ <b className="font-semibold">Heads up!</b> Database Assignment 3 is due in 3 hours. Do you want me to summarize the requirements?
+            </motion.div>
+          )}
+          
+          {messages >= 2 && (
+            <motion.div
+              key="msg2"
+              initial={{ opacity: 0, y: 10, scale: 0.95, transformOrigin: 'top right' }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              className="self-end bg-primary text-primary-foreground px-4 py-2.5 rounded-[18px] rounded-tr-sm text-[13px] shadow-sm"
+            >
+              Yes please
+            </motion.div>
+          )}
+          
+          {messages >= 3 && (
+            <motion.div
+              key="msg3"
+              initial={{ opacity: 0, y: 10, scale: 0.95, transformOrigin: 'top left' }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              className="self-start bg-muted/80 text-foreground px-4 py-3 rounded-[18px] rounded-tl-sm text-[13px] max-w-[90%] leading-relaxed shadow-sm border border-border/30 space-y-2"
+            >
+              <p className="font-medium text-foreground">Here is the AI summary:</p>
+              <ul className="list-disc pl-4 space-y-1 text-muted-foreground">
+                <li>Use PostgreSQL</li>
+                <li>Minimum 3 joins required</li>
+                <li>Submit on Moodle by 11:59 PM</li>
+              </ul>
+            </motion.div>
+          )}
+          
+          {isTyping && (
+            <motion.div
+              key="typing"
+              initial={{ opacity: 0, y: 10, scale: 0.95, transformOrigin: 'top left' }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.15 } }}
+              className="self-start bg-muted/80 px-4 py-3.5 rounded-[18px] rounded-tl-sm shadow-sm border border-border/30 flex items-center gap-1.5"
+            >
+              <motion.div className="w-1.5 h-1.5 bg-muted-foreground/60 rounded-full" animate={{ y: [0, -3, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0 }} />
+              <motion.div className="w-1.5 h-1.5 bg-muted-foreground/60 rounded-full" animate={{ y: [0, -3, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.15 }} />
+              <motion.div className="w-1.5 h-1.5 bg-muted-foreground/60 rounded-full" animate={{ y: [0, -3, 0] }} transition={{ duration: 0.6, repeat: Infinity, delay: 0.3 }} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
 function Hero() {
   return (
     <section className="relative w-full pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden min-h-[85vh] flex items-center">
@@ -103,7 +220,7 @@ function Hero() {
         />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10 w-full">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10 w-full grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-12 lg:gap-8 items-center">
         <motion.div
           initial="hidden"
           animate="visible"
@@ -162,10 +279,24 @@ function Hero() {
             </a>
           </motion.div>
         </motion.div>
+
+        {/* Right Side: Telegram Mockup */}
+        <div className="hidden lg:flex justify-end items-center relative w-full h-full perspective-[1000px]">
+          <motion.div 
+            animate={{ y: [-8, 8, -8] }} 
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            style={{ rotateX: 5, rotateY: -10, rotateZ: 2 }}
+            className="relative drop-shadow-2xl origin-center"
+          >
+            <div className="absolute inset-0 bg-primary/20 blur-[80px] rounded-full" />
+            <TelegramMockup />
+          </motion.div>
+        </div>
       </div>
     </section>
   );
 }
+
 const modules = [
   {
     id: "deadlines",
