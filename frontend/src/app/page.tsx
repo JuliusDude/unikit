@@ -1145,90 +1145,6 @@ function FAQ() {
   );
 }
 
-function CTA() {
-  const lenis = useLenis();
-  const ref = useRef(null);
-  const inView = useInView(ref, {
-    once: true,
-    amount: 0.1
-  });
-
-  const handleExploreFeatures = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    if (typeof window !== "undefined") {
-      if (window.location.hash !== "#modules") {
-        window.history.pushState(null, "", "#modules");
-      }
-    }
-    if (lenis) {
-      lenis.scrollTo("#modules", {
-        offset: -80,
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      });
-    } else {
-      const el = document.querySelector("#modules");
-      if (el) {
-        const top = el.getBoundingClientRect().top + window.pageYOffset - 80;
-        window.scrollTo({ top, behavior: "smooth" });
-      }
-    }
-  };
-
-  return (
-    <section ref={ref} className="py-24 px-6 lg:px-12">
-      <div className="max-w-5xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="bg-gradient-to-br from-primary via-primary to-secondary rounded-[20px] p-12 md:p-20 text-center text-white relative overflow-hidden shadow-2xl"
-        >
-          {/* Decorative background blurs */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute -top-24 -left-24 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-            <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-white/10 rounded-full blur-3xl" />
-          </div>
-          
-          <div className="relative z-10 flex flex-col items-center">
-            
-            {/* Beta Badge */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 border border-white/20 rounded-[10px] mb-6 backdrop-blur-md">
-              <Sparkles className="w-3.5 h-3.5 text-blue-200" />
-              <span className="text-[11px] font-bold tracking-widest uppercase text-white/90">Public Beta Live</span>
-            </div>
-
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight text-white leading-tight max-w-2xl">
-              Your degree, minus the chaos.
-            </h2>
-            
-            <p className="text-white/80 max-w-xl mx-auto mb-10 text-lg leading-relaxed font-medium">
-              Join thousands of students across India who actually sleep before exam week. Secure your free beta account today and get full access to all AI tools—zero hidden fees.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
-              <Link
-                href="/signup"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-sm font-bold text-primary bg-white rounded-[10px] hover:bg-white/90 hover:scale-105 active:scale-95 transition-all duration-200 shadow-xl"
-              >
-                Claim Your Free Beta
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <a
-                href="#modules"
-                onClick={handleExploreFeatures}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-sm font-bold text-white border border-white/30 bg-white/5 backdrop-blur-sm rounded-[10px] hover:bg-white/15 hover:border-white/50 transition-all duration-200 cursor-pointer"
-              >
-                Explore Features
-              </a>
-            </div>
-            
-          </div>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
 function Footer() {
   const lenis = useLenis();
 
@@ -1330,8 +1246,7 @@ export default function Home() {
           <AIFeatures />
           
           <ReplaceTools />
-            <FAQ />
-            <CTA />
+          <FAQ />
         </main>
         <Footer />
       </div>

@@ -1,9 +1,10 @@
 # Project Context
 
 ## Current Objective
-- [x] Add smooth transition scroll to navbar linking.
+- [x] Remove the Public Beta Live CTA section from the landing page.
 
 ## Active Tasks
+- [x] Removed `CTA` component from [page.tsx](file:///F:/Project/unikit/unikit/frontend/src/app/page.tsx).
 - [x] Started backend server via `npm start` (port 4000).
 - [x] Started frontend server via `npm run dev` (port 3000).
 - [x] Integrated smooth transition scrolling into [page.tsx](file:///F:/Project/unikit/unikit/frontend/src/app/page.tsx):
