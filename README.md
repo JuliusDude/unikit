@@ -1,11 +1,16 @@
-# CampusFlow: AI-Powered Student Hub and Study Assistant
+# UniKit: AI-Powered Student Hub and Study Assistant
 
-CampusFlow is a production-grade, full-stack campus management and cognitive study assistant platform. It merges automated administrative tools—such as task scheduling, attendance risk metrics, Telegram notifications, and notice broadcasts—with a NotebookLM-inspired study workspace and a visual collaboration whiteboard.
+## What is UniKit?
+UniKit (formerly CampusFlow) is a production-grade, full-stack campus management and cognitive study assistant platform. It merges automated administrative tools—such as task scheduling, attendance risk metrics, Telegram notifications, and notice broadcasts—with a NotebookLM-inspired study workspace and a visual collaboration whiteboard.
+
+## Why UniKit?
+The core philosophy behind UniKit is "The Focused Academic." University life is often cluttered with numerous portals, apps, and distractions. UniKit is designed to minimize cognitive load while keeping students highly organized. 
+
+- **Distraction-Free Environment:** The interface is exceptionally clean, utilizing generous negative space, warm off-white backgrounds, and a singular "Deep Amethyst" accent color to draw attention strictly to what matters.
+- **Unified Workflow:** It brings together scheduling, attendance tracking, note-taking, and AI-driven study tools into a single, cohesive platform.
+- **Cognitive Ease:** By reducing eye strain with a warm campus aesthetic and organizing information logically, it allows for longer, more productive study sessions without the mental fatigue of context switching between disparate apps.
 
 ---
-
-
-
 
 ## System Architecture
 
@@ -65,7 +70,7 @@ flowchart LR
 * **Layers System**: Sidebar layer panel supporting locks, visibility toggles, layer creation, and layer list reordering. Rendering loops sort shapes by their assigned layer ID order and skip shapes on hidden layers.
 * **Inline Text Editing**: Double-clicking a shape opens an absolute-positioned textarea directly over the shape, scaled by the viewport zoom, replacing browser prompt dialogs.
 * **Minimap Projections**: Bottom-right floating canvas projecting the virtual coordinate space (-2000 to +2000) onto a small grid. It renders the viewport boundary using coordinate mapping and allows click-to-pan repositioning.
-* **Backend Auto-Save & Fallback**: Automatically updates the whiteboard database state every 3 seconds using a debounced hook. If the Supabase database connection is offline or if the whiteboard table has not been initialized, the system automatically falls back to storing whiteboard JSON payloads locally on the server (`backend/whiteboards_db.json`).
+* **Backend Auto-Save & Fallback**: Automatically updates the whiteboard database state every 3 seconds using a debounced hook. If the Supabase database connection is offline or if the whiteboard table has not been initialized, the system automatically falls back to storing whiteboard JSON payloads locally on the server.
 
 ---
 
@@ -101,38 +106,23 @@ flowchart TD
 
 ## Directory Structure
 
-```
-D:/Project/
+```text
+/
 ├── backend/
 │   ├── src/
 │   │   ├── index.js               # Express app entry point & route registration
 │   │   ├── middleware/
 │   │   │   └── auth.js            # JWT Validation Middleware
-│   │   ├── routes/
-│   │   │   ├── ai.js              # AI Completion Router (Chat, Quiz, Flashcards, Tools)
-│   │   │   ├── auth.js            # User Authentication Router
-│   │   │   ├── tasks.js           # Task Planner Router
-│   │   │   └── whiteboards.js     # Whiteboard CRUD Router (with Local JSON Fallback)
-│   │   └── services/
-│   │       ├── google.js          # Google API Calendar Service
-│   │       ├── groq.js            # Groq AI Service (with Offline Fallback generators)
-│   │       └── supabase.js        # Supabase PostgreSQL Client
+│   │   ├── routes/                # Express Routers (ai, auth, tasks, whiteboards)
+│   │   └── services/              # External services (Google, Groq, Supabase)
 │   ├── .env                       # Backend Environment Configuration
 │   └── package.json
 ├── frontend/
 │   ├── src/
-│   │   ├── app/
-│   │   │   └── (dashboard)/
-│   │   │       └── dashboard/
-│   │   │           ├── tools/     # Smart Tools workspace page
-│   │   │           └── whiteboard/# Visual Whiteboard page
-│   │   ├── components/
-│   │   │   └── shared/
-│   │   │       └── Sidebar.tsx    # Dashboard Navigation Sidebar
-│   │   ├── features/
-│   │   │   └── whiteboard/        # Whiteboard components, hooks, and helpers
-│   │   └── lib/
-│   │       └── api.ts             # API Client Configuration
+│   │   ├── app/                   # Next.js App Router (dashboard, tools, whiteboard)
+│   │   ├── components/            # React UI Components
+│   │   ├── features/              # Feature-specific logic (e.g., whiteboard engine)
+│   │   └── lib/                   # Utility functions and API clients
 │   ├── .env.local                 # Frontend Environment Configuration
 │   └── package.json
 └── sql/
@@ -144,7 +134,7 @@ D:/Project/
 ## Development Setup
 
 ### 1. Database Schema Setup
-Execute the instructions in [schema.sql](file:///D:/Project/sql/schema.sql) in your Supabase SQL Editor. This initializes tables and indices for students, tasks, notices, attendance, and whiteboards.
+Execute the instructions in `sql/schema.sql` in your Supabase SQL Editor. This initializes tables and indices for students, tasks, notices, attendance, and whiteboards.
 
 ### 2. Environment Configuration
 Create a `.env` file in the `backend/` directory:
@@ -172,7 +162,7 @@ To run the Backend Server:
 ```bash
 cd backend
 npm install
-node src/index.js
+npm start
 ```
 
 To run the Frontend Server:
@@ -191,4 +181,4 @@ Run the test suite in the frontend directory to verify whiteboard math and coord
 cd frontend
 npm run test
 ```
-All 63 whiteboard math and shape engine tests will run and output their status.
+All whiteboard math and shape engine tests will run and output their status.

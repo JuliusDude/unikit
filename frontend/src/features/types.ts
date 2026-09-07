@@ -1,6 +1,6 @@
 export type TaskStatus = "pending" | "completed" | "cancelled";
 
-export type TaskFilter = "all" | "today" | "upcoming" | "completed";
+export type TaskFilter = "today" | "upcoming" | "completed" | "all";
 
 export interface Task {
   id: string;

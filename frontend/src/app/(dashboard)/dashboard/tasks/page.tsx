@@ -8,7 +8,7 @@ import type { Task, TaskStatus } from "@/features/types";
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState<"all" | "today" | "upcoming" | "completed">("all");
+  const [activeFilter, setActiveFilter] = useState<"today" | "upcoming" | "completed" | "all">("today");
   
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -214,7 +214,7 @@ export default function TasksPage() {
 
       {/* Filter Tabs */}
       <div className="flex gap-2 border-b border-border pb-1 mb-4 flex-shrink-0">
-        {(["all", "today", "upcoming", "completed"] as const).map((filter) => (
+        {(["today", "upcoming", "completed", "all"] as const).map((filter) => (
           <button
             key={filter}
             onClick={() => setActiveFilter(filter)}

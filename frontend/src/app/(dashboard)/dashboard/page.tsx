@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { StatCard } from "@/features/dashboard/components/StatCard";
 import { TodayTasksWidget } from "@/features/dashboard/components/TodayTasksWidget";
@@ -58,7 +58,9 @@ function PopoutWidget({ children }: { children: React.ReactNode }) {
           }
           onClick={isExpanded ? (e) => e.stopPropagation() : undefined}
         >
-          {children}
+          {React.isValidElement(children)
+            ? React.cloneElement(children as React.ReactElement<{ isExpanded?: boolean }>, { isExpanded })
+            : children}
         </div>
       </div>
     </div>

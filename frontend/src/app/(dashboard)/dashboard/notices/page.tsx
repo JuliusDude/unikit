@@ -17,8 +17,11 @@ interface GroupEvent {
   telegram_groups?: { name: string };
 }
 
+type TimelineFilter = "upcoming" | "previous" | "all";
+
 export default function NoticesPage() {
   const [viewMode, setViewMode] = useState<"group" | "personal">("group");
+  const [timelineFilter, setTimelineFilter] = useState<TimelineFilter>("upcoming");
   const [notices, setNotices] = useState<Notice[]>([]);
   const [groupEvents, setGroupEvents] = useState<GroupEvent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -120,6 +123,33 @@ export default function NoticesPage() {
     }
   };
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const isEventUpcoming = (eventDateStr: string) => {
+    const d = new Date(eventDateStr);
+    return d >= today;
+  };
+
+  const isNoticeUpcoming = (eventDateStr: string | null, createdAtStr: string) => {
+    const d = new Date(eventDateStr || createdAtStr);
+    return d >= today;
+  };
+
+  const filteredGroupEvents = groupEvents.filter((event) => {
+    if (timelineFilter === "all") return true;
+    if (timelineFilter === "upcoming") return isEventUpcoming(event.event_date);
+    if (timelineFilter === "previous") return !isEventUpcoming(event.event_date);
+    return true;
+  });
+
+  const filteredNotices = notices.filter((notice) => {
+    if (timelineFilter === "all") return true;
+    if (timelineFilter === "upcoming") return isNoticeUpcoming(notice.event_date, notice.created_at);
+    if (timelineFilter === "previous") return !isNoticeUpcoming(notice.event_date, notice.created_at);
+    return true;
+  });
+
   return (
     <div className="max-w-7xl mx-auto h-[calc(100vh-6rem)] flex flex-col">
       <div className="flex items-center justify-between flex-shrink-0 mb-6">
@@ -140,14 +170,31 @@ export default function NoticesPage() {
         </div>
       </div>
 
+      {/* Filter Tabs matching the exact Design System of /tasks */}
+      <div className="flex gap-2 border-b border-border pb-1 mb-4 flex-shrink-0">
+        {(["upcoming", "previous", "all"] as const).map((filter) => (
+          <button
+            key={filter}
+            onClick={() => setTimelineFilter(filter)}
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-standard capitalize cursor-pointer ${
+              timelineFilter === filter
+                ? "border-primary text-primary font-semibold"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {filter}
+          </button>
+        ))}
+      </div>
+
       {error && (
-        <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-[10px] text-sm text-destructive animate-in fade-in duration-200">
+        <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-[10px] text-sm text-destructive animate-in fade-in duration-200 mb-4">
           {error}
         </div>
       )}
 
       {successMsg && (
-        <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-[10px] text-sm text-green-600 animate-in fade-in duration-200">
+        <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-[10px] text-sm text-green-600 animate-in fade-in duration-200 mb-4">
           {successMsg}
         </div>
       )}
@@ -159,16 +206,24 @@ export default function NoticesPage() {
               <Loader2 className="w-6 h-6 text-primary animate-spin mb-2" />
               <p className="text-sm text-muted-foreground">Loading announcements...</p>
             </div>
-          ) : groupEvents.length === 0 ? (
+          ) : filteredGroupEvents.length === 0 ? (
             <div className="bg-white border border-border rounded-[10px] p-12 text-center shadow-sm">
               <Bell className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-foreground mb-2">No Group Announcements</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                {timelineFilter === "upcoming"
+                  ? "No Upcoming Announcements"
+                  : timelineFilter === "previous"
+                  ? "No Previous Announcements"
+                  : "No Group Announcements"}
+              </h3>
               <p className="text-sm text-muted-foreground">
-                Join a group via invite link to receive teacher announcements here.
+                {timelineFilter === "all"
+                  ? "Join a group via invite link to receive teacher announcements here."
+                  : `No announcements found under the ${timelineFilter} category.`}
               </p>
             </div>
           ) : (
-            groupEvents.map(event => (
+            filteredGroupEvents.map(event => (
               <div key={event.id} className="bg-white border border-border rounded-[10px] p-5 shadow-sm space-y-3 relative overflow-hidden group">
                 <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
                 <div className="flex items-center justify-between">
@@ -322,17 +377,25 @@ export default function NoticesPage() {
               <Loader2 className="w-6 h-6 text-primary animate-spin mb-2" />
               <p className="text-xs text-muted-foreground">Loading notices...</p>
             </div>
-          ) : notices.length === 0 ? (
+          ) : filteredNotices.length === 0 ? (
             <div className="bg-white border border-border rounded-[10px] p-12 text-center shadow-sm my-auto">
               <Megaphone className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-foreground mb-2">No notices yet</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                {timelineFilter === "upcoming"
+                  ? "No Upcoming Notices"
+                  : timelineFilter === "previous"
+                  ? "No Previous Notices"
+                  : "No notices yet"}
+              </h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Paste your first announcement to generate history
+                {timelineFilter === "all"
+                  ? "Paste your first announcement to generate history"
+                  : `No notices found under the ${timelineFilter} filter.`}
               </p>
             </div>
           ) : (
             <div className="flex-1 overflow-y-auto space-y-2 max-h-[500px]">
-              {notices.map((notice) => (
+              {filteredNotices.map((notice) => (
                 <button
                   key={notice.id}
                   onClick={() => setActiveNotice(notice)}

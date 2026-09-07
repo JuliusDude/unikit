@@ -993,43 +993,55 @@ function FAQ() {
 }
 
 function CTA() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true });
+  const ref = useRef(null); const inView = useInView(ref, {
+    once: true,
+    amount: 0.1
+  });
 
   return (
-    <section ref={ref} className="py-20 md:py-24 px-4">
-      <div className="max-w-4xl mx-auto">
+    <section ref={ref} className="py-24 px-6 lg:px-12">
+      <div className="max-w-5xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
-          className="bg-gradient-to-br from-primary via-primary to-secondary rounded-[10px] p-10 md:p-16 text-center text-white relative overflow-hidden"
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="bg-gradient-to-br from-primary via-primary to-secondary rounded-[20px] p-12 md:p-20 text-center text-white relative overflow-hidden shadow-2xl"
         >
-          <div className="absolute inset-0">
-            <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
-            <div className="absolute bottom-10 right-10 w-48 h-48 bg-white/5 rounded-full blur-3xl" />
+          {/* Decorative background blurs */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute -top-24 -left-24 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+            <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-white/10 rounded-full blur-3xl" />
           </div>
-          <div className="relative z-10">
+          
+          <div className="relative z-10 flex flex-col items-center">
             
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight">
-              Start Building with UniKit Today
+            {/* Beta Badge */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/15 border border-white/20 rounded-[10px] mb-6 backdrop-blur-md">
+              <Sparkles className="w-3.5 h-3.5 text-blue-200" />
+              <span className="text-[11px] font-bold tracking-widest uppercase text-white/90">Public Beta Live</span>
+            </div>
+
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight text-white leading-tight max-w-2xl">
+              Your degree, minus the chaos.
             </h2>
-            <p className="text-white/80 max-w-xl mx-auto mb-8 leading-relaxed">
-              Join students across India who never miss a deadline. Get started for free during our public beta and experience the full platform at no cost.
+            
+            <p className="text-white/80 max-w-xl mx-auto mb-10 text-lg leading-relaxed font-medium">
+              Join thousands of students across India who actually sleep before exam week. Secure your free beta account today and get full access to all AI tools—zero hidden fees.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
               <Link
                 href="/signup"
-                className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-medium text-primary bg-white rounded-full hover:bg-white/90 transition-standard shadow-lg"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-sm font-bold text-primary bg-white rounded-[10px] hover:bg-white/90 hover:scale-105 active:scale-95 transition-all duration-200 shadow-xl"
               >
-                Get Started Free
+                Claim Your Free Beta
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <a
                 href="#modules"
-                className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-medium text-white border border-white/30 rounded-[10px] hover:bg-white/10 transition-standard"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-sm font-bold text-white border border-white/30 bg-white/5 backdrop-blur-sm rounded-[10px] hover:bg-white/15 hover:border-white/50 transition-all duration-200"
               >
-                Learn More
+                Explore Features
               </a>
             </div>
             
@@ -1039,7 +1051,6 @@ function CTA() {
     </section>
   );
 }
-
 function Footer() {
   return (
     <footer className="border-t border-border/40 bg-muted/5 py-16 px-6 lg:px-12">
