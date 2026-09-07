@@ -3,24 +3,79 @@
 import Link from "next/link";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
-import { ReactLenis } from 'lenis/react';
+import { ReactLenis, useLenis } from 'lenis/react';
 import { AlertTriangle, ArrowRight, ArrowUpRight, BarChart01 as BarChart3, Bell01 as Bell, Calendar, CalendarCheck01 as CalendarClock, CheckCircle, CheckSquare, ChevronDown, FaceSmile as Bot, File04 as FileText, GraduationHat01 as GraduationCap, LayoutGrid01 as LayoutDashboard, Lightning01 as Zap, Menu01 as Menu, MessageSquare01 as MessageSquare, Minus, Plus, Send01 as Send, Shield01 as Shield, Stars01 as Sparkles, TrendUp01 as TrendingUp, XClose as X } from "@untitledui/icons";
 import { useAuth } from "@/hooks/useAuth";
 import { HandwritingText } from "@/components/ui/handwriting-text";
 
+const navLinks = [
+  { name: "Features", href: "#modules" },
+  { name: "AI Tools", href: "#ai-features" },
+  { name: "FAQ", href: "#faq" },
+];
+
 function Header() {
   const { user } = useAuth();
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("");
+  const lenis = useLenis();
+
+  const scrollToSection = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+
+    if (typeof window !== "undefined") {
+      if (window.location.hash !== href) {
+        window.history.pushState(null, "", href);
+      }
+    }
+
+    if (lenis) {
+      lenis.scrollTo(href, {
+        offset: -80,
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      });
+    } else {
+      const element = document.querySelector(href);
+      if (element) {
+        const top = element.getBoundingClientRect().top + window.pageYOffset - 80;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
+    }
+  }, [lenis]);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+
+      const sectionIds = ["modules", "ai-features", "faq"];
+      const scrollPos = window.scrollY + 140;
+
+      let current = "";
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (scrollPos >= top && scrollPos < top + height) {
+            current = `#${id}`;
+            break;
+          }
+        }
+      }
+      setActiveSection(current);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 pt-4 px-4 pointer-events-none">
-      <div className="max-w-5xl mx-auto flex items-center justify-center">
+      <div className="max-w-5xl mx-auto flex flex-col items-center justify-center">
         <div 
           className={`pointer-events-auto flex items-center justify-between w-full rounded-2xl border transition-all duration-300 ${
             scrolled 
@@ -32,16 +87,37 @@ function Header() {
             <div className="w-10 h-10 rounded-xl bg-primary shadow-sm flex items-center justify-center">
               <img src="/logo-ukit.png" alt="UniKit Logo" className="w-6 h-6 object-contain" />
             </div>
-            <span className="text-2xl font-bold tracking-tight text-foreground tracking-tight">UniKit</span>
+            <span className="text-2xl font-bold tracking-tight text-foreground">UniKit</span>
           </Link>
           
           <nav className="hidden md:flex items-center gap-8">
-            <Link href="#modules" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Features</Link>
-            <Link href="#ai-features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">AI Tools</Link>
-            <Link href="#faq" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">FAQ</Link>
+            {navLinks.map((link) => {
+              const isActive = activeSection === link.href;
+              return (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={(e) => scrollToSection(e, link.href)}
+                  className={`relative text-sm font-medium transition-colors duration-200 py-1 cursor-pointer ${
+                    isActive
+                      ? "text-foreground font-semibold"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {link.name}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeNavIndicator"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
+                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                </a>
+              );
+            })}
           </nav>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {user ? (
               <Link href="/dashboard" className="text-sm font-semibold text-primary hover:text-primary/80 transition-colors">
                 Dashboard
@@ -51,13 +127,65 @@ function Header() {
                 <Link href="/login" className="hidden sm:block text-sm font-semibold text-foreground hover:text-primary transition-colors">
                   Log in
                 </Link>
-                <Link href="/signup" className="text-sm font-semibold bg-primary text-primary-foreground px-5 py-2.5 rounded-[12px] hover:opacity-90 transition-opacity shadow-sm">
+                <Link href="/signup" className="text-sm font-semibold bg-primary text-primary-foreground px-4 sm:px-5 py-2 sm:py-2.5 rounded-[12px] hover:opacity-90 transition-opacity shadow-sm">
                   Get Started
                 </Link>
               </>
             )}
+
+            {/* Mobile menu trigger */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 rounded-xl text-foreground hover:bg-muted/50 transition-colors cursor-pointer"
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Dropdown Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.98 }}
+              transition={{ duration: 0.2 }}
+              className="pointer-events-auto mt-2 w-full rounded-2xl bg-background/95 backdrop-blur-xl border border-border p-4 shadow-xl shadow-black/10 md:hidden flex flex-col gap-1.5"
+            >
+              {navLinks.map((link) => {
+                const isActive = activeSection === link.href;
+                return (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    onClick={(e) => scrollToSection(e, link.href)}
+                    className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                      isActive
+                        ? "bg-primary/10 text-primary font-semibold"
+                        : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                    }`}
+                  >
+                    {link.name}
+                  </a>
+                );
+              })}
+              {!user && (
+                <div className="pt-2 mt-1 border-t border-border flex flex-col gap-2 sm:hidden">
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="px-4 py-2 text-sm font-semibold text-foreground hover:text-primary transition-colors"
+                  >
+                    Log in
+                  </Link>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </header>
   );
@@ -180,6 +308,30 @@ function TelegramMockup() {
 }
 
 function Hero() {
+  const lenis = useLenis();
+
+  const handleLearnMore = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (typeof window !== "undefined") {
+      if (window.location.hash !== "#modules") {
+        window.history.pushState(null, "", "#modules");
+      }
+    }
+    if (lenis) {
+      lenis.scrollTo("#modules", {
+        offset: -80,
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      });
+    } else {
+      const el = document.querySelector("#modules");
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.pageYOffset - 80;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
+    }
+  };
+
   return (
     <section className="relative w-full pt-32 pb-16 md:pt-40 md:pb-24 overflow-hidden min-h-[85vh] flex items-center">
       <div className="absolute inset-0 -z-10">
@@ -251,7 +403,8 @@ function Hero() {
             </Link>
             <a
               href="#modules"
-              className="inline-flex min-h-12 items-center gap-2 bg-secondary px-7 text-base leading-none font-semibold text-secondary-foreground transition-all duration-200 ease-out hover:opacity-80 rounded-[10px]"
+              onClick={handleLearnMore}
+              className="inline-flex min-h-12 items-center gap-2 bg-secondary px-7 text-base leading-none font-semibold text-secondary-foreground transition-all duration-200 ease-out hover:opacity-80 rounded-[10px] cursor-pointer"
             >
               Learn More
             </a>
@@ -993,10 +1146,34 @@ function FAQ() {
 }
 
 function CTA() {
-  const ref = useRef(null); const inView = useInView(ref, {
+  const lenis = useLenis();
+  const ref = useRef(null);
+  const inView = useInView(ref, {
     once: true,
     amount: 0.1
   });
+
+  const handleExploreFeatures = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (typeof window !== "undefined") {
+      if (window.location.hash !== "#modules") {
+        window.history.pushState(null, "", "#modules");
+      }
+    }
+    if (lenis) {
+      lenis.scrollTo("#modules", {
+        offset: -80,
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      });
+    } else {
+      const el = document.querySelector("#modules");
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.pageYOffset - 80;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
+    }
+  };
 
   return (
     <section ref={ref} className="py-24 px-6 lg:px-12">
@@ -1039,7 +1216,8 @@ function CTA() {
               </Link>
               <a
                 href="#modules"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-sm font-bold text-white border border-white/30 bg-white/5 backdrop-blur-sm rounded-[10px] hover:bg-white/15 hover:border-white/50 transition-all duration-200"
+                onClick={handleExploreFeatures}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-sm font-bold text-white border border-white/30 bg-white/5 backdrop-blur-sm rounded-[10px] hover:bg-white/15 hover:border-white/50 transition-all duration-200 cursor-pointer"
               >
                 Explore Features
               </a>
@@ -1052,6 +1230,30 @@ function CTA() {
   );
 }
 function Footer() {
+  const lenis = useLenis();
+
+  const handleScrollTo = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    if (typeof window !== "undefined") {
+      if (window.location.hash !== href) {
+        window.history.pushState(null, "", href);
+      }
+    }
+    if (lenis) {
+      lenis.scrollTo(href, {
+        offset: -80,
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      });
+    } else {
+      const el = document.querySelector(href);
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.pageYOffset - 80;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
+    }
+  };
+
   return (
     <footer className="border-t border-border/40 bg-muted/5 py-16 px-6 lg:px-12">
       <div className="max-w-7xl mx-auto">
@@ -1060,9 +1262,9 @@ function Footer() {
           <div className="sm:col-span-2">
             <Link href="/" className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-xl bg-primary shadow-sm flex items-center justify-center">
-                <img src="/logo-ukit.png" alt="UniKit Logo" className="w-6 h-6 object-contain drop-shadow-sm" />
+                <img src="/logo-ukit.png" alt="UniKit Logo" className="w-6 h-6 object-contain" />
               </div>
-              <span className="text-2xl font-bold text-foreground tracking-tight">UniKit</span>
+              <span className="text-2xl font-bold tracking-tight text-foreground tracking-tight">UniKit</span>
             </Link>
             <p className="text-base text-muted-foreground max-w-sm leading-relaxed mb-6">
               Your distraction-free campus productivity platform. Unifying deadlines, tasks, and AI tools into one seamless workflow.
@@ -1077,8 +1279,8 @@ function Footer() {
           <div>
             <h4 className="font-semibold text-foreground mb-5 text-sm uppercase tracking-wider">Platform</h4>
             <ul className="space-y-3">
-              <li><Link href="#modules" className="text-sm text-muted-foreground hover:text-primary font-medium transition-colors">Features</Link></li>
-              <li><Link href="#ai-features" className="text-sm text-muted-foreground hover:text-primary font-medium transition-colors">Smart Tools</Link></li>
+              <li><a href="#modules" onClick={(e) => handleScrollTo(e, "#modules")} className="text-sm text-muted-foreground hover:text-primary font-medium transition-colors cursor-pointer">Features</a></li>
+              <li><a href="#ai-features" onClick={(e) => handleScrollTo(e, "#ai-features")} className="text-sm text-muted-foreground hover:text-primary font-medium transition-colors cursor-pointer">Smart Tools</a></li>
               <li><Link href="/dashboard" className="text-sm text-muted-foreground hover:text-primary font-medium transition-colors">Student Dashboard</Link></li>
               <li><Link href="/dashboard/whiteboard" className="text-sm text-muted-foreground hover:text-primary font-medium transition-colors">Whiteboard</Link></li>
             </ul>
@@ -1089,7 +1291,7 @@ function Footer() {
             <ul className="space-y-3">
               <li><a href="https://github.com/JuliusDude/unikit" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-primary font-medium transition-colors flex items-center gap-1.5">Source Code <ArrowUpRight className="w-3.5 h-3.5" /></a></li>
               <li><a href="#" className="text-sm text-muted-foreground hover:text-primary font-medium transition-colors">Documentation</a></li>
-              <li><Link href="#faq" className="text-sm text-muted-foreground hover:text-primary font-medium transition-colors">Help & FAQ</Link></li>
+              <li><a href="#faq" onClick={(e) => handleScrollTo(e, "#faq")} className="text-sm text-muted-foreground hover:text-primary font-medium transition-colors cursor-pointer">Help & FAQ</a></li>
             </ul>
           </div>
 

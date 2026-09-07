@@ -1,11 +1,17 @@
 # Project Context
 
 ## Current Objective
-- [x] Integrate notification system using n8n for Telegram (link telegram chat_id to db & trigger task reminders).
+- [x] Add smooth transition scroll to navbar linking.
 
 ## Active Tasks
 - [x] Started backend server via `npm start` (port 4000).
 - [x] Started frontend server via `npm run dev` (port 3000).
+- [x] Integrated smooth transition scrolling into [page.tsx](file:///F:/Project/unikit/unikit/frontend/src/app/page.tsx):
+  - Added Lenis smooth scrolling (`useLenis`) with easing function and top offset (`offset: -80`) to accommodate the fixed navbar.
+  - Added active section indicator with Framer Motion layout animations (`layoutId="activeNavIndicator"`).
+  - Added mobile navigation dropdown menu with animated toggle and smooth anchor jumping.
+  - Linked Hero "Learn More" button and Footer navigation links to use the same butter-smooth transition scrolling.
+- [x] Added `scroll-behavior: smooth` and `scroll-padding-top: 5rem` in [globals.css](file:///F:/Project/unikit/unikit/frontend/src/app/globals.css).
 - [x] Created `sql/add_telegram_chat_id.sql` to support `telegram_chat_id` on `public.students`.
 - [x] Built Telegram service (`backend/src/services/telegram.js`) supporting link code generation, validation, and hybrid persistence (`preferences.settings` JSONB fallback + `students.telegram_chat_id`).
 - [x] Created Telegram routes (`backend/src/routes/telegram.js`):
