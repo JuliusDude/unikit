@@ -3,6 +3,7 @@ const { getClient } = require("../services/supabase");
 const authMiddleware = require("../middleware/auth");
 const { triggerN8nDeadline } = require("../services/n8n");
 const { getValidAccessToken, createCalendarEvent } = require("../services/google");
+const { getStudentTelegram } = require("../services/telegram");
 
 const router = express.Router();
 
@@ -115,11 +116,16 @@ router.post("/", async (req, res) => {
         }
       }
 
+      const telegramInfo = await getStudentTelegram(req.student.id);
+
       await triggerN8nDeadline({
+        taskId: task.id,
         studentName: student?.name,
-        telegramUsername: student?.telegram_username,
+        telegramUsername: telegramInfo.username || student?.telegram_username,
+        telegramChatId: telegramInfo.chatId,
         subject,
         deadline,
+        reminderTime: reminder,
         taskTitle: title,
       });
 
@@ -127,7 +133,7 @@ router.post("/", async (req, res) => {
         student_id: req.student.id,
         workflow_type: "deadline_reminder",
         status: "triggered",
-        details: { task_id: task.id, title },
+        details: { task_id: task.id, title, reminder_time: reminder, telegram_chat_id: telegramInfo.chatId },
       });
     }
 
@@ -139,11 +145,17 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   try {
-    const { title, subject, description, deadline, status } = req.body;
+    const { title, subject, description, deadline, reminder_time, status } = req.body;
+
+    const updatePayload = { title, subject, description, deadline, status };
+    if (reminder_time !== undefined) {
+      updatePayload.reminder_time = reminder_time;
+      updatePayload.n8n_triggered = false; // Reset so new reminder fires
+    }
 
     const { data: task, error } = await getClient()
       .from("tasks")
-      .update({ title, subject, description, deadline, status })
+      .update(updatePayload)
       .eq("id", req.params.id)
       .eq("student_id", req.student.id)
       .select()

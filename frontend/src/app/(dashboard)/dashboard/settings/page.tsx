@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Calendar, Loading01 as Loader2, Plus, RefreshCcw01 as RefreshCw, Save01 as Save, Settings01 as Settings, Shield02 as ShieldAlert, ShieldTick as ShieldCheck, Stars01 as Sparkles, User01 as User, Users01 as Users, XClose as X } from "@untitledui/icons";
+import { Calendar, Check, Copy01 as Copy, Loading01 as Loader2, Plus, RefreshCcw01 as RefreshCw, Save01 as Save, Send01 as Send, Settings01 as Settings, Shield02 as ShieldAlert, ShieldTick as ShieldCheck, Stars01 as Sparkles, User01 as User, Users01 as Users, XClose as X } from "@untitledui/icons";
 import { api } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -24,6 +24,19 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [calendarConnected, setCalendarConnected] = useState(false);
   const [checkingCalendar, setCheckingCalendar] = useState(true);
+
+  // Telegram Notifications state
+  const [telegramConnected, setTelegramConnected] = useState(false);
+  const [checkingTelegram, setCheckingTelegram] = useState(true);
+  const [telegramData, setTelegramData] = useState<{
+    chat_id?: string | number | null;
+    username?: string | null;
+    link_code?: string;
+    deep_link?: string;
+    bot_username?: string;
+  } | null>(null);
+  const [copiedCode, setCopiedCode] = useState(false);
+  const [sendingTest, setSendingTest] = useState(false);
   
   const [joinedGroups, setJoinedGroups] = useState<{ id: string; name: string; telegram_chat_id: number; created_at: string }[]>([]);
   const [loadingGroups, setLoadingGroups] = useState(true);
@@ -51,8 +64,65 @@ export default function SettingsPage() {
         .then((res) => setJoinedGroups(res.groups || []))
         .catch(() => setJoinedGroups([]))
         .finally(() => setLoadingGroups(false));
+
+      // Fetch Telegram status
+      fetchTelegramStatus();
     }
   }, [user]);
+
+  const fetchTelegramStatus = async () => {
+    setCheckingTelegram(true);
+    try {
+      const res = await api.get<{
+        connected: boolean;
+        chat_id?: string | number | null;
+        username?: string | null;
+        link_code?: string;
+        deep_link?: string;
+        bot_username?: string;
+      }>("/api/telegram/status");
+      setTelegramConnected(Boolean(res.connected));
+      setTelegramData(res);
+    } catch {
+      setTelegramConnected(false);
+    } finally {
+      setCheckingTelegram(false);
+    }
+  };
+
+  const handleCopyCode = () => {
+    if (telegramData?.link_code) {
+      navigator.clipboard.writeText(telegramData.link_code);
+      setCopiedCode(true);
+      setTimeout(() => setCopiedCode(false), 2000);
+    }
+  };
+
+  const handleSendTest = async () => {
+    setError("");
+    setSuccessMsg("");
+    setSendingTest(true);
+    try {
+      await api.post("/api/telegram/test-notification", {});
+      setSuccessMsg("Test notification sent to your Telegram!");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send test notification");
+    } finally {
+      setSendingTest(false);
+    }
+  };
+
+  const handleUnlinkTelegram = async () => {
+    setError("");
+    setSuccessMsg("");
+    try {
+      await api.post("/api/telegram/unlink", {});
+      setSuccessMsg("Telegram account unlinked successfully");
+      await fetchTelegramStatus();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to unlink Telegram");
+    }
+  };
 
   const handleConnectCalendar = async () => {
     if (!user) return;
@@ -189,15 +259,145 @@ export default function SettingsPage() {
                   </button>
                 </div>
               )}
-              </div>
             </div>
+          </div>
 
-            {/* Joined Groups Card */}
-            <div className="bg-white border border-border rounded-[10px] p-6 shadow-sm mt-6">
-              <h3 className="font-semibold text-foreground text-base flex items-center gap-2 border-b border-border pb-3 mb-4">
-                <Users className="w-4 h-4 text-primary" />
-                Joined Classes
-              </h3>
+          {/* Telegram Notifications Card */}
+          <div className="bg-white border border-border rounded-[10px] p-5 shadow-sm space-y-4">
+            <h3 className="font-semibold text-foreground text-base flex items-center gap-2 border-b border-border pb-3">
+              <Send className="w-4 h-4 text-primary" />
+              Telegram Notifications
+            </h3>
+
+            <div className="space-y-3">
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Connect your Telegram account to receive task and deadline reminder alerts.
+              </p>
+
+              {checkingTelegram ? (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground animate-pulse py-2">
+                  <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                  Checking Telegram link...
+                </div>
+              ) : telegramConnected ? (
+                <div className="space-y-3">
+                  <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-[10px] text-green-700 text-sm">
+                    <div className="flex items-center gap-2">
+                      <ShieldCheck className="w-5 h-5 flex-shrink-0 text-green-600" />
+                      <div>
+                        <span className="font-semibold block">Telegram Connected</span>
+                        {telegramData?.username && (
+                          <span className="text-xs text-green-800 font-medium">@{telegramData.username}</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-muted-foreground">
+                    Reminders for tasks will be delivered directly to your Telegram chat.
+                  </p>
+
+                  <div className="space-y-2 pt-1">
+                    <button
+                      type="button"
+                      onClick={handleSendTest}
+                      disabled={sendingTest}
+                      className="w-full py-2 px-3 bg-muted text-foreground text-xs font-semibold rounded-[10px] hover:bg-accent border border-border transition-standard cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+                    >
+                      {sendingTest ? (
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          Sending test alert...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-3.5 h-3.5 text-primary" />
+                          Send Test Alert
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleUnlinkTelegram}
+                      className="w-full py-1.5 px-3 text-destructive hover:bg-destructive/10 text-xs font-medium rounded-[10px] transition-standard cursor-pointer text-center"
+                    >
+                      Disconnect Telegram
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3 pt-1">
+                  <div className="flex items-center gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-[10px] text-destructive text-sm">
+                    <ShieldAlert className="w-5 h-5 flex-shrink-0" />
+                    <span className="font-semibold">Not Linked</span>
+                  </div>
+
+                  {telegramData?.deep_link && (
+                    <a
+                      href={telegramData.deep_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-2.5 bg-primary text-primary-foreground text-sm font-semibold rounded-[10px] hover:opacity-90 transition-standard cursor-pointer flex items-center justify-center gap-2 shadow-sm"
+                    >
+                      <Send className="w-4 h-4" />
+                      Open Telegram Bot
+                    </a>
+                  )}
+
+                  {telegramData?.link_code && (
+                    <div className="bg-background border border-border rounded-[10px] p-3 space-y-2">
+                      <div className="flex justify-between items-center text-xs text-muted-foreground">
+                        <span>Verification Code:</span>
+                        <span className="font-mono text-[10px]">@{telegramData.bot_username || "UniKitBot"}</span>
+                      </div>
+                      <div className="flex items-center justify-between bg-white px-3 py-1.5 border border-border rounded-[8px]">
+                        <code className="text-xs font-mono font-bold text-foreground">
+                          {telegramData.link_code}
+                        </code>
+                        <button
+                          type="button"
+                          onClick={handleCopyCode}
+                          className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 cursor-pointer transition-colors"
+                        >
+                          {copiedCode ? (
+                            <>
+                              <Check className="w-3.5 h-3.5 text-green-600" />
+                              <span className="text-[11px] text-green-600 font-medium">Copied</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-3.5 h-3.5" />
+                              <span className="text-[11px]">Copy</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground">
+                        Send <span className="font-mono font-semibold">/link {telegramData.link_code}</span> to our bot to verify.
+                      </p>
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={fetchTelegramStatus}
+                    className="w-full py-2 px-3 border border-border hover:bg-muted text-foreground text-xs font-medium rounded-[10px] transition-standard cursor-pointer flex items-center justify-center gap-1.5"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5 text-muted-foreground" />
+                    Check Verification
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Joined Groups Card */}
+          <div className="bg-white border border-border rounded-[10px] p-5 shadow-sm space-y-4">
+            <h3 className="font-semibold text-foreground text-base flex items-center gap-2 border-b border-border pb-3">
+              <Users className="w-4 h-4 text-primary" />
+              Joined Classes
+            </h3>
               
               <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
                 {loadingGroups ? (
