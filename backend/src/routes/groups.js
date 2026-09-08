@@ -272,21 +272,24 @@ router.post("/webhook/message", n8nAuth, async (req, res) => {
 
     const supabase = getClient();
 
-    // 1. Find group by chat_id
+    // 1. Find group by chat_id (convert to number/string safely)
+    const numericChatId = Number(chat_id) || chat_id;
     const { data: group, error: groupError } = await supabase
       .from("telegram_groups")
       .select("id, authorized_user_ids")
-      .eq("telegram_chat_id", chat_id)
+      .eq("telegram_chat_id", numericChatId)
       .single();
 
     if (groupError || !group) {
-      return res.status(404).json({ message: "Group not found for chat_id" });
+      console.error("[Webhook Message] Group lookup failed for chat_id:", chat_id, groupError);
+      return res.status(404).json({ message: "Group not found for chat_id: " + chat_id });
     }
 
     const authUsers = group.authorized_user_ids || [];
     const senderIdStr = sender_id ? String(sender_id) : '';
     if (authUsers.length > 0 && !authUsers.includes(senderIdStr)) {
-      return res.status(403).json({ message: "Ignored: Sender is not an authorized teacher." });
+      console.warn("[Webhook Message] Sender not authorized:", senderIdStr, "Auth users:", authUsers);
+      return res.status(403).json({ message: "Ignored: Sender is not an authorized teacher in this group." });
     }
 
     // 2. Extract Event via AI
@@ -294,8 +297,8 @@ router.post("/webhook/message", n8nAuth, async (req, res) => {
     const extractedData = await extractGroupEvent(text);
     
     if (!extractedData) {
-      // Not an announcement, just normal chat
-      return res.json({ message: "Ignored: No academic event extracted." });
+      console.log("[Webhook Message] No academic event extracted from text:", text);
+      return res.status(422).json({ message: "Could not detect a clear deadline or academic date in your announcement." });
     }
 
     // 3. Save to database
@@ -313,7 +316,10 @@ router.post("/webhook/message", n8nAuth, async (req, res) => {
       .select()
       .single();
 
-    if (insertError) throw insertError;
+    if (insertError) {
+      console.error("[Webhook Message] Insert error to events table:", insertError);
+      throw insertError;
+    }
 
     // 4. Trigger Calendar Fan-out asynchronously
     // Using local fetch to hit our own calendar fan-out endpoint
