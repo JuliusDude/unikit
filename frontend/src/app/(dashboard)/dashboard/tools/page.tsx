@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Announcement01 as Megaphone, Calendar, Check, Copy01 as Copy, File04 as FileText, GitBranch01 as GitFork, Lightbulb01 as Lightbulb, Loading01 as Loader2, Shield02 as ShieldAlert, Stars01 as Sparkles, XClose as X, Upload01 as Upload, Download01 as Download } from "@untitledui/icons";
 import { api } from "@/lib/api";
+import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import mermaid from "mermaid";
@@ -337,9 +338,12 @@ export default function SmartToolsPage() {
                           
                           if (data.text) {
                             setContent((prev) => prev ? `${prev}\n\n${data.text}` : data.text);
+                            toast.success("Document parsed successfully!");
                           }
                         } catch (err) {
-                          setError(err instanceof Error ? err.message : "Error uploading document");
+                          const msg = err instanceof Error ? err.message : "Error uploading document";
+                          setError(msg);
+                          toast.error(msg);
                         } finally {
                           setIsUploading(false);
                           e.target.value = ""; // reset input

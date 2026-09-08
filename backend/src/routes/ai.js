@@ -27,8 +27,22 @@ router.post("/parse-document", authMiddleware, upload.single("document"), async 
     let text = "";
     
     if (extension === 'pdf') {
-      const pdfData = await pdfParse(file.buffer);
-      text = pdfData.text;
+      try {
+        if (typeof pdfParse === 'function') {
+          const pdfData = await pdfParse(file.buffer);
+          text = pdfData.text;
+        } else if (pdfParse && pdfParse.PDFParse) {
+          const parser = new pdfParse.PDFParse({ data: file.buffer });
+          const result = await parser.getText();
+          await parser.destroy();
+          text = result.text;
+        } else {
+          throw new Error("PDF parser module interface unrecognized");
+        }
+      } catch (pdfErr) {
+        console.error("PDF parse inner error:", pdfErr);
+        throw pdfErr;
+      }
     } else if (['txt', 'md', 'csv', 'json'].includes(extension)) {
       text = file.buffer.toString('utf-8');
     } else {
