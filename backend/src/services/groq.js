@@ -130,7 +130,7 @@ LEVEL 1: Main Concept
       return `### Attendance Assessment (Mock)
 * Current analysis based on submitted subject percentages.
 
-**âš ï¸ At Risk (Below 75%)**:
+**⚠️ At Risk (Below 75%)**:
 * *Operating Systems*: 62% attendance. (Needs 4 consecutive classes to pass).
 * *Database Systems*: 71% attendance. (Needs 2 consecutive classes to pass).
 
@@ -175,12 +175,12 @@ async function summarizeNotice(text) {
 
 async function getStudyTip() {
   const tips = [
-    "Take regular breaks using the Pomodoro technique â€” 25 minutes of focused study, then 5 minutes off.",
+    "Take regular breaks using the Pomodoro technique — 25 minutes of focused study, then 5 minutes off.",
     "Review your notes within 24 hours of taking them to improve retention by up to 60%.",
-    "Teach what you've learned to someone else â€” it's the best way to solidify understanding.",
+    "Teach what you've learned to someone else — it's the best way to solidify understanding.",
     "Get 7-8 hours of sleep before an exam. Your brain consolidates memories during sleep.",
     "Start with the hardest task when your energy is highest, usually in the morning.",
-    "Use active recall instead of re-reading â€” test yourself on the material.",
+    "Use active recall instead of re-reading — test yourself on the material.",
     "Break large assignments into smaller tasks with their own mini-deadlines.",
     "Study in different locations to create multiple memory associations.",
   ];
@@ -197,7 +197,7 @@ async function attendanceAlert(subject, total, attended, threshold = 75) {
     return { percentage: pct, message: `${subject}: ${pct}%. You can skip ${canSkip} more classes.`, isAtRisk: false };
   } else {
     const needed = Math.ceil((threshold * total - 100 * attended) / (100 - threshold));
-    return { percentage: pct, message: `${subject}: âš ï¸ ${pct}%. Need ${needed} more classes to reach ${threshold}%.`, isAtRisk: true };
+    return { percentage: pct, message: `${subject}: ⚠️ ${pct}%. Need ${needed} more classes to reach ${threshold}%.`, isAtRisk: true };
   }
 }
 
@@ -495,17 +495,17 @@ Follow this strict structure:
 ### 📖 The Simple Definition
 (Explain it in 2 sentences as if speaking to a high schooler. No jargon.)
 
-### ðŸ• The Analogy
+### 🧩 The Analogy
 (Provide a vivid, relatable real-world analogy that perfectly maps to the concept.)
 
-### âš™ï¸ How It Works (The Mechanics)
+### ⚙️ How It Works (The Mechanics)
 (Step-by-step breakdown using bullet points. Bold the key terms.)
 
-### ðŸŒ Real-World Applications
+### 🌍 Real-World Applications
 - **Application 1:** (Brief description)
 - **Application 2:** (Brief description)
 
-### âš ï¸ Common Traps & Misconceptions
+### ⚠️ Common Traps & Misconceptions
 - **Myth:** [Myth] -> **Reality:** [Truth]
 
 Rules:
@@ -533,7 +533,7 @@ Format your response using this precise layout:
 
 Rules:
 - If raw numbers are provided, calculate mathematically accurately.
-- Use emojis (🚨, âš ï¸, 🟢) to visually indicate risk levels.
+- Use emojis (🚨, ⚠️, 🟢) to visually indicate risk levels.
 - Do NOT hallucinate data not provided.`;
       userPrompt = `Analyze these attendance records:\n\n${content}`;
       break;
@@ -545,17 +545,17 @@ Extract and format the information exactly as follows:
 ### 📢 Notice TL;DR
 (One bold sentence summarizing the exact purpose of the notice)
 
-### ðŸ—“ï¸ Critical Dates & Deadlines
+### 🗓️ Critical Dates & Deadlines
 - **[Date/Time]:** [Event/Deadline description]
 
 ### 👥 Who is Affected?
 (e.g., "All 3rd-year CSE students", "Faculty only")
 
-### ðŸ“ Required Actions
+### 📌 Required Actions
 1. Step 1 (if any)
 2. Step 2 (if any)
 
-### â„¹ï¸ Additional Details
+### ℹ️ Additional Details
 (Any other relevant context, formatted as brief bullet points)
 
 Rules:

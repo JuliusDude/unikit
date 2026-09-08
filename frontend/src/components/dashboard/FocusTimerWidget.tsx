@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Clock as Timer, Maximize01 as Maximize2, Minimize01 as Minimize2, Minus, PauseCircle as Pause, Play, Plus, RefreshCcw01 as RotateCcw, Settings02 as Settings2, SkipForward, XClose as X } from "@untitledui/icons";
+import { api } from "@/lib/api";
 
 export function FocusTimerWidget() {
   const [sessionLength, setSessionLength] = useState(25);
@@ -28,6 +29,15 @@ export function FocusTimerWidget() {
     return () => clearTimer();
   }, [clearTimer]);
 
+  const completeSession = () => {
+    setSessionsCompleted((s) => s + 1);
+    const minutes = Math.round(maxSeconds / 60);
+    api.post("/api/activity/focus", { minutes }).catch(console.error);
+    setIsBreak(true);
+    setTotalSeconds(breakLength * 60);
+    setMaxSeconds(breakLength * 60);
+  };
+
   useEffect(() => {
     if (isRunning && totalSeconds > 0) {
       intervalRef.current = setInterval(() => {
@@ -43,10 +53,7 @@ export function FocusTimerWidget() {
       clearTimer();
       setIsRunning(false);
       if (!isBreak) {
-        setSessionsCompleted((s) => s + 1);
-        setIsBreak(true);
-        setTotalSeconds(breakLength * 60);
-        setMaxSeconds(breakLength * 60);
+        completeSession();
       } else {
         setIsBreak(false);
         setTotalSeconds(sessionLength * 60);
@@ -56,7 +63,7 @@ export function FocusTimerWidget() {
       clearTimer();
     }
     return () => clearTimer();
-  }, [isRunning, totalSeconds, isBreak, breakLength, sessionLength, clearTimer]);
+  }, [isRunning, totalSeconds, isBreak, breakLength, sessionLength, clearTimer, maxSeconds]);
 
   const handlePlay = (e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -80,10 +87,7 @@ export function FocusTimerWidget() {
     e?.stopPropagation();
     setIsRunning(false);
     if (!isBreak) {
-      setSessionsCompleted((s) => s + 1);
-      setIsBreak(true);
-      setTotalSeconds(breakLength * 60);
-      setMaxSeconds(breakLength * 60);
+      completeSession();
     } else {
       setIsBreak(false);
       setTotalSeconds(sessionLength * 60);

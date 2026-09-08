@@ -125,6 +125,35 @@ export default function AttendancePage() {
     setAnalyzingId(null);
   };
 
+  const handleQuickUpdate = async (record: Attendance, type: "attended" | "missed") => {
+    const newTotal = record.total_classes + 1;
+    const newAttended = type === "attended" ? record.attended_classes + 1 : record.attended_classes;
+    
+    const updatedRecord = { 
+      ...record, 
+      total_classes: newTotal, 
+      attended_classes: newAttended 
+    };
+
+    // Optimistically update
+    setRecords((prev) =>
+      prev.map((r) => (r.id === record.id ? updatedRecord : r))
+    );
+
+    try {
+      await api.post<{ attendance: Attendance }>("/api/attendance", {
+        subject: record.subject,
+        total_classes: newTotal,
+        attended_classes: newAttended,
+        threshold: record.threshold
+      });
+      
+      handleRefreshAlert(updatedRecord);
+    } catch (err) {
+      console.error("Failed to update attendance", err);
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto h-[calc(100vh-6rem)] flex flex-col">
       <div className="flex items-center justify-between flex-shrink-0 mb-6">
@@ -285,6 +314,21 @@ export default function AttendancePage() {
                         <span>
                           Attended: <strong>{record.attended_classes}</strong> / <strong>{record.total_classes}</strong> classes
                         </span>
+                      </div>
+
+                      <div className="flex gap-2 mt-2">
+                        <button
+                          onClick={() => handleQuickUpdate(record, "attended")}
+                          className="text-xs px-3 py-1.5 rounded-md font-medium bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-standard cursor-pointer"
+                        >
+                          + Attended
+                        </button>
+                        <button
+                          onClick={() => handleQuickUpdate(record, "missed")}
+                          className="text-xs px-3 py-1.5 rounded-md font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-standard cursor-pointer"
+                        >
+                          + Missed
+                        </button>
                       </div>
 
                       {/* AI Risk Alerter Message box */}

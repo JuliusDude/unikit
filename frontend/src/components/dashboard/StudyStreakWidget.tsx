@@ -1,29 +1,26 @@
 "use client";
 
 import { Activity as Flame, CheckCircle, Clock } from "@untitledui/icons";
-import type { Attendance, Task } from "@/features/types";
+import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
+import type { Task } from "@/features/types";
 
-interface StudyStreakWidgetProps {
-  attendance: Attendance[];
-  tasks?: Task[];
-}
+export function StudyStreakWidget() {
+  const [streak, setStreak] = useState(0);
+  const [totalHours, setTotalHours] = useState("0.0");
+  const [totalFinished, setTotalFinished] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-export function StudyStreakWidget({ attendance = [], tasks = [] }: StudyStreakWidgetProps) {
-  const getStreakData = () => {
-    const totalAttended = attendance.reduce((s, r) => s + r.attended_classes, 0);
-    // Rough mock for day streak based on attendance for now, since we don't have a real streak table
-    const streak = totalAttended > 0 ? Math.min(totalAttended, 7) : 0;
-    
-    // Total hours can be mocked as 0.5 hours per attended class
-    const totalHours = (totalAttended * 0.5).toFixed(1);
-    
-    // Actually use the tasks array to get total finished tasks!
-    const totalFinished = tasks.filter(t => t.status === "completed").length;
-
-    return { streak, totalHours, totalFinished };
-  };
-
-  const { streak, totalHours, totalFinished } = getStreakData();
+  useEffect(() => {
+    Promise.all([
+      api.get<{ streak: number, totalHours: string }>("/api/activity/stats").catch(() => ({ streak: 0, totalHours: "0.0" })),
+      api.get<{ tasks: Task[] }>("/api/tasks").catch(() => ({ tasks: [] }))
+    ]).then(([statsRes, tasksRes]) => {
+      setStreak(statsRes.streak || 0);
+      setTotalHours(statsRes.totalHours || "0.0");
+      setTotalFinished((tasksRes.tasks || []).filter((t: Task) => t.status === "completed").length);
+    }).finally(() => setLoading(false));
+  }, []);
 
   return (
     <div className="relative overflow-hidden bg-gradient-to-br from-primary to-primary/80 rounded-[10px] p-5 card-hover h-full text-white">
@@ -35,8 +32,14 @@ export function StudyStreakWidget({ attendance = [], tasks = [] }: StudyStreakWi
       </div>
 
       <div className="text-center mb-4">
-        <p className="text-4xl font-bold tracking-tight">{streak}</p>
-        <p className="text-xs text-white/70 mt-0.5">Day Streak</p>
+        {loading ? (
+          <div className="h-[40px] w-[60px] bg-white/20 rounded mx-auto animate-pulse"></div>
+        ) : (
+          <>
+            <p className="text-4xl font-bold tracking-tight">{streak}</p>
+            <p className="text-xs text-white/70 mt-0.5">Day Streak</p>
+          </>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -45,14 +48,14 @@ export function StudyStreakWidget({ attendance = [], tasks = [] }: StudyStreakWi
             <Clock className="w-3.5 h-3.5 text-white/70" />
             <span className="text-xs text-white/70">Hours</span>
           </div>
-          <p className="text-lg font-bold">{totalHours}</p>
+          <p className="text-lg font-bold">{loading ? "-" : totalHours}</p>
         </div>
         <div className="bg-white/10 rounded-[10px] p-3 text-center">
           <div className="flex items-center justify-center gap-1.5 mb-1">
             <CheckCircle className="w-3.5 h-3.5 text-white/70" />
             <span className="text-xs text-white/70">Tasks Done</span>
           </div>
-          <p className="text-lg font-bold">{totalFinished}</p>
+          <p className="text-lg font-bold">{loading ? "-" : totalFinished}</p>
         </div>
       </div>
     </div>

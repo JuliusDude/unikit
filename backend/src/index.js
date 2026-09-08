@@ -18,6 +18,7 @@ const reminderRoutes = require("./routes/reminders");
 const flashcardsRoutes = require("./routes/flashcards");
 const telegramRoutes = require("./routes/telegram");
 const achievementsRoutes = require("./routes/achievements");
+const activityRoutes = require("./routes/activity");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -40,6 +41,7 @@ app.use("/api/reminders", reminderRoutes);
 app.use("/api/flashcards", flashcardsRoutes);
 app.use("/api/telegram", telegramRoutes);
 app.use("/api/achievements", achievementsRoutes);
+app.use("/api/activity", activityRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });

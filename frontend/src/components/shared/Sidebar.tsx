@@ -60,6 +60,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
           <Link
             key={item.href}
             href={item.href}
+            id={`tour-nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
             className={cn(
               "flex items-center gap-3 px-3 py-2 rounded-[10px] text-sm font-medium transition-all duration-150",
               isActive(item.href)
@@ -82,6 +83,7 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
           <Link
             key={item.href}
             href={item.href}
+            id={`tour-nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
             className={cn(
               "flex items-center gap-3 px-3 py-2 rounded-[10px] text-sm font-medium transition-all duration-150",
               isActive(item.href)
