@@ -35,7 +35,7 @@ router.get("/status", authMiddleware, async (req, res) => {
     const { chatId, username, isVerified } = await getStudentTelegram(studentId);
 
     const tokenData = generateLinkToken(studentId);
-    const botUsername = process.env.TELEGRAM_BOT_USERNAME || "UniKitBot";
+    const botUsername = process.env.TELEGRAM_BOT_USERNAME || "unialert0bot";
 
     res.json({
       connected: isVerified,

@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, CalendarCheck01 as CalendarClock, Clipboard as ClipboardList, Plus } from "@untitledui/icons";
+import { ArrowRight, CalendarCheck01 as CalendarClock, Calendar, Clipboard as ClipboardList, Plus } from "@untitledui/icons";
 import type { Task } from "@/features/types";
 import { motion } from "framer-motion";
+import { generateGoogleCalendarUrl } from "@/lib/calendar";
 
 interface TodayTasksWidgetProps {
   tasks: Task[];
@@ -79,9 +80,20 @@ export function TodayTasksWidget({ tasks = [] }: TodayTasksWidgetProps) {
                 <p className="text-sm font-medium text-foreground truncate">{task.title}</p>
                 <p className="text-xs text-muted-foreground">{task.subject}</p>
               </div>
-              <span className="ml-2 px-2.5 py-1 text-xs font-medium bg-primary/10 text-primary rounded-[10px] whitespace-nowrap">
-                {task.status}
-              </span>
+              <div className="flex items-center gap-2">
+                <a
+                  href={generateGoogleCalendarUrl(task.title, task.description || "", task.deadline)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-1 hover:bg-blue-50 rounded-md text-muted-foreground hover:text-blue-600 transition-colors"
+                  title="Add to Google Calendar"
+                >
+                  <Calendar className="w-4 h-4" />
+                </a>
+                <span className="px-2.5 py-1 text-xs font-medium bg-primary/10 text-primary rounded-[10px] whitespace-nowrap">
+                  {task.status}
+                </span>
+              </div>
             </motion.div>
           ))}
         </motion.div>

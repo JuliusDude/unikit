@@ -83,6 +83,11 @@ export default function SettingsPage() {
       }>("/api/telegram/status");
       setTelegramConnected(Boolean(res.connected));
       setTelegramData(res);
+      if (res.connected && res.username) {
+        setTelegramUsername(res.username);
+      } else {
+        setTelegramUsername("");
+      }
     } catch {
       setTelegramConnected(false);
     } finally {
@@ -167,7 +172,6 @@ export default function SettingsPage() {
         name: name.trim(),
         branch,
         year,
-        telegram_username: telegramUsername.trim(),
         subjects
       }, { token: token || undefined });
       
@@ -487,20 +491,26 @@ export default function SettingsPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-foreground mb-1.5 uppercase tracking-wider">
-                  Telegram Username
+                  Telegram Identity
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-mono">@</span>
+                  {telegramUsername ? (
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-mono">@</span>
+                  ) : telegramConnected ? (
+                    <ShieldCheck className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-green-600" />
+                  ) : (
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-mono">@</span>
+                  )}
                   <input
                     type="text"
-                    value={telegramUsername.replace(/^@/, "")}
-                    onChange={(e) => setTelegramUsername(e.target.value)}
-                    className="w-full pl-7 pr-3 py-2 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                    placeholder="username"
+                    value={telegramUsername ? telegramUsername.replace(/^@/, "") : (telegramConnected ? "Linked (Private)" : "")}
+                    disabled
+                    className={`w-full pl-8 pr-3 py-2 border border-border rounded-[10px] text-sm bg-muted cursor-not-allowed font-medium ${telegramConnected && !telegramUsername ? 'text-green-700' : 'text-muted-foreground'}`}
+                    placeholder="Not linked"
                   />
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Enter your username without the &apos;@&apos;. Telegram bot sends reminders to this account.
+                  This field is synced automatically when you connect your Telegram account below.
                 </p>
               </div>
 
@@ -572,6 +582,37 @@ export default function SettingsPage() {
                 </button>
               </div>
             </form>
+          </div>
+
+          {/* Danger Zone */}
+          <div className="bg-red-50 border border-red-200 rounded-[10px] p-6 shadow-sm space-y-4">
+            <h3 className="font-semibold text-red-700 text-base flex items-center gap-2 border-b border-red-200 pb-3">
+              Danger Zone
+            </h3>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-medium text-red-900">Delete Account and My Data</p>
+                <p className="text-xs text-red-700 mt-1 max-w-md">
+                  Once you delete your account, there is no going back. All your tasks, attendance, notes, and profile data will be permanently wiped.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={async () => {
+                  if (confirm("Are you absolutely sure you want to delete your account? This action cannot be undone.")) {
+                    try {
+                      await api.delete("/api/auth/me");
+                      logout();
+                    } catch (err) {
+                      alert("Failed to delete account: " + (err instanceof Error ? err.message : "Unknown error"));
+                    }
+                  }
+                }}
+                className="shrink-0 px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-[10px] hover:bg-red-700 transition-colors"
+              >
+                Delete Account
+              </button>
+            </div>
           </div>
         </div>
       </div>

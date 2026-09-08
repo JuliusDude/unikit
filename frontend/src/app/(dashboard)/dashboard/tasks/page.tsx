@@ -5,6 +5,7 @@ import { ArrowLeft, Bell01 as Bell, Calendar, Check, Edit01 as Edit2, List as Li
 import { api } from "@/lib/api";
 import { motion } from "framer-motion";
 import type { Task, TaskStatus } from "@/features/types";
+import { generateGoogleCalendarUrl } from "@/lib/calendar";
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -297,6 +298,15 @@ export default function TasksPage() {
                     </span>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
+                    <a
+                      href={generateGoogleCalendarUrl(task.title, task.description || "", task.deadline)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 hover:bg-blue-50 rounded-[10px] text-muted-foreground hover:text-blue-600 transition-standard cursor-pointer"
+                      title="Add to Google Calendar"
+                    >
+                      <Calendar className="w-4 h-4" />
+                    </a>
                     <button
                       onClick={() => handleOpenEditModal(task)}
                       className="p-1.5 hover:bg-accent rounded-[10px] text-muted-foreground hover:text-foreground transition-standard cursor-pointer"

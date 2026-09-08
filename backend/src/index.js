@@ -19,6 +19,7 @@ const flashcardsRoutes = require("./routes/flashcards");
 const telegramRoutes = require("./routes/telegram");
 const achievementsRoutes = require("./routes/achievements");
 const activityRoutes = require("./routes/activity");
+const { initCronJobs } = require("./services/cron");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -46,6 +47,9 @@ app.use("/api/activity", activityRoutes);
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
+
+// Initialize background jobs
+initCronJobs();
 
 app.listen(PORT, () => {
   console.log(`CampusFlow backend running on port ${PORT}`);

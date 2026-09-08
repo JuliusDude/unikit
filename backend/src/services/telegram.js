@@ -32,8 +32,8 @@ function generateLinkToken(studentId) {
     }
   }
 
-  // Generate 6-char alphanumeric code (e.g. UK-9482)
-  const randomDigits = Math.floor(1000 + Math.random() * 9000);
+  // Generate 6-digit code
+  const randomDigits = Math.floor(100000 + Math.random() * 900000);
   const code = `UK-${randomDigits}`;
   const deepLinkPayload = `link_${randomDigits}`;
 
@@ -220,6 +220,7 @@ async function unlinkStudentTelegram(studentId) {
     if (currentPref && currentPref.settings) {
       const updatedSettings = { ...currentPref.settings };
       delete updatedSettings.telegram_chat_id;
+      delete updatedSettings.telegram_username;
       delete updatedSettings.telegram_verified;
       delete updatedSettings.telegram_linked_at;
 
@@ -235,7 +236,7 @@ async function unlinkStudentTelegram(studentId) {
   try {
     await supabase
       .from("students")
-      .update({ telegram_chat_id: null })
+      .update({ telegram_chat_id: null, telegram_username: null })
       .eq("id", studentId);
   } catch (err) {
     // ignore

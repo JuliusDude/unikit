@@ -1,0 +1,204 @@
+{
+  "name": "CampusFlow Student Linking",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "telegram-trigger",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "h2Q6l1bxyZuXkLTL",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.message.chat.type }}",
+              "value2": "private"
+            },
+            {
+              "value1": "={{ $json.message.text }}",
+              "operation": "startsWith",
+              "value2": "/start UK-"
+            }
+          ]
+        },
+        "combineOperation": "any",
+        "conditions2": [
+          {
+            "id": "b3f021e9-4e08-4107-a3d6-444f24ef36cb",
+            "leftValue": "={{ $json.message.chat.type }}",
+            "rightValue": "private",
+            "operator": {
+              "type": "string",
+              "operation": "equals"
+            }
+          }
+        ]
+      },
+      "id": "filter-start",
+      "name": "Is Private Chat",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.BACKEND_URL }}/api/telegram/verify-link",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-n8n-secret",
+              "value": "={{ $vars.N8N_WEBHOOK_SECRET || '' }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "={{ $json.message.chat.id }}"
+            },
+            {
+              "name": "username",
+              "value": "={{ $json.message.from.username }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.message.text }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "id": "post-verify",
+      "name": "Verify Link",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        680,
+        280
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Is Private Chat').item.json.message.chat.id }}",
+        "text": "=✅ Success! Your Telegram account has been permanently linked to your CampusFlow dashboard.\n\nYou will now receive personalized deadline reminders and AI alerts directly in this chat.",
+        "additionalFields": {}
+      },
+      "id": "success-msg",
+      "name": "Send Success",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        920,
+        180
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "h2Q6l1bxyZuXkLTL",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Is Private Chat').item.json.message.chat.id }}",
+        "text": "=❌ Linking Failed.\n\n{{ $json.body.message || 'Invalid or expired link code. Please refresh your CampusFlow Settings page to get a new code.' }}",
+        "additionalFields": {}
+      },
+      "id": "error-msg",
+      "name": "Send Error",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        920,
+        380
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "h2Q6l1bxyZuXkLTL",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Is Private Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Private Chat": {
+      "main": [
+        [
+          {
+            "node": "Verify Link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Link": {
+      "main": [
+        [
+          {
+            "node": "Send Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "notifyme"
+    }
+  ]
+}

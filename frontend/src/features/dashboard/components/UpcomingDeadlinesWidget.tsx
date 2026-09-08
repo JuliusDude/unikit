@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Clock, Plus, Stars01 as PartyPopper } from "@untitledui/icons";
+import { ArrowRight, Clock, Plus, Stars01 as PartyPopper, Calendar } from "@untitledui/icons";
 import type { Task } from "@/features/types";
+import { generateGoogleCalendarUrl } from "@/lib/calendar";
 
 interface UpcomingDeadlinesWidgetProps {
   tasks: Task[];
@@ -83,9 +84,20 @@ export function UpcomingDeadlinesWidget({ tasks = [] }: UpcomingDeadlinesWidgetP
                   <p className="text-sm font-medium text-foreground truncate">{task.title}</p>
                   <p className="text-xs text-muted-foreground">{task.subject}</p>
                 </div>
-                <span className={`ml-2 px-2.5 py-1 text-xs font-medium rounded-full whitespace-nowrap ${getDaysColor(days)}`}>
-                  {getDaysLabel(days)}
-                </span>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={generateGoogleCalendarUrl(task.title, task.description || "", task.deadline)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-1 hover:bg-blue-50 rounded-md text-muted-foreground hover:text-blue-600 transition-colors"
+                    title="Add to Google Calendar"
+                  >
+                    <Calendar className="w-4 h-4" />
+                  </a>
+                  <span className={`ml-2 px-2.5 py-1 text-xs font-medium rounded-full whitespace-nowrap ${getDaysColor(days)}`}>
+                    {getDaysLabel(days)}
+                  </span>
+                </div>
               </div>
             );
           })}

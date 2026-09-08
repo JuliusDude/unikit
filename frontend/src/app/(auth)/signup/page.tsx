@@ -27,6 +27,7 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -72,7 +73,7 @@ export default function SignupPage() {
     setError(""); // Clear error on change
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     setError("");
     if (step === 1) {
       if (!form.email || !form.password || !form.confirmPassword) {
@@ -87,13 +88,37 @@ export default function SignupPage() {
         setError("Password must be at least 6 characters");
         return;
       }
-      setStep(2);
+
+      setLoading(true);
+      try {
+        await api.post("/api/auth/check-email", { email: form.email });
+        setStep(2);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Email already registered");
+      } finally {
+        setLoading(false);
+      }
     } else if (step === 2) {
       if (!form.name || !form.branch || !form.year) {
         setError("Please fill all personal info");
         return;
       }
-      setStep(3);
+      setLoading(true);
+      try {
+        await register({
+          name: form.name,
+          email: form.email,
+          password: form.password,
+          branch: form.branch,
+          year: Number(form.year),
+          telegram_username: "", // No longer required manually
+        }, false); // redirect = false
+        setStep(3);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Registration failed");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -102,32 +127,38 @@ export default function SignupPage() {
     setStep((prev) => prev - 1);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (!form.telegram_username) {
-      setError("Telegram username is required");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      await register({
-        name: form.name,
-        email: form.email,
-        password: form.password,
-        branch: form.branch,
-        year: Number(form.year),
-        telegram_username: form.telegram_username,
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Registration failed");
-    } finally {
-      setLoading(false);
+  // Telegram Sync Polling
+  const [telegramData, setTelegramData] = useState<{ deep_link?: string; link_code?: string; connected?: boolean; bot_username?: string } | null>(null);
+  
+  const handleCopy = () => {
+    if (telegramData?.link_code) {
+      navigator.clipboard.writeText(telegramData.link_code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
+  useEffect(() => {
+    if (step === 3) {
+      const checkStatus = async () => {
+        try {
+          const res = await api.get<{ deep_link?: string; link_code?: string; connected?: boolean; bot_username?: string }>("/api/telegram/status");
+          setTelegramData(res);
+          if (res.connected) {
+            // Wait 2 seconds and auto-redirect
+            setTimeout(() => {
+              router.push("/dashboard");
+            }, 2000);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      };
+      
+      checkStatus();
+      const interval = setInterval(checkStatus, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [step, router]);
 
   return (
     <div className="bg-white rounded-[10px] border border-border p-5 sm:p-6 shadow-sm w-full">
@@ -160,7 +191,7 @@ export default function SignupPage() {
         </div>
       )}
 
-      <form onSubmit={step === 3 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }} className="space-y-3">
+      <form onSubmit={step < 3 ? (e) => { e.preventDefault(); handleNext(); } : (e) => e.preventDefault()} className="space-y-3">
         
         {/* STEP 1: CREDENTIALS */}
         {step === 1 && (
@@ -302,46 +333,81 @@ export default function SignupPage() {
 
         {/* STEP 3: TELEGRAM INFO */}
         {step === 3 && (
-          <div className="space-y-3 animate-in slide-in-from-right-4 duration-300">
-            <div className="p-3 bg-blue-500/10 text-blue-700 border border-blue-500/20 rounded-[10px] text-xs mb-3 leading-relaxed">
-              UniKit uses Telegram to send you intelligent task reminders, summarize college notices on-the-fly, and alert you of attendance risks.
+          <div className="space-y-4 animate-in slide-in-from-right-4 duration-300">
+            <div className="p-3 bg-blue-500/10 text-blue-700 border border-blue-500/20 rounded-[10px] text-xs leading-relaxed text-center font-medium">
+              Link your Telegram to get AI-powered reminders for classes, attendance alerts, and deadline summaries instantly!
             </div>
             
-            <div>
-              <label htmlFor="telegram_username" className="block text-sm font-medium text-foreground mb-1">
-                Telegram Username
-              </label>
-              <input
-                id="telegram_username"
-                name="telegram_username"
-                type="text"
-                value={form.telegram_username}
-                onChange={handleChange}
-                className="w-full px-3 py-1.5 border border-border rounded-[10px] text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                placeholder="@yourusername"
-                required
-              />
+            <div className="flex flex-col items-center gap-3 py-2">
+              {telegramData?.connected ? (
+                <div className="flex flex-col items-center gap-2 animate-in fade-in duration-300">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <Check className="w-6 h-6 text-green-600" />
+                  </div>
+                  <p className="text-sm font-bold text-green-700">Telegram Linked!</p>
+                  <p className="text-xs text-muted-foreground">Redirecting you to dashboard...</p>
+                </div>
+              ) : (
+                <>
+                  <div className="text-center">
+                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">Your Link Code</p>
+                    <button 
+                      type="button" 
+                      onClick={handleCopy}
+                      className="px-4 py-2 bg-muted text-foreground font-mono font-bold text-lg rounded-[8px] border border-border block mx-auto hover:bg-muted/80 transition-colors cursor-pointer"
+                      title="Click to copy"
+                    >
+                      {copied ? "Copied!" : telegramData?.link_code || "..."}
+                    </button>
+                  </div>
+                  
+                  <a
+                    href={telegramData?.deep_link || "#"}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full py-2.5 bg-[#2AABEE] text-white text-sm font-medium rounded-full hover:bg-[#229ED9] transition-colors flex items-center justify-center gap-2"
+                  >
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                      <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a58.315 58.315 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.892-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                    </svg>
+                    Link Telegram Now
+                  </a>
+                  <p className="text-[10px] text-muted-foreground text-center px-4">
+                    Click the button above and press "Start" in Telegram. <br/>
+                    Or manually message <strong>@{telegramData?.bot_username || "unialert0bot"}</strong> and send: <br/>
+                    <code className="bg-muted px-1 py-0.5 rounded text-foreground font-mono">/link {telegramData?.link_code || "UK-XXXX"}</code>
+                  </p>
+                </>
+              )}
             </div>
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-2 mt-4 bg-primary text-white text-sm font-medium rounded-full hover:bg-primary/90 transition-standard disabled:opacity-50 flex items-center justify-center gap-2"
-        >
-          {step < 3 ? (
-            <>
-              Next <ArrowRight className="w-4 h-4" />
-            </>
-          ) : loading ? (
-            "Creating account..."
-          ) : (
-            <>
-              Create Account <Check className="w-4 h-4" />
-            </>
-          )}
-        </button>
+        {step < 3 ? (
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-2 mt-4 bg-primary text-white text-sm font-medium rounded-full hover:bg-primary/90 transition-standard disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            {loading ? (
+              step === 1 ? "Checking..." : "Creating account..."
+            ) : step === 1 ? (
+              <>Next <ArrowRight className="w-4 h-4" /></>
+            ) : (
+              <>Create Account <Check className="w-4 h-4" /></>
+            )}
+          </button>
+        ) : (
+          !telegramData?.connected && (
+            <button
+              type="button"
+              onClick={() => router.push("/dashboard")}
+              className="w-full py-2 mt-2 bg-transparent text-muted-foreground text-sm font-medium rounded-full hover:bg-muted transition-standard"
+            >
+              Skip for now
+            </button>
+          )
+        )}
       </form>
 
       {step === 1 && (

@@ -6,11 +6,32 @@ const authMiddleware = require("../middleware/auth");
 
 const router = express.Router();
 
+router.post("/check-email", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email is required" });
+
+    const { data: existing } = await getClient()
+      .from("students")
+      .select("id")
+      .eq("email", email)
+      .limit(1);
+
+    if (existing && existing.length > 0) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
+    
+    res.json({ available: true });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 router.post("/register", async (req, res) => {
   try {
-    const { name, email, password, branch, year, telegram_username, subjects } = req.body;
+    const { name, email, password, branch, year, subjects } = req.body;
 
-    if (!name || !email || !password || !branch || !year || !telegram_username) {
+    if (!name || !email || !password || !branch || !year) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -18,9 +39,9 @@ router.post("/register", async (req, res) => {
       .from("students")
       .select("id")
       .eq("email", email)
-      .single();
+      .limit(1);
 
-    if (existing) {
+    if (existing && existing.length > 0) {
       return res.status(400).json({ message: "Email already registered" });
     }
 
@@ -34,7 +55,6 @@ router.post("/register", async (req, res) => {
         password_hash,
         branch,
         year,
-        telegram_username,
         subjects: subjects || [],
       })
       .select("id, name, email, branch, year, telegram_username, subjects, created_at")
@@ -114,11 +134,11 @@ router.get("/me", authMiddleware, async (req, res) => {
 
 router.put("/me", authMiddleware, async (req, res) => {
   try {
-    const { name, branch, year, telegram_username, subjects } = req.body;
+    const { name, branch, year, subjects } = req.body;
 
     const { data: student, error } = await getClient()
       .from("students")
-      .update({ name, branch, year, telegram_username, subjects })
+      .update({ name, branch, year, subjects })
       .eq("id", req.student.id)
       .select("id, name, email, branch, year, telegram_username, subjects, created_at")
       .single();
@@ -127,6 +147,32 @@ router.put("/me", authMiddleware, async (req, res) => {
     res.json({ student });
   } catch (error) {
     res.status(500).json({ message: error.message || "Failed to update profile" });
+  }
+});
+
+router.delete("/me", authMiddleware, async (req, res) => {
+  try {
+    const supabase = getClient();
+    const studentId = req.student.id;
+
+    // Delete student. Assuming ON DELETE CASCADE is set for tasks, preferences, enrollments.
+    // If not, we manually delete dependencies first to be safe.
+    await supabase.from("preferences").delete().eq("user_id", studentId);
+    await supabase.from("tasks").delete().eq("student_id", studentId);
+    await supabase.from("group_enrollments").delete().eq("student_id", studentId);
+    await supabase.from("automation_logs").delete().eq("student_id", studentId);
+    await supabase.from("flashcards_decks").delete().eq("student_id", studentId);
+    await supabase.from("quizzes").delete().eq("student_id", studentId);
+    
+    // Finally, delete the student record
+    const { error } = await supabase.from("students").delete().eq("id", studentId);
+    
+    if (error) throw error;
+
+    res.json({ message: "Account deleted successfully" });
+  } catch (error) {
+    console.error("Delete account error:", error.message);
+    res.status(500).json({ message: error.message || "Failed to delete account" });
   }
 });
 

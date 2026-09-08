@@ -21,7 +21,7 @@ export interface RegisterPayload {
   password: string;
   branch: string;
   year: number;
-  telegram_username: string;
+  telegram_username?: string;
   subjects?: string[];
 }
 
@@ -29,7 +29,7 @@ export interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (payload: RegisterPayload) => Promise<void>;
+  register: (payload: RegisterPayload, redirect?: boolean) => Promise<void>;
   logout: () => void;
   devLogin: () => Promise<void>;
 }
@@ -77,11 +77,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const register = useCallback(
-    async (payload: RegisterPayload) => {
+    async (payload: RegisterPayload, redirect = true) => {
       const res = await api.post<{ token: string; student: User }>("/api/auth/register", payload);
       localStorage.setItem("UniKit_token", res.token);
       setUser(res.student);
-      router.push("/dashboard");
+      if (redirect) {
+        router.push("/dashboard");
+      }
     },
     [router]
   );
