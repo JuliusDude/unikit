@@ -46,11 +46,22 @@ router.post("/register", n8nAuth, async (req, res) => {
     const invite_link = `${FRONTEND_URL}/join?chat_id=${telegram_chat_id}`;
 
     if (existing) {
+      const updates = {};
       // If the existing group was registered with localhost or an outdated domain, update it
       if (existing.invite_link !== invite_link) {
+        updates.invite_link = invite_link;
+      }
+
+      // If sender_id is provided and not in authorized_user_ids, add it
+      const existingAuth = existing.authorized_user_ids || [];
+      if (sender_id && !existingAuth.includes(String(sender_id))) {
+        updates.authorized_user_ids = [...existingAuth, String(sender_id)];
+      }
+
+      if (Object.keys(updates).length > 0) {
         await supabase
           .from("telegram_groups")
-          .update({ invite_link })
+          .update(updates)
           .eq("id", existing.id);
       }
 
@@ -287,9 +298,14 @@ router.post("/webhook/message", n8nAuth, async (req, res) => {
 
     const authUsers = group.authorized_user_ids || [];
     const senderIdStr = sender_id ? String(sender_id) : '';
-    if (authUsers.length > 0 && !authUsers.includes(senderIdStr)) {
-      console.warn("[Webhook Message] Sender not authorized:", senderIdStr, "Auth users:", authUsers);
-      return res.status(403).json({ message: "Ignored: Sender is not an authorized teacher in this group." });
+    // If the group has an explicit whitelist, but sender is not in it, add them automatically if they run /create
+    if (authUsers.length > 0 && senderIdStr && !authUsers.includes(senderIdStr)) {
+      console.log("[Webhook Message] Auto-authorizing sender running /create:", senderIdStr);
+      authUsers.push(senderIdStr);
+      await supabase
+        .from("telegram_groups")
+        .update({ authorized_user_ids: authUsers })
+        .eq("id", group.id);
     }
 
     // 2. Extract Event via AI
