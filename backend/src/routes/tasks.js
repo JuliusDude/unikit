@@ -99,43 +99,7 @@ router.post("/", async (req, res) => {
       .eq("id", req.student.id)
       .single();
 
-    if (add_to_calendar !== false) {
-      const accessToken = await getValidAccessToken(req.student.id);
-      if (accessToken) {
-        try {
-          const deadlineDate = new Date(deadline);
-          await createCalendarEvent(accessToken, {
-            summary: `[CampusFlow] ${title}`,
-            description: `Subject: ${subject}${description ? `\n${description}` : ""}`,
-            start: { dateTime: deadlineDate.toISOString() },
-            end: { dateTime: new Date(deadlineDate.getTime() + 3600000).toISOString() },
-            reminders: { useDefault: false, overrides: [{ method: "popup", minutes: 60 }] },
-          });
-        } catch (calErr) {
-          console.error("Failed to create calendar event:", calErr.message);
-        }
-      }
 
-      const telegramInfo = await getStudentTelegram(req.student.id);
-
-      await triggerN8nDeadline({
-        taskId: task.id,
-        studentName: student?.name,
-        telegramUsername: telegramInfo.username || student?.telegram_username,
-        telegramChatId: telegramInfo.chatId,
-        subject,
-        deadline,
-        reminderTime: reminder,
-        taskTitle: title,
-      });
-
-      await getClient().from("automation_logs").insert({
-        student_id: req.student.id,
-        workflow_type: "deadline_reminder",
-        status: "triggered",
-        details: { task_id: task.id, title, reminder_time: reminder, telegram_chat_id: telegramInfo.chatId },
-      });
-    }
 
     res.json({ task });
   } catch (error) {

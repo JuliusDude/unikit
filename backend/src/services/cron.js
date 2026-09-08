@@ -1,18 +1,19 @@
 const cron = require("node-cron");
 const axios = require("axios");
 const { getClient } = require("./supabase");
+const { sendDirectTelegramMessage } = require("./telegram");
 
 /**
- * Initializes the background cron job for pushing reminders to n8n.
+ * Initializes the background cron job for pushing reminders to Telegram directly.
  * Runs every 5 minutes.
  */
 function initCronJobs() {
-  console.log("🕒 Initializing background reminder cron job (Push Architecture)");
+  console.log("🕒 Initializing background reminder cron job (Direct Telegram API)");
 
   cron.schedule("*/5 * * * *", async () => {
-    const n8nWebhookUrl = process.env.N8N_WEBHOOK_URL;
-    if (!n8nWebhookUrl) {
-      console.warn("⚠️ Cron: N8N_WEBHOOK_URL is not set. Skipping reminder push.");
+    // If we don't have a token, we shouldn't attempt to send messages
+    if (!process.env.TELEGRAM_BOT_TOKEN || process.env.TELEGRAM_BOT_TOKEN === "placeholder") {
+      console.warn("⚠️ Cron: TELEGRAM_BOT_TOKEN is missing. Skipping reminder push.");
       return;
     }
 
@@ -25,16 +26,19 @@ function initCronJobs() {
       const dueTasks = tasksRes.data || [];
 
       for (const task of dueTasks) {
-        // Push to n8n webhook
-        await axios.post(n8nWebhookUrl, {
-          type: "task_reminder",
-          telegram_chat_id: task.telegram_chat_id,
-          message_text: task.message_text
-        });
+        // Send directly via Telegram Bot API
+        const sendResult = await sendDirectTelegramMessage(
+          task.telegram_chat_id,
+          task.message_text
+        );
         
-        // Mark as sent
-        await axios.patch(`${localApiUrl}/tasks/${task.id}/mark-sent`);
-        console.log(`✅ Pushed Task Reminder for task ${task.id}`);
+        if (sendResult.success) {
+          // Mark as sent in DB with the exact threshold (7d, 1d, 1h, 10m)
+          await axios.patch(`${localApiUrl}/tasks/${task.id}/mark-sent`, { threshold: task.threshold });
+          console.log(`✅ Sent ${task.threshold} Task Reminder to chat ${task.telegram_chat_id}`);
+        } else {
+          console.error(`❌ Failed to send Task Reminder:`, sendResult.error || sendResult.message);
+        }
       }
 
       // 2. Fetch Due Group Reminders (Broadcasts)
@@ -42,39 +46,32 @@ function initCronJobs() {
       const dueGroupReminders = groupsRes.data || [];
 
       for (const reminder of dueGroupReminders) {
-        // Fetch all students in this group who have telegram linked
         const supabase = getClient();
         
-        const { data: enrollments } = await supabase
-          .from("group_enrollments")
+        // Fetch group members directly using group_members table (as per notifyme-migration.sql)
+        const { data: members } = await supabase
+          .from("group_members")
           .select("student_id")
           .eq("group_id", reminder.group_id);
 
         let sentCount = 0;
         
-        for (const enroll of enrollments || []) {
-          const { data: pref } = await supabase
-            .from("preferences")
-            .select("settings")
-            .eq("user_id", enroll.student_id)
-            .single();
+        for (const member of members || []) {
+          // Get the telegram status using the helper function
+          const { getStudentTelegram } = require("./telegram");
+          const telegramInfo = await getStudentTelegram(member.student_id);
             
-          const chat_id = pref?.settings?.telegram_chat_id;
-          if (chat_id) {
+          if (telegramInfo.isVerified && telegramInfo.chatId) {
             const message = `⚠️ *Upcoming Deadline!*\n\n📌 *${reminder.title}* is in *${reminder.days_left} day(s)* — ${reminder.event_date}\n\nCategory: ${reminder.category} | Priority: ${reminder.priority}`;
             
-            await axios.post(n8nWebhookUrl, {
-              type: "group_reminder",
-              telegram_chat_id: chat_id,
-              message_text: message
-            });
+            await sendDirectTelegramMessage(telegramInfo.chatId, message);
             sentCount++;
           }
         }
 
-        // Mark as sent
+        // Mark group reminder as sent
         await axios.patch(`${localApiUrl}/${reminder.id}/mark-sent`);
-        console.log(`✅ Pushed Group Reminder ${reminder.id} to ${sentCount} students`);
+        console.log(`✅ Sent Group Reminder ${reminder.id} to ${sentCount} students`);
       }
 
     } catch (error) {
