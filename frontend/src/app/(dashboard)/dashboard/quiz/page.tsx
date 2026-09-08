@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 "use client";
 
 import { useState, useEffect } from "react";
@@ -176,7 +177,7 @@ export default function QuizPage() {
 
   const handleGenerateQuiz = async () => {
     if (!newQuizTitle.trim() || !newQuizContent.trim()) {
-      alert("Please provide both a title and notes text content.");
+      toast.error("Please provide both a title and notes text content.");
       return;
     }
 
@@ -224,7 +225,7 @@ export default function QuizPage() {
         setSelectedQuizId(null);
       }
     } catch (err) {
-      alert("Failed to delete quiz.");
+      toast.error("Failed to delete quiz.");
     }
   };
 

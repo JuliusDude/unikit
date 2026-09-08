@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 "use client";
 
 import { useState, useEffect } from "react";
@@ -159,7 +160,7 @@ export default function FlashcardsPage() {
   // Generate New Deck
   const handleGenerate = async () => {
     if (!modalTitle.trim() || !modalContent.trim()) {
-      alert("Please provide both a title and notes text content.");
+      toast.error("Please provide both a title and notes text content.");
       return;
     }
 
@@ -219,7 +220,7 @@ export default function FlashcardsPage() {
   // Add custom manual card
   const handleAddManualCard = () => {
     if (!newCardFront.trim() || !newCardBack.trim()) {
-      alert("Please provide both front and back values.");
+      toast.error("Please provide both front and back values.");
       return;
     }
 
@@ -252,7 +253,7 @@ export default function FlashcardsPage() {
 
   const handleSaveCardEdit = () => {
     if (!editCardFront.trim() || !editCardBack.trim()) {
-      alert("Question prompt and answer content cannot be empty.");
+      toast.error("Question prompt and answer content cannot be empty.");
       return;
     }
 

@@ -1,3 +1,4 @@
+import { toast } from 'sonner';
 "use client";
 
 import { useEffect, useState } from "react";
@@ -604,7 +605,7 @@ export default function SettingsPage() {
                       await api.delete("/api/auth/me");
                       logout();
                     } catch (err) {
-                      alert("Failed to delete account: " + (err instanceof Error ? err.message : "Unknown error"));
+                      toast.error("Failed to delete account: " + (err instanceof Error ? err.message : "Unknown error"));
                     }
                   }
                 }}
