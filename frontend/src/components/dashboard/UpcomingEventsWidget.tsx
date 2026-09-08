@@ -17,6 +17,9 @@ function formatDate(dateStr: string): string {
 }
 
 function formatTime(dateStr: string): string {
+  if (!dateStr.includes("T")) {
+    return "All day";
+  }
   return new Date(dateStr).toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
@@ -28,19 +31,49 @@ function getColor(idx: number): string {
   return colors[idx % colors.length];
 }
 
+interface CombinedEvent {
+  id: string;
+  title: string;
+  date: string;
+  subtitle: string;
+  type: "task" | "announcement";
+}
+
 export function UpcomingEventsWidget() {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [events, setEvents] = useState<CombinedEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api
-      .get<{ tasks: Task[] }>("/api/tasks/upcoming")
-      .then((res) => setTasks(res.tasks || []))
-      .catch(() => setTasks([]))
+    Promise.all([
+      api.get<{ tasks: Task[] }>("/api/tasks/upcoming").catch(() => ({ tasks: [] })),
+      api.get<{ events: any[] }>("/api/groups/events").catch(() => ({ events: [] }))
+    ])
+      .then(([tasksRes, groupEventsRes]) => {
+        const taskItems: CombinedEvent[] = (tasksRes.tasks || []).map((t) => ({
+          id: t.id,
+          title: t.title,
+          date: t.deadline,
+          subtitle: t.subject,
+          type: "task"
+        }));
+
+        const announcementItems: CombinedEvent[] = (groupEventsRes.events || []).map((e) => ({
+          id: e.id,
+          title: e.title,
+          date: e.event_date,
+          subtitle: e.telegram_groups?.name || "Group Announcement",
+          type: "announcement"
+        }));
+
+        const combined = [...taskItems, ...announcementItems].sort(
+          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+        );
+
+        setEvents(combined.slice(0, 5));
+      })
+      .catch(() => setEvents([]))
       .finally(() => setLoading(false));
   }, []);
-
-  const events = tasks.slice(0, 5);
 
   if (loading) {
     return (
@@ -79,14 +112,14 @@ export function UpcomingEventsWidget() {
                 {i < events.length - 1 && <div className="w-px flex-1 bg-border mt-1" />}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-muted-foreground mb-0.5">{formatDate(event.deadline)}</p>
+                <p className="text-xs font-medium text-muted-foreground mb-0.5">{formatDate(event.date)}</p>
                 <p className="text-sm font-medium text-foreground truncate">{event.title}</p>
                 <div className="flex items-center gap-3 mt-1">
                   <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Clock className="w-3 h-3" /> {formatTime(event.deadline)}
+                    <Clock className="w-3 h-3" /> {formatTime(event.date)}
                   </span>
                   <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <MapPin className="w-3 h-3" /> {event.subject}
+                    <MapPin className="w-3 h-3" /> {event.subtitle}
                   </span>
                 </div>
               </div>
