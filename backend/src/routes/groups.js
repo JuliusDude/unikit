@@ -42,16 +42,24 @@ router.post("/register", n8nAuth, async (req, res) => {
       .eq("telegram_chat_id", telegram_chat_id)
       .single();
 
+    // Generate current invite link using current FRONTEND_URL
+    const invite_link = `${FRONTEND_URL}/join?chat_id=${telegram_chat_id}`;
+
     if (existing) {
+      // If the existing group was registered with localhost or an outdated domain, update it
+      if (existing.invite_link !== invite_link) {
+        await supabase
+          .from("telegram_groups")
+          .update({ invite_link })
+          .eq("id", existing.id);
+      }
+
       return res.json({
         group_id: existing.id,
-        invite_link: existing.invite_link,
+        invite_link: invite_link,
         message: "Group already registered",
       });
     }
-
-    // Generate invite link (students visit this URL to join)
-    const invite_link = `${FRONTEND_URL}/join?chat_id=${telegram_chat_id}`;
 
     // Ensure sender_id is treated as a string for robust storage
     const senderIdStr = sender_id ? String(sender_id) : null;
