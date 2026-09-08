@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Announcement01 as Megaphone, Calendar, Check, Copy01 as Copy, File04 as FileText, GitBranch01 as GitFork, Lightbulb01 as Lightbulb, Loading01 as Loader2, Shield02 as ShieldAlert, Stars01 as Sparkles, XClose as X } from "@untitledui/icons";
+import { Announcement01 as Megaphone, Calendar, Check, Copy01 as Copy, File04 as FileText, GitBranch01 as GitFork, Lightbulb01 as Lightbulb, Loading01 as Loader2, Shield02 as ShieldAlert, Stars01 as Sparkles, XClose as X, Upload01 as Upload, Download01 as Download } from "@untitledui/icons";
 import { api } from "@/lib/api";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -108,6 +108,7 @@ export default function SmartToolsPage() {
   const [activeTool, setActiveTool] = useState<Tool | null>(null);
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [result, setResult] = useState("");
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState("");
@@ -168,6 +169,70 @@ export default function SmartToolsPage() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
+  };
+
+  const handleDownload = () => {
+    if (!result) return;
+    
+    const element = document.getElementById("ai-output-content");
+    
+    if (element) {
+      try {
+        const printWindow = window.open('', '', 'width=800,height=600');
+        if (printWindow) {
+          printWindow.document.write(`
+            <html>
+              <head>
+                <title>${activeTool?.title || "AI Output"}</title>
+                <style>
+                  body { font-family: system-ui, -apple-system, sans-serif; padding: 2rem; color: #0f172a; line-height: 1.6; max-width: 800px; margin: 0 auto; }
+                  h1, h2, h3, h4 { color: #4c1d95; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+                  table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+                  th, td { border: 1px solid #cbd5e1; padding: 0.75rem; text-align: left; }
+                  th { background-color: #f8fafc; }
+                  code { background: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: monospace; font-size: 0.9em; }
+                  pre { background: #f8fafc; padding: 1rem; border-radius: 8px; overflow-x: auto; border: 1px solid #e2e8f0; }
+                  ul, ol { padding-left: 1.5rem; margin: 0.5rem 0; }
+                  li { margin-bottom: 0.25rem; }
+                  p { margin: 0.5rem 0; }
+                  @media print {
+                    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0; }
+                  }
+                </style>
+              </head>
+              <body>
+                <h2>${activeTool?.title || "AI Generated Output"}</h2>
+                <hr style="border: 0; border-top: 1px solid #e2e8f0; margin-bottom: 2rem;" />
+                ${element.innerHTML}
+                <script>
+                  window.onload = () => {
+                    setTimeout(() => {
+                      window.print();
+                      window.close();
+                    }, 300);
+                  };
+                </script>
+              </body>
+            </html>
+          `);
+          printWindow.document.close();
+          return;
+        }
+      } catch (err) {
+        console.error("Print generation failed, falling back to markdown", err);
+      }
+    }
+
+    // Fallback to markdown download
+    const blob = new Blob([result], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${activeTool?.slug || "output"}-${new Date().toISOString().split('T')[0]}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -234,9 +299,55 @@ export default function SmartToolsPage() {
             {/* Modal Body */}
             <div className="space-y-4 flex-1">
               <div>
-                <label className="block text-sm font-medium text-foreground mb-1.5">
-                  Source Material / Text Input
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-sm font-medium text-foreground">
+                    Source Material / Text Input
+                  </label>
+                  <label className={`text-xs font-semibold ${isUploading ? 'text-muted-foreground bg-muted cursor-not-allowed' : 'text-primary hover:text-primary/80 cursor-pointer bg-primary/10 hover:bg-primary/15'} flex items-center gap-1.5 px-2.5 py-1.5 rounded-[8px] transition-colors`}>
+                    {isUploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                    {isUploading ? 'Extracting...' : 'Upload Document'}
+                    <input 
+                      type="file" 
+                      accept=".pdf,.txt,.md,.csv,.json"
+                      className="hidden" 
+                      disabled={isUploading}
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        setIsUploading(true);
+                        setError("");
+                        
+                        try {
+                          const formData = new FormData();
+                          formData.append("document", file);
+                          
+                          const token = localStorage.getItem("UniKit_token");
+                          const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000"}/api/ai/parse-document`, {
+                            method: "POST",
+                            headers: {
+                              Authorization: `Bearer ${token}`
+                            },
+                            body: formData
+                          });
+                          
+                          const data = await res.json();
+                          if (!res.ok) {
+                            throw new Error(data.message || "Failed to parse document");
+                          }
+                          
+                          if (data.text) {
+                            setContent((prev) => prev ? `${prev}\n\n${data.text}` : data.text);
+                          }
+                        } catch (err) {
+                          setError(err instanceof Error ? err.message : "Error uploading document");
+                        } finally {
+                          setIsUploading(false);
+                          e.target.value = ""; // reset input
+                        }
+                      }} 
+                    />
+                  </label>
+                </div>
                 <textarea
                   value={content}
                   onChange={(e) => setContent(e.target.value)}
@@ -299,13 +410,22 @@ export default function SmartToolsPage() {
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Generated Output</span>
                     {result && (
-                      <button
-                        onClick={handleCopy}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 border border-input hover:bg-primary/10 text-xs font-medium rounded-[10px] transition-standard cursor-pointer text-primary"
-                      >
-                        {copied ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5" />}
-                        {copied ? "Copied!" : "Copy"}
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={handleDownload}
+                          className="inline-flex items-center gap-1.5 px-3 py-1 border border-input hover:bg-primary/10 text-xs font-medium rounded-[10px] transition-standard cursor-pointer text-primary"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                          Download
+                        </button>
+                        <button
+                          onClick={handleCopy}
+                          className="inline-flex items-center gap-1.5 px-3 py-1 border border-input hover:bg-primary/10 text-xs font-medium rounded-[10px] transition-standard cursor-pointer text-primary"
+                        >
+                          {copied ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5" />}
+                          {copied ? "Copied!" : "Copy"}
+                        </button>
+                      </div>
                     )}
                   </div>
                   {loading ? (
@@ -314,7 +434,7 @@ export default function SmartToolsPage() {
                       
                     </div>
                   ) : (
-                    <div className="bg-white border border-border rounded-[12px] p-6 md:p-8 text-base text-foreground max-h-[500px] overflow-y-auto shadow-inner prose prose-slate max-w-none prose-headings:text-primary prose-a:text-primary prose-li:my-0">
+                    <div id="ai-output-content" className="bg-white border border-border rounded-[12px] p-6 md:p-8 text-base text-foreground max-h-[500px] overflow-y-auto shadow-inner prose prose-slate max-w-none prose-headings:text-primary prose-a:text-primary prose-li:my-0">
                       <ReactMarkdown 
                         remarkPlugins={[remarkGfm]}
                         components={{

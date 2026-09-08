@@ -118,11 +118,11 @@ LEVEL 1: Main Concept
     case 'explain-concept':
       return `### Concept Explanation: ${content.substring(0, 40) || "Topic"}
       
-**ðŸ’¡ The Analogy**: Think of it like a train station. Passengers (data packages) board trains (requests) and routes are managed by central track controllers (logic routers) to prevent collisions.
+**💡 The Analogy**: Think of it like a train station. Passengers (data packages) board trains (requests) and routes are managed by central track controllers (logic routers) to prevent collisions.
 
-**ðŸ“– Simple Definition**: A structured explanation detailing components, configurations, and core mathematical formulas.
+**📖 Simple Definition**: A structured explanation detailing components, configurations, and core mathematical formulas.
 
-**ðŸš€ Real-world Examples**:
+**🚀 Real-world Examples**:
 1. Web server load balancers distributing network traffic.
 2. File systems mapping blocks to disk sectors.`;
 
@@ -134,7 +134,7 @@ LEVEL 1: Main Concept
 * *Operating Systems*: 62% attendance. (Needs 4 consecutive classes to pass).
 * *Database Systems*: 71% attendance. (Needs 2 consecutive classes to pass).
 
-**ðŸš€ Action Steps**:
+**🚀 Action Steps**:
 1. Email department regarding excused logs.
 2. Review notices for upcoming calendar deadlines.`;
 
@@ -407,17 +407,17 @@ async function executeSmartTool(tool, content, options = {}) {
     case 'summarize-notes':
       systemPrompt = `You are an expert academic note summarizer. Create a highly structured, comprehensive summary of the provided text.
 Your response must strictly follow this structure:
-### ðŸ“Œ Executive Summary
+### 📌 Executive Summary
 (1-2 sentences capturing the core essence)
 
-### ðŸ”‘ Key Concepts
+### 🔑 Key Concepts
 - **Concept 1:** Brief definition.
 - **Concept 2:** Brief definition.
 
 ### ðŸ“ Detailed Breakdown
 (Use nested bullet points and bold text to organize the main ideas and supporting details logically)
 
-### ðŸ’¡ Crucial Takeaways
+### 💡 Crucial Takeaways
 (2-3 critical points the student MUST remember for an exam)
 
 Rules:
@@ -434,18 +434,18 @@ Available study hours per day: ${studyHours}.
 Target Exam Date: ${examDate}.
 
 Format your response exactly as follows:
-### ðŸ“… Overall Strategy
+### 📅 Overall Strategy
 (Brief overview of how the time is distributed, prioritizing difficult topics)
 
 ### ðŸ—“ï¸ Daily Breakdown
 **Day 1 (Date):**
-- ðŸ•’ [Time Block 1] (e.g., 2 hours): Topic A - Deep Work
-- â˜• [Break] (e.g., 15 mins): Active rest
-- ðŸ•’ [Time Block 2]: Topic B - Practice
+- 🕒 [Time Block 1] (e.g., 2 hours): Topic A - Deep Work
+- ☕ [Break] (e.g., 15 mins): Active rest
+- 🕒 [Time Block 2]: Topic B - Practice
 
 (Continue for the required days)
 
-### ðŸ”„ Revision & Testing Strategy
+### 🔄 Revision & Testing Strategy
 (How to incorporate active recall and spaced repetition before the exam)
 
 Rules:
@@ -492,7 +492,7 @@ Rules:
 Explain the requested concept using the Feynman Technique.
 
 Follow this strict structure:
-### ðŸ“– The Simple Definition
+### 📖 The Simple Definition
 (Explain it in 2 sentences as if speaking to a high schooler. No jargon.)
 
 ### ðŸ• The Analogy
@@ -519,21 +519,21 @@ Rules:
 Analyze the provided attendance records based on a standard 75% requirement.
 
 Format your response using this precise layout:
-### ðŸ“Š Attendance Overview
+### 📊 Attendance Overview
 (Provide a Markdown table summarizing: Subject | Current % | Status)
 
-### ðŸš¨ Critical Risks (Below 75%)
+### 🚨 Critical Risks (Below 75%)
 - **[Subject Name]:** [Advice on how many classes to attend to recover]
 
-### ðŸŸ¢ Safe Zone (Above 75%)
+### 🟢 Safe Zone (Above 75%)
 - **[Subject Name]:** [Advice on how many classes can safely be missed]
 
-### ðŸŽ¯ Action Plan
+### 🎯 Action Plan
 (Bullet points with realistic, actionable advice for recovery and maintaining good standing)
 
 Rules:
 - If raw numbers are provided, calculate mathematically accurately.
-- Use emojis (ðŸš¨, âš ï¸, ðŸŸ¢) to visually indicate risk levels.
+- Use emojis (🚨, âš ï¸, 🟢) to visually indicate risk levels.
 - Do NOT hallucinate data not provided.`;
       userPrompt = `Analyze these attendance records:\n\n${content}`;
       break;
@@ -542,13 +542,13 @@ Rules:
       systemPrompt = `You are an administrative assistant AI trained to extract critical information from dense college circulars.
 
 Extract and format the information exactly as follows:
-### ðŸ“¢ Notice TL;DR
+### 📢 Notice TL;DR
 (One bold sentence summarizing the exact purpose of the notice)
 
 ### ðŸ—“ï¸ Critical Dates & Deadlines
 - **[Date/Time]:** [Event/Deadline description]
 
-### ðŸ‘¥ Who is Affected?
+### 👥 Who is Affected?
 (e.g., "All 3rd-year CSE students", "Faculty only")
 
 ### ðŸ“ Required Actions

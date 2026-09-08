@@ -26,7 +26,7 @@
           "conditions": [
             {
               "id": "cond-start",
-              "leftValue": "={{ ($json.message.text || '').startsWith('/start') }}",
+              "leftValue": "={{ ($json.message.text || '').startsWith('/start') || ($json.message.text || '').startsWith('/invite') }}",
               "rightValue": "true",
               "operator": { "type": "string", "operation": "equals" }
             },
@@ -41,7 +41,7 @@
         }
       },
       "id": "node-if-start",
-      "name": "IF — /start in a Group",
+      "name": "IF — /start or /invite in a Group",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [460, 300]
@@ -117,7 +117,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
-        "text": "⚠️ NotifyMe could not register this group. Please try /start again.",
+        "text": "⚠️ NotifyMe could not register this group. Please try /start or /invite again.",
         "additionalFields": {}
       },
       "id": "node-send-error",

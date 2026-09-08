@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Announcement01 as Megaphone, Bell01 as Bell, Calendar, Clock, Loading01 as Loader2, RefreshCcw01 as RefreshCw, Send01 as Send, Stars01 as Sparkles, Users01 as Users } from "@untitledui/icons";
 import { api } from "@/lib/api";
+import { motion } from "framer-motion";
 import type { Notice } from "@/features/types";
 
 interface GroupEvent {
@@ -171,20 +172,30 @@ export default function NoticesPage() {
       </div>
 
       {/* Filter Tabs matching the exact Design System of /tasks */}
-      <div className="flex gap-2 border-b border-border pb-1 mb-4 flex-shrink-0">
-        {(["upcoming", "previous", "all"] as const).map((filter) => (
-          <button
-            key={filter}
-            onClick={() => setTimelineFilter(filter)}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-standard capitalize cursor-pointer ${
-              timelineFilter === filter
-                ? "border-primary text-primary font-semibold"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {filter}
-          </button>
-        ))}
+      <div className="flex gap-4 border-b border-border pb-[1px] mb-4 flex-shrink-0 relative">
+        {(["upcoming", "previous", "all"] as const).map((filter) => {
+          const isActive = timelineFilter === filter;
+          return (
+            <button
+              key={filter}
+              onClick={() => setTimelineFilter(filter)}
+              className={`relative px-2 py-2 text-sm transition-colors capitalize cursor-pointer ${
+                isActive
+                  ? "text-foreground font-semibold"
+                  : "text-muted-foreground hover:text-foreground font-medium"
+              }`}
+            >
+              {filter}
+              {isActive && (
+                <motion.div
+                  layoutId="activeNoticeTab"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {error && (

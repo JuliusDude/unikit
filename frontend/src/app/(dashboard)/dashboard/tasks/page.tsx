@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ArrowLeft, Bell01 as Bell, Calendar, Check, Edit01 as Edit2, List as ListTodo, Loading01 as Loader2, Plus, Trash01 as Trash2, XClose as X } from "@untitledui/icons";
 import { api } from "@/lib/api";
+import { motion } from "framer-motion";
 import type { Task, TaskStatus } from "@/features/types";
 
 export default function TasksPage() {
@@ -213,20 +214,30 @@ export default function TasksPage() {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex gap-2 border-b border-border pb-1 mb-4 flex-shrink-0">
-        {(["today", "upcoming", "completed", "all"] as const).map((filter) => (
-          <button
-            key={filter}
-            onClick={() => setActiveFilter(filter)}
-            className={`px-4 py-2 text-sm font-medium border-b-2 transition-standard capitalize cursor-pointer ${
-              activeFilter === filter
-                ? "border-primary text-primary font-semibold"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            {filter}
-          </button>
-        ))}
+      <div className="flex gap-4 border-b border-border pb-[1px] mb-4 flex-shrink-0 relative">
+        {(["today", "upcoming", "completed", "all"] as const).map((filter) => {
+          const isActive = activeFilter === filter;
+          return (
+            <button
+              key={filter}
+              onClick={() => setActiveFilter(filter)}
+              className={`relative px-2 py-2 text-sm transition-colors capitalize cursor-pointer ${
+                isActive
+                  ? "text-foreground font-semibold"
+                  : "text-muted-foreground hover:text-foreground font-medium"
+              }`}
+            >
+              {filter}
+              {isActive && (
+                <motion.div
+                  layoutId="activeTaskTab"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
+            </button>
+          );
+        })}
       </div>
 
       <div className="flex-1 overflow-y-auto min-h-0 pr-1 pb-6">

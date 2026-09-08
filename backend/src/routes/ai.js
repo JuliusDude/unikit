@@ -1,4 +1,6 @@
 const express = require("express");
+const multer = require("multer");
+const pdfParse = require("pdf-parse");
 const authMiddleware = require("../middleware/auth");
 const {
   getStudyTip,
@@ -11,6 +13,35 @@ const {
 } = require("../services/groq");
 
 const router = express.Router();
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } }); // 10MB limit
+
+router.post("/parse-document", authMiddleware, upload.single("document"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No document provided" });
+    }
+
+    const file = req.file;
+    const extension = file.originalname.split('.').pop().toLowerCase();
+    
+    let text = "";
+    
+    if (extension === 'pdf') {
+      const pdfData = await pdfParse(file.buffer);
+      text = pdfData.text;
+    } else if (['txt', 'md', 'csv', 'json'].includes(extension)) {
+      text = file.buffer.toString('utf-8');
+    } else {
+      return res.status(400).json({ message: "Unsupported file type. Please upload a PDF or text file." });
+    }
+    
+    res.json({ text });
+  } catch (error) {
+    console.error("Document parse error:", error);
+    res.status(500).json({ message: "Failed to parse document" });
+  }
+});
+
 
 router.get("/tip", async (req, res) => {
   try {

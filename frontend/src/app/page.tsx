@@ -71,7 +71,14 @@ function Header() {
         current = "#faq";
       }
       
-      setActiveSection(current);
+      setActiveSection((prev) => {
+        if (current) return current;
+        // If we are above the first tracked section, clear the highlight
+        const firstEl = document.getElementById(sectionIds[0]);
+        if (firstEl && scrollPos < firstEl.offsetTop) return "";
+        // Otherwise, we are in a gap between sections (e.g., ReplaceTools), keep the previous highlight
+        return prev;
+      });
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });

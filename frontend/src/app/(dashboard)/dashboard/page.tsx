@@ -178,7 +178,7 @@ export default function DashboardPage() {
       {/* ── Row 6: Campus News  |  Achievements ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
         <PopoutWidget><CampusNewsWidget /></PopoutWidget>
-        <AchievementWidget tasks={tasks} attendance={attendance} />
+        <PopoutWidget><AchievementWidget /></PopoutWidget>
       </div>
 
       {/* ── Row 7: Quote (full-width centered) ── */}
