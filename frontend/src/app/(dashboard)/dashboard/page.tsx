@@ -158,28 +158,28 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* ── Row 3: Attendance  |  Study Streak ── */}
+      {/* ── Row 3: Campus News  |  Study Streak ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 items-start">
-        <div id="tour-attendance"><PopoutWidget><AttendanceWidget attendance={attendance} /></PopoutWidget></div>
+        <div id="tour-campus-news"><PopoutWidget><CampusNewsWidget /></PopoutWidget></div>
         <div id="tour-streak"><StudyStreakWidget /></div>
       </div>
 
-      {/* ── Row 4: Quick Actions  |  Weekly Progress  |  Campus News ── */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+      {/* ── Row 4: Quick Actions  |  Attendance ── */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-start">
         <div id="tour-quick-actions"><QuickActionsWidget /></div>
-        <div id="tour-weekly-progress"><WeeklyProgressWidget tasks={tasks} /></div>
-        <div id="tour-campus-news"><PopoutWidget><CampusNewsWidget /></PopoutWidget></div>
+        <div id="tour-attendance"><PopoutWidget><AttendanceWidget attendance={attendance} /></PopoutWidget></div>
       </div>
 
-      {/* ── Row 5: Recent Activity  |  Productivity Score  |  Focus Timer ── */}
+      {/* ── Row 5: Recent Activity  |  Weekly Progress  |  Focus Timer ── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
         <RecentActivityWidget />
-        <div id="tour-productivity"><ProductivityScoreWidget tasks={tasks} attendance={attendance} /></div>
+        <div id="tour-weekly-progress"><WeeklyProgressWidget tasks={tasks} /></div>
         <div id="tour-timer"><FocusTimerWidget /></div>
       </div>
 
-      {/* ── Row 6: Achievements ── */}
+      {/* ── Row 6: Productivity Score  |  Achievements ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-start">
+        <div id="tour-productivity"><ProductivityScoreWidget tasks={tasks} attendance={attendance} /></div>
         <div id="tour-achievements"><PopoutWidget><AchievementWidget /></PopoutWidget></div>
       </div>
 
