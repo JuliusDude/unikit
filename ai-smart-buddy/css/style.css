@@ -528,8 +528,65 @@ label {
     border-radius: 4px;
 }
 
+.message-content pre {
+    background-color: rgba(0,0,0,0.06);
+    padding: 12px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 8px 0;
+}
+
+.message.user .message-content pre {
+    background-color: rgba(255,255,255,0.2);
+}
+
+.message-content pre code {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+}
+
 .message.user .message-content code {
     background-color: rgba(255,255,255,0.2);
+}
+
+.message-content h1,
+.message-content h2,
+.message-content h3,
+.message-content h4 {
+    margin: 16px 0 8px;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.message-content h1 { font-size: 1.5em; }
+.message-content h2 { font-size: 1.3em; }
+.message-content h3 { font-size: 1.1em; }
+
+.message-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+}
+
+.message-content th,
+.message-content td {
+    border: 1px solid hsl(var(--border));
+    padding: 6px 10px;
+    text-align: left;
+}
+
+.message-content th {
+    background-color: rgba(0,0,0,0.04);
+}
+
+.message.user .message-content th,
+.message.user .message-content td {
+    border-color: rgba(255,255,255,0.2);
+}
+
+.message.user .message-content th {
+    background-color: rgba(255,255,255,0.1);
 }
 
 .message-copy-btn {
@@ -1066,6 +1123,50 @@ label {
     background: rgba(0,0,0,0.06);
     padding: 2px 6px;
     border-radius: 4px;
+}
+
+.modal-result pre {
+    background: rgba(0,0,0,0.06);
+    padding: 12px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 8px 0;
+}
+
+.modal-result pre code {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+}
+
+.modal-result h1,
+.modal-result h2,
+.modal-result h3,
+.modal-result h4 {
+    margin: 16px 0 8px;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.modal-result h1 { font-size: 1.5em; }
+.modal-result h2 { font-size: 1.3em; }
+.modal-result h3 { font-size: 1.1em; }
+
+.modal-result table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+}
+
+.modal-result th,
+.modal-result td {
+    border: 1px solid hsl(var(--border));
+    padding: 6px 10px;
+    text-align: left;
+}
+
+.modal-result th {
+    background-color: rgba(0,0,0,0.04);
 }
 
 .result-copy-btn {

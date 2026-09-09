@@ -141,6 +141,11 @@ If the student asks about tasks or deadlines, suggest they use the Smart Tools s
     }
 
     formatMessage(text) {
+        if (typeof marked !== 'undefined') {
+            const rawHtml = marked.parse(text);
+            return typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawHtml) : rawHtml;
+        }
+
         let escaped = text
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
@@ -149,7 +154,10 @@ If the student asks about tasks or deadlines, suggest they use the Smart Tools s
         escaped = escaped
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            .replace(/`(.*?)`/g, '<code>$1</code>');
+            .replace(/`(.*?)`/g, '<code>$1</code>')
+            .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+            .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+            .replace(/^# (.*$)/gim, '<h1>$1</h1>');
 
         const lines = escaped.split('\n');
         let result = '';

@@ -237,6 +237,11 @@ Format as clear bullet points.`;
     }
 
     formatResult(text) {
+        if (typeof marked !== 'undefined') {
+            const rawHtml = marked.parse(text);
+            return typeof DOMPurify !== 'undefined' ? DOMPurify.sanitize(rawHtml) : rawHtml;
+        }
+
         let escaped = text
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
@@ -245,7 +250,10 @@ Format as clear bullet points.`;
         escaped = escaped
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            .replace(/`(.*?)`/g, '<code>$1</code>');
+            .replace(/`(.*?)`/g, '<code>$1</code>')
+            .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+            .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+            .replace(/^# (.*$)/gim, '<h1>$1</h1>');
 
         const lines = escaped.split('\n');
         let result = '';

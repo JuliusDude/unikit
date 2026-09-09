@@ -1,8 +1,5 @@
--- Migration: Add telegram_chat_id to students table
--- Run this in your Supabase SQL Editor
+-- Fix: Add telegram_chat_id to students table if not present
+ALTER TABLE public.students ADD COLUMN IF NOT EXISTS telegram_chat_id BIGINT;
 
-ALTER TABLE public.students 
-ADD COLUMN IF NOT EXISTS telegram_chat_id BIGINT;
-
-CREATE INDEX IF NOT EXISTS idx_students_telegram_chat_id 
-ON public.students(telegram_chat_id);
+-- Ensure tasks table has reminders_sent JSONB
+ALTER TABLE public.tasks ADD COLUMN IF NOT EXISTS reminders_sent JSONB DEFAULT '{}'::jsonb;

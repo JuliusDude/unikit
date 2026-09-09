@@ -17,7 +17,6 @@
   ],
   "author": "CampusFlow",
   "license": "MIT",
-  "dependencies": {},
   "engines": {
     "node": ">=14.0.0"
   }
