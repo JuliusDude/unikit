@@ -189,15 +189,15 @@ async function getStudyTip() {
 
 async function attendanceAlert(subject, total, attended, threshold = 75) {
   if (total === 0) {
-    return { percentage: "100.0", message: `${subject}: No classes held yet. You are at 100% attendance.`, isAtRisk: false };
+    return { percentage: "100.0", message: `No classes held yet. You are at 100% attendance.`, isAtRisk: false };
   }
   const pct = ((attended / total) * 100).toFixed(1);
   if (Number(pct) >= threshold) {
     const canSkip = Math.floor(attended * 100 / threshold - total);
-    return { percentage: pct, message: `${subject}: ${pct}%. You can skip ${canSkip} more classes.`, isAtRisk: false };
+    return { percentage: pct, message: `You have ${pct}%. You can safely skip ${canSkip} more classes.`, isAtRisk: false };
   } else {
     const needed = Math.ceil((threshold * total - 100 * attended) / (100 - threshold));
-    return { percentage: pct, message: `${subject}: ⚠️ ${pct}%. Need ${needed} more classes to reach ${threshold}%.`, isAtRisk: true };
+    return { percentage: pct, message: `⚠️ ${pct}%. You need to attend ${needed} more classes consecutively to reach ${threshold}%.`, isAtRisk: true };
   }
 }
 

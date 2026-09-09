@@ -346,7 +346,7 @@ export default function AttendancePage() {
                           <div>
                             <span className="font-semibold block mb-0.5 flex items-center gap-1">
                               <Sparkles className="w-3 h-3 text-current animate-pulse" />
-                              AI Risk Assessment
+                              Risk Assessment
                             </span>
                             {aiAlert.message}
                           </div>
