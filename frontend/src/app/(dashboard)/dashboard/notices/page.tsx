@@ -21,8 +21,8 @@ interface GroupEvent {
 type TimelineFilter = "upcoming" | "previous" | "all";
 
 export default function NoticesPage() {
-  const [viewMode, setViewMode] = useState<"group" | "personal">("group");
-  const [timelineFilter, setTimelineFilter] = useState<TimelineFilter>("upcoming");
+  const [viewMode, setViewMode] = useState<"group" | "personal">("personal");
+  const [timelineFilter, setTimelineFilter] = useState<TimelineFilter>("all");
   const [notices, setNotices] = useState<Notice[]>([]);
   const [groupEvents, setGroupEvents] = useState<GroupEvent[]>([]);
   const [loading, setLoading] = useState(true);
