@@ -73,28 +73,30 @@ export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
           </Link>
         ))}
 
-        <div className="pt-4 pb-2 px-1">
-          {!isCollapsed && (
-            <p className="text-xs font-semibold text-white/40 uppercase tracking-wider">Tools</p>
-          )}
-        </div>
-
-        {toolItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            id={`tour-nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
-            className={cn(
-              "flex items-center gap-3 px-3 py-2 rounded-[10px] text-sm font-medium transition-all duration-150",
-              isActive(item.href)
-                ? "bg-white/20 text-white"
-                : "text-white/70 hover:bg-white/10 hover:text-white"
+        <div id="tour-sidebar-tools" className="flex flex-col space-y-0.5">
+          <div className="pt-4 pb-2 px-1">
+            {!isCollapsed && (
+              <p className="text-xs font-semibold text-white/40 uppercase tracking-wider">Tools</p>
             )}
-          >
-            <item.icon className="w-4.5 h-4.5 flex-shrink-0" />
-            {!isCollapsed && <span>{item.label}</span>}
-          </Link>
-        ))}
+          </div>
+
+          {toolItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              id={`tour-nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+              className={cn(
+                "flex items-center gap-3 px-3 py-2 rounded-[10px] text-sm font-medium transition-all duration-150",
+                isActive(item.href)
+                  ? "bg-white/20 text-white"
+                  : "text-white/70 hover:bg-white/10 hover:text-white"
+              )}
+            >
+              <item.icon className="w-4.5 h-4.5 flex-shrink-0" />
+              {!isCollapsed && <span>{item.label}</span>}
+            </Link>
+          ))}
+        </div>
 
         <div className="pt-4 pb-2 px-1">
           {!isCollapsed && (

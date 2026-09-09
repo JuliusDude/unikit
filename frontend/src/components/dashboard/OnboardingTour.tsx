@@ -84,6 +84,14 @@ export function OnboardingTour() {
             side: "left", align: 'start' 
           }
         },
+        {
+          element: '#tour-sidebar-tools',
+          popover: {
+            title: 'Explore More Tools',
+            description: 'Use the sidebar to navigate to your dedicated pages for Flashcards, Quizzes, Whiteboards, and more!',
+            side: "right", align: 'start'
+          }
+        },
       ],
       onDestroyStarted: () => {
         localStorage.setItem("hasSeenTour", "true");
