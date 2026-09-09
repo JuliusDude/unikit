@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { BarChart01 as BarChart3, CheckCircle, Loading01 as Loader2, Plus, RefreshCcw01 as RefreshCw, Shield02 as ShieldAlert, Stars01 as Sparkles, Trash01 as Trash2 } from "@untitledui/icons";
+import { BarChart01 as BarChart3, CheckCircle, Loading01 as Loader2, Plus, RefreshCcw01 as RefreshCw, Shield02 as ShieldAlert, Trash01 as Trash2 } from "@untitledui/icons";
 import { api } from "@/lib/api";
 import type { Attendance } from "@/features/types";
 
@@ -359,8 +359,7 @@ export default function AttendancePage() {
                             <CheckCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
                           )}
                           <div>
-                            <span className="font-semibold block mb-0.5 flex items-center gap-1">
-                              <Sparkles className="w-3 h-3 text-current animate-pulse" />
+                            <span className="font-semibold block mb-0.5">
                               Risk Assessment
                             </span>
                             {aiAlert.message}
