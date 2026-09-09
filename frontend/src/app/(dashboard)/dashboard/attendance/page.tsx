@@ -98,10 +98,18 @@ export default function AttendancePage() {
       // Reload and auto-analyze
       fetchAttendance(false);
     } catch (err) {
-      setFormError(err instanceof Error ? err.message : "Failed to save attendance record");
+      setFormError(err instanceof Error ? err.message : "Failed to save attendance");
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const handleEditClick = (record: Attendance) => {
+    setSubject(record.subject);
+    setTotalClasses(record.total_classes);
+    setAttendedClasses(record.attended_classes);
+    setThreshold(record.threshold || 75);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleDelete = async (id: string) => {
@@ -282,7 +290,8 @@ export default function AttendancePage() {
                 return (
                   <div
                     key={record.id}
-                    className={`bg-white border rounded-[10px] p-5 shadow-sm flex items-start justify-between gap-4 transition-all hover:shadow-md ${
+                    onClick={() => handleEditClick(record)}
+                    className={`bg-white border rounded-[10px] p-5 shadow-sm flex items-start justify-between gap-4 transition-all hover:shadow-md cursor-pointer ${
                       isUnderThreshold ? "border-destructive/30" : "border-border"
                     }`}
                   >
@@ -318,13 +327,19 @@ export default function AttendancePage() {
 
                       <div className="flex gap-2 mt-2">
                         <button
-                          onClick={() => handleQuickUpdate(record, "attended")}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleQuickUpdate(record, "attended");
+                          }}
                           className="text-xs px-3 py-1.5 rounded-md font-medium bg-green-500/10 text-green-600 hover:bg-green-500/20 transition-standard cursor-pointer"
                         >
                           + Attended
                         </button>
                         <button
-                          onClick={() => handleQuickUpdate(record, "missed")}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleQuickUpdate(record, "missed");
+                          }}
                           className="text-xs px-3 py-1.5 rounded-md font-medium bg-destructive/10 text-destructive hover:bg-destructive/20 transition-standard cursor-pointer"
                         >
                           + Missed
@@ -358,7 +373,10 @@ export default function AttendancePage() {
 
                     <div className="flex flex-col items-center justify-start gap-2 flex-shrink-0">
                       <button
-                        onClick={() => handleRefreshAlert(record)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRefreshAlert(record);
+                        }}
                         disabled={analyzingId === record.id}
                         className="p-1.5 hover:bg-accent rounded-[10px] text-muted-foreground hover:text-foreground transition-standard cursor-pointer"
                         title="Recheck risk assessment"
@@ -366,7 +384,10 @@ export default function AttendancePage() {
                         <RefreshCw className={`w-4 h-4 ${analyzingId === record.id ? "animate-spin" : ""}`} />
                       </button>
                       <button
-                        onClick={() => handleDelete(record.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(record.id);
+                        }}
                         className="p-1.5 hover:bg-destructive/10 rounded-[10px] text-muted-foreground hover:text-destructive transition-standard cursor-pointer"
                         title="Delete subject record"
                       >
