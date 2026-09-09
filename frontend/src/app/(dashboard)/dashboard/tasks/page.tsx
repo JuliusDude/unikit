@@ -5,7 +5,7 @@ import { ArrowLeft, Bell01 as Bell, Calendar, Check, Edit01 as Edit2, List as Li
 import { api } from "@/lib/api";
 import { motion } from "framer-motion";
 import type { Task, TaskStatus } from "@/features/types";
-import { generateGoogleCalendarUrl } from "@/lib/calendar";
+
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -73,14 +73,13 @@ export default function TasksPage() {
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const nextWeek = new Date(today);
-    nextWeek.setDate(nextWeek.getDate() + 7);
+
 
     if (activeFilter === "today") {
       return taskDate >= today && taskDate < tomorrow;
     }
     if (activeFilter === "upcoming") {
-      return taskDate >= today && taskDate <= nextWeek;
+      return taskDate >= today;
     }
     return true;
   });
@@ -298,15 +297,7 @@ export default function TasksPage() {
                     </span>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    <a
-                      href={generateGoogleCalendarUrl(task.title, task.description || "", task.deadline)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-1.5 hover:bg-blue-50 rounded-[10px] text-muted-foreground hover:text-blue-600 transition-standard cursor-pointer"
-                      title="Add to Google Calendar"
-                    >
-                      <Calendar className="w-4 h-4" />
-                    </a>
+
                     <button
                       onClick={() => handleOpenEditModal(task)}
                       className="p-1.5 hover:bg-accent rounded-[10px] text-muted-foreground hover:text-foreground transition-standard cursor-pointer"
@@ -354,11 +345,7 @@ export default function TasksPage() {
                       </span>
                     </div>
                   )}
-                  {task.add_to_calendar && (
-                    <span className="px-2 py-0.5 bg-blue-500/10 text-blue-600 rounded-[10px] font-medium">
-                      Google Calendar Linked
-                    </span>
-                  )}
+
                 </div>
               </div>
             </div>
@@ -462,18 +449,7 @@ export default function TasksPage() {
                 />
               </div>
 
-              <div className="flex items-center gap-2 pt-2">
-                <input
-                  id="add-to-calendar"
-                  type="checkbox"
-                  checked={addToCalendar}
-                  onChange={(e) => setAddToCalendar(e.target.checked)}
-                  className="w-4 h-4 rounded text-primary focus:ring-primary"
-                />
-                <label htmlFor="add-to-calendar" className="text-sm font-medium text-foreground cursor-pointer">
-                  Sync with Google Calendar & trigger Telegram automations
-                </label>
-              </div>
+
 
               <div className="flex gap-3 justify-end border-t border-border pt-4 mt-6">
                 <button
