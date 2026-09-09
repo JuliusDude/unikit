@@ -9,7 +9,7 @@ import { AttendanceWidget } from "@/features/dashboard/components/AttendanceWidg
 import { QuickActionsWidget } from "@/components/dashboard/QuickActionsWidget";
 import { WeeklyProgressWidget } from "@/components/dashboard/WeeklyProgressWidget";
 import { StudyStreakWidget } from "@/components/dashboard/StudyStreakWidget";
-import { UpcomingEventsWidget } from "@/components/dashboard/UpcomingEventsWidget";
+
 import { RecentActivityWidget } from "@/components/dashboard/RecentActivityWidget";
 import { ProductivityScoreWidget } from "@/components/dashboard/ProductivityScoreWidget";
 import { FocusTimerWidget } from "@/components/dashboard/FocusTimerWidget";
@@ -164,11 +164,11 @@ export default function DashboardPage() {
         <div id="tour-streak"><StudyStreakWidget /></div>
       </div>
 
-      {/* ── Row 4: Quick Actions  |  Weekly Progress  |  Upcoming Events ── */}
+      {/* ── Row 4: Quick Actions  |  Weekly Progress  |  Campus News ── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
         <div id="tour-quick-actions"><QuickActionsWidget /></div>
         <div id="tour-weekly-progress"><WeeklyProgressWidget tasks={tasks} /></div>
-        <PopoutWidget><UpcomingEventsWidget /></PopoutWidget>
+        <div id="tour-campus-news"><PopoutWidget><CampusNewsWidget /></PopoutWidget></div>
       </div>
 
       {/* ── Row 5: Recent Activity  |  Productivity Score  |  Focus Timer ── */}
@@ -178,9 +178,8 @@ export default function DashboardPage() {
         <div id="tour-timer"><FocusTimerWidget /></div>
       </div>
 
-      {/* ── Row 6: Campus News  |  Achievements ── */}
+      {/* ── Row 6: Achievements ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 items-start">
-        <div id="tour-campus-news"><PopoutWidget><CampusNewsWidget /></PopoutWidget></div>
         <div id="tour-achievements"><PopoutWidget><AchievementWidget /></PopoutWidget></div>
       </div>
 
